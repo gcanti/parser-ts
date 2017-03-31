@@ -5,6 +5,7 @@ import { Either, left, right } from 'fp-ts/lib/Either'
 import { Predicate } from 'fp-ts/lib/function'
 import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import { Option, none, some } from 'fp-ts/lib/Option'
+import { fold as foldMonoid } from 'fp-ts/lib/Monoid'
 
 declare module 'fp-ts/lib/HKT' {
   interface HKT<A> {
@@ -211,13 +212,8 @@ export function maybe(parser: Parser<string>): Parser<string> {
   return parser.alt(empty())
 }
 
-// TODO remove when fp-ts v0.2 lends
-function fold_<A>(monoid: StaticMonoid<A>, as: Array<A>): A {
-  return as.reduce((acc, a) => monoid.concat(acc, a), monoid.empty())
-}
-
 export function fold(ps: Array<Parser<string>>): Parser<string> {
-  return fold_({ empty, concat }, ps)
+  return foldMonoid({ empty, concat }, ps)
 }
 
 /** The `many` combinator takes a parser, and returns a new parser which will

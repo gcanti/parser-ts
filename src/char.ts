@@ -1,4 +1,4 @@
-import { Predicate } from 'fp-ts/lib/function'
+import { not } from 'fp-ts/lib/function'
 import { Parser } from '.'
 import * as p from '.'
 
@@ -86,11 +86,6 @@ function isLower(c: Char): boolean {
 
 /** Matches a single lower case ASCII letter. */
 export const lower = p.expected(p.sat(isLower), 'a lower case letter')
-
-// TODO remove when fp-ts v0.2 lends
-export function not<A>(predicate: Predicate<A>): Predicate<A> {
-  return a => !predicate(a)
-}
 
 /** Matches a single character which isn't a character from the provided string. */
 export function notOneOf(s: string): Parser<Char> {
