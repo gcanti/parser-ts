@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/gcanti/parser-ts",
   "dependencies": {
-    "fp-ts": "github:gcanti/fp-ts#amazing"
+    "fp-ts": "^0.2.0"
   },
   "devDependencies": {
     "@types/mocha": "2.2.38",
