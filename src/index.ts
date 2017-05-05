@@ -33,7 +33,7 @@ export class Parser<A> implements
   static of = of
   static zero = zero
   readonly _URI: URI
-  constructor(public readonly value: (s: string) => ParseResult<A>) {}
+  constructor(public readonly value: (s: string) => ParseResult<A>) { }
   /** Run a parser against an input, either getting an error or a value */
   run(s: string): ParseResult<A> {
     return this.value(s)
@@ -198,8 +198,8 @@ export function sat(predicate: Predicate<string>): Parser<string> {
   return new Parser(s => getAndNext(s)
     .chain(x => predicate(x[0]) ? some(x) : none as Option<[string, string]>)
     .fold(
-      () => createParseFailure<string>(s, 'Parse failed on sat'),
-      ([c, s]) => createParseSuccess(c, s)
+    () => createParseFailure<string>(s, 'Parse failed on sat'),
+    ([c, s]) => createParseSuccess(c, s)
     )
   )
 }
@@ -241,7 +241,13 @@ export function many1<A>(parser: Parser<A>): Parser<NonEmptyArray<A>> {
  * use `sep` to match separator characters in between matches of `p`.
  */
 export function sepBy<A, B>(sep: Parser<A>, parser: Parser<B>): Parser<Array<B>> {
-  return alt(sepBy1(sep, parser).map(a => a.toArray()), of([]))
+  return alt(
+    sepBy1(sep, parser).map(a => a.toArray()),
+    alt(
+      parser.map(a => [a]),
+      of([])
+    )
+  )
 }
 
 /** Matches the provided parser `p` one or more times, but requires the
@@ -249,11 +255,15 @@ export function sepBy<A, B>(sep: Parser<A>, parser: Parser<B>): Parser<Array<B>>
  * use `sep` to match separator characters in between matches of `p`.
  */
 export function sepBy1<A, B>(sep: Parser<A>, parser: Parser<B>): Parser<NonEmptyArray<B>> {
-  return parser.chain(head => sepBy(sep, parser).chain(tail => of(new NonEmptyArray(head, tail))))
+  return parser.chain(head =>
+    sep.chain(_ =>
+      sepBy(sep, parser)
+    ).chain(tail => of(new NonEmptyArray(head, tail)))
+  )
 }
 
 // tslint:disable-next-line no-unused-expression
-;(
+; (
   { map, of, ap, chain, zero, alt, empty, concat } as (
     StaticMonad<URI> &
     StaticAlternative<URI> &

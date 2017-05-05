@@ -1,3 +1,4 @@
+import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import * as assert from 'assert'
 import {
   unparser,
@@ -7,7 +8,10 @@ import {
   sat,
   alt,
   fold,
-  createParseSuccess
+  createParseSuccess,
+  many,
+  sepBy1,
+  sepBy
 } from '../src'
 import { char } from '../src/char'
 import { eqEithers } from './helpers'
@@ -36,6 +40,21 @@ describe('Parser', () => {
   it('fold', () => {
     const parser = fold([char('a'), char('b')])
     eqEithers(parser.run('ab'), createParseSuccess('ab', ''))
+  })
+
+  it('many', () => {
+    const parser = many(char('a'))
+    eqEithers(parser.run('aa'), createParseSuccess(['a', 'a'], ''))
+  })
+
+  it('sepBy1', () => {
+    const parser = sepBy1(char(','), sat(c => c !== ','))
+    eqEithers(parser.run('a,b,c'), createParseSuccess(new NonEmptyArray('a', ['b', 'c']), ''))
+  })
+
+  it('seqBy', () => {
+    const parser = sepBy(char(','), sat(c => c !== ','))
+    eqEithers(parser.run('a,b,c'), createParseSuccess(['a', 'b', 'c'], ''))
   })
 
 })
