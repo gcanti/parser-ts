@@ -1,4 +1,6 @@
+import { identity } from 'fp-ts/lib/function'
 import { StaticMonoid } from 'fp-ts/lib/Monoid'
+import { StaticApply } from 'fp-ts/lib/Apply'
 import { StaticMonad, FantasyMonad } from 'fp-ts/lib/Monad'
 import { StaticAlternative, FantasyAlternative } from 'fp-ts/lib/Alternative'
 import { Either, left, right } from 'fp-ts/lib/Either'
@@ -6,6 +8,7 @@ import { Predicate } from 'fp-ts/lib/function'
 import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import { Option, none, some } from 'fp-ts/lib/Option'
 import { fold as foldMonoid } from 'fp-ts/lib/Monoid'
+import { HKT, HKTS } from 'fp-ts/lib/HKT'
 
 declare module 'fp-ts/lib/HKT' {
   interface HKT<A> {
@@ -33,7 +36,7 @@ export class Parser<A> implements
   static of = of
   static zero = zero
   readonly _URI: URI
-  constructor(public readonly value: (s: string) => ParseResult<A>) {}
+  constructor(public readonly value: (s: string) => ParseResult<A>) { }
   /** Run a parser against an input, either getting an error or a value */
   run(s: string): ParseResult<A> {
     return this.value(s)
@@ -198,8 +201,8 @@ export function sat(predicate: Predicate<string>): Parser<string> {
   return new Parser(s => getAndNext(s)
     .chain(x => predicate(x[0]) ? some(x) : none as Option<[string, string]>)
     .fold(
-      () => createParseFailure<string>(s, 'Parse failed on sat'),
-      ([c, s]) => createParseSuccess(c, s)
+    () => createParseFailure<string>(s, 'Parse failed on sat'),
+    ([c, s]) => createParseSuccess(c, s)
     )
   )
 }
@@ -241,19 +244,40 @@ export function many1<A>(parser: Parser<A>): Parser<NonEmptyArray<A>> {
  * use `sep` to match separator characters in between matches of `p`.
  */
 export function sepBy<A, B>(sep: Parser<A>, parser: Parser<B>): Parser<Array<B>> {
-  return alt(sepBy1(sep, parser).map(a => a.toArray()), of([]))
+  return alt(
+    sepBy1(sep, parser).map(a => a.toArray()),
+    alt(
+      parser.map(a => [a]),
+      of([])
+    )
+  )
+}
+
+// to remove when lending in fp-ts
+function applySecond<F extends HKTS>(apply: StaticApply<F>): <A, B>(fa: HKT<A>[F], fb: HKT<B>[F]) => HKT<B>[F] {
+  return <A, B>(fa: HKT<A>[F], fb: HKT<B>[F]) => apply.ap<B, B>(apply.map(() => identity, fa), fb)
+}
+
+/** Matches both parsers and return the value of the second
+ */
+
+function second<A, B>(pa: Parser<A>, pb: Parser<B>): Parser<B> {
+  return new Parser(s =>
+    applySecond({ URI, map, ap })<A, B>(pa, pb).run(s)
+  )
 }
 
 /** Matches the provided parser `p` one or more times, but requires the
  * parser `sep` to match once in between each match of `p`. In other words,
  * use `sep` to match separator characters in between matches of `p`.
  */
+
 export function sepBy1<A, B>(sep: Parser<A>, parser: Parser<B>): Parser<NonEmptyArray<B>> {
-  return parser.chain(head => sepBy(sep, parser).chain(tail => of(new NonEmptyArray(head, tail))))
+  return parser.chain(head => alt(many(second(sep, parser)), of([])).chain(tail => of(new NonEmptyArray(head, tail))))
 }
 
 // tslint:disable-next-line no-unused-expression
-;(
+; (
   { map, of, ap, chain, zero, alt, empty, concat } as (
     StaticMonad<URI> &
     StaticAlternative<URI> &
