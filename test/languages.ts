@@ -38,4 +38,11 @@ describe('languages', () => {
     }, ''))
   })
 
+  it('a parser for the path `/users/:user`', () => {
+    const parser = s.string('/users/')
+      .chain(() => s.int.map(n => ({ user: n })))
+    eqEithers(parser.run('/users/1'), p.createParseSuccess({ user: 1 }, ''))
+    eqEithers(parser.run('/users/a'), p.createParseFailure('a', 'an integer'))
+  })
+
 })
