@@ -20,7 +20,7 @@ export const URI = 'Parser'
 
 export type URI = typeof URI
 
-export type ParseFailure = {
+export interface ParseFailure {
   remaining: string,
   message: string
 }
