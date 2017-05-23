@@ -20,7 +20,7 @@ export const URI = 'Parser'
 
 export type URI = typeof URI
 
-export type ParseFailure = {
+export interface ParseFailure {
   remaining: string,
   message: string
 }
@@ -35,6 +35,7 @@ export class Parser<A> implements
 
   static of = of
   static zero = zero
+  readonly _A: A
   readonly _URI: URI
   constructor(public readonly value: (s: string) => ParseResult<A>) { }
   /** Run a parser against an input, either getting an error or a value */
