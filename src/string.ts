@@ -1,6 +1,6 @@
 import { HKT, HKTS } from 'fp-ts/lib/HKT'
 import { Option, none, some } from 'fp-ts/lib/Option'
-import { StaticFoldable } from 'fp-ts/lib/Foldable'
+import { Foldable } from 'fp-ts/lib/Foldable'
 import * as array from 'fp-ts/lib/Array'
 import { Parser } from '.'
 import * as p from '.'
@@ -38,7 +38,7 @@ export function string(prefix: string): Parser<string> {
   )
 }
 
-export function oneOfF<F extends HKTS>(foldable: StaticFoldable<F>): (fs: HKT<string>[F]) => Parser<string> {
+export function oneOfF<F extends HKTS>(foldable: Foldable<F>): (fs: HKT<string>[F]) => Parser<string> {
   return fs => foldable.reduce((p, s: string) => p.alt(string(s)), p.zero<string>(), fs)
 }
 
