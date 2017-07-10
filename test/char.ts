@@ -1,21 +1,8 @@
-import {
-  createParseSuccess,
-  createParseFailure
-} from '../src'
-import {
-  char,
-  many,
-  many1,
-  notChar,
-  oneOf,
-  digit,
-  space,
-  alphanum
-} from '../src/char'
+import { createParseSuccess, createParseFailure } from '../src'
+import { char, many, many1, notChar, oneOf, digit, space, alphanum } from '../src/char'
 import { eqEithers } from './helpers'
 
 describe('char', () => {
-
   it('char', () => {
     const parser = char('a')
     eqEithers(parser.run('ab'), createParseSuccess('a', 'b'))
@@ -68,5 +55,4 @@ describe('char', () => {
     eqEithers(parser.run('_'), createParseSuccess('_', ''))
     eqEithers(parser.run('@'), createParseFailure('@', 'a word character'))
   })
-
 })
