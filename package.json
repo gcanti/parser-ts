@@ -1,17 +1,16 @@
 {
   "name": "parser-ts",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "String parser combinators for TypeScript",
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
     "lint": "tslint src/**/*.ts test/**/*.ts",
     "typings-checker": "typings-checker --allow-expect-error --project typings-checker/tsconfig.json typings-checker/index.ts",
     "mocha": "mocha -r ts-node/register test/*.ts",
-    "test": "npm run lint && npm run typings-checker && npm run mocha",
+    "prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --list-different \"{src,test}/**/*.ts\"",
+    "test": "npm run lint && npm run prettier && npm run typings-checker && npm run mocha",
     "clean": "rm -rf lib/*",
     "build": "npm run clean && tsc"
   },
@@ -26,28 +25,19 @@
   },
   "homepage": "https://github.com/gcanti/parser-ts",
   "dependencies": {
-    "fp-ts": "^0.3.0"
+    "fp-ts": "^0.4.0"
   },
   "devDependencies": {
     "@types/mocha": "2.2.38",
     "@types/node": "7.0.4",
     "mocha": "3.2.0",
-    "ts-node": "2.0.0",
+    "prettier": "1.5.2",
     "tslint": "4.4.2",
     "tslint-config-standard": "4.0.0",
+    "ts-node": "^3.2.0",
     "typescript": "2.3.3",
     "typings-checker": "1.1.2"
   },
-  "tags": [
-    "typescript",
-    "parser-combinators",
-    "functional-programming",
-    "fp-ts"
-  ],
-  "keywords": [
-    "typescript",
-    "parser-combinators",
-    "functional-programming",
-    "fp-ts"
-  ]
+  "tags": ["typescript", "parser-combinators", "functional-programming", "fp-ts"],
+  "keywords": ["typescript", "parser-combinators", "functional-programming", "fp-ts"]
 }

@@ -8,18 +8,12 @@ import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import { Option, none, some } from 'fp-ts/lib/Option'
 import { fold as foldMonoid } from 'fp-ts/lib/Monoid'
 
-declare module 'fp-ts/lib/HKT' {
-  interface HKT<A> {
-    Parser: Parser<A>
-  }
-}
-
 export const URI = 'Parser'
 
 export type URI = typeof URI
 
 export interface ParseFailure {
-  remaining: string,
+  remaining: string
   message: string
 }
 
@@ -27,15 +21,12 @@ export type ParseSuccess<A> = [A, string]
 
 export type ParseResult<A> = Either<ParseFailure, ParseSuccess<A>>
 
-export class Parser<A> implements
-  FantasyMonad<URI, A>,
-  FantasyAlternative<URI, A> {
-
+export class Parser<A> implements FantasyMonad<URI, A>, FantasyAlternative<URI, A> {
   static of = of
   static zero = zero
   readonly _A: A
   readonly _URI: URI
-  constructor(public readonly value: (s: string) => ParseResult<A>) { }
+  constructor(public readonly value: (s: string) => ParseResult<A>) {}
   /** Run a parser against an input, either getting an error or a value */
   run(s: string): ParseResult<A> {
     return this.value(s)
@@ -58,10 +49,7 @@ export class Parser<A> implements
   alt(fa: Parser<A>): Parser<A> {
     return new Parser(s => {
       const e = this.run(s)
-      return e.fold(
-        () => fa.run(s),
-        () => e
-      )
+      return e.fold(() => fa.run(s), () => e)
     })
   }
 }
@@ -117,10 +105,7 @@ export function consumed<A>(result: ParseResult<A>): Either<ParseFailure, A> {
 }
 
 export function remaining<A>(result: ParseResult<A>): string {
-  return result.fold(
-    pe => pe.remaining,
-    ([_, s]) => s
-  )
+  return result.fold(pe => pe.remaining, ([_, s]) => s)
 }
 
 export function getAndNext(s: string): Option<[string, string]> {
@@ -131,7 +116,7 @@ export function getAndNext(s: string): Option<[string, string]> {
 }
 
 /** Get the result of a parse, plus the unparsed input remainder */
-export function unparser<A>(parser: Parser<A>, s: string): { consumed: Either<ParseFailure, A>, remaining: string } {
+export function unparser<A>(parser: Parser<A>, s: string): { consumed: Either<ParseFailure, A>; remaining: string } {
   const e = parser.run(s)
   return { consumed: consumed(e), remaining: remaining(e) }
 }
@@ -197,12 +182,10 @@ export const either = alt
  * fail
  */
 export function sat(predicate: Predicate<string>): Parser<string> {
-  return new Parser(s => getAndNext(s)
-    .chain(x => predicate(x[0]) ? some(x) : none as Option<[string, string]>)
-    .fold(
-    () => createParseFailure<string>(s, 'Parse failed on sat'),
-    ([c, s]) => createParseSuccess(c, s)
-    )
+  return new Parser(s =>
+    getAndNext(s)
+      .chain(x => (predicate(x[0]) ? some(x) : none as Option<[string, string]>))
+      .fold(() => createParseFailure<string>(s, 'Parse failed on sat'), ([c, s]) => createParseSuccess(c, s))
   )
 }
 
@@ -243,21 +226,13 @@ export function many1<A>(parser: Parser<A>): Parser<NonEmptyArray<A>> {
  * use `sep` to match separator characters in between matches of `p`.
  */
 export function sepBy<A, B>(sep: Parser<A>, parser: Parser<B>): Parser<Array<B>> {
-  return alt(
-    sepBy1(sep, parser).map(a => a.toArray()),
-    alt(
-      parser.map(a => [a]),
-      of([])
-    )
-  )
+  return alt(sepBy1(sep, parser).map(a => a.toArray()), alt(parser.map(a => [a]), of([])))
 }
 
 /** Matches both parsers and return the value of the second
  */
 function second<A, B>(pa: Parser<A>, pb: Parser<B>): Parser<B> {
-  return new Parser(s =>
-    applySecond({ URI, map, ap })<A, B>(pa, pb).run(s)
-  )
+  return new Parser(s => applySecond({ URI, map, ap })(pa, pb).run(s))
 }
 
 /** Matches the provided parser `p` one or more times, but requires the
@@ -268,11 +243,57 @@ export function sepBy1<A, B>(sep: Parser<A>, parser: Parser<B>): Parser<NonEmpty
   return parser.chain(head => alt(many(second(sep, parser)), of([])).chain(tail => of(new NonEmptyArray(head, tail))))
 }
 
-// tslint:disable-next-line no-unused-expression
-; (
-  { map, of, ap, chain, zero, alt, empty, concat } as (
-    Monad<URI> &
-    Alternative<URI> &
-    Monoid<Parser<string>>
-  )
-)
+export const parser: Monad<URI> & Alternative<URI> & Monoid<Parser<string>> = {
+  URI,
+  map,
+  of,
+  ap,
+  chain,
+  zero,
+  alt,
+  empty,
+  concat
+}
+
+//
+// overloadings
+//
+
+import { Curried2, Curried3, Curried4 } from 'fp-ts/lib/function'
+
+declare module 'fp-ts/lib/Functor' {
+  interface Ops {
+    lift<A, B>(functor: Functor<URI>, f: (a: A) => B): (fa: Parser<A>) => Parser<B>
+    voidRight<A, B>(functor: Functor<URI>, a: A, fb: Parser<B>): Parser<A>
+    voidLeft<A, B>(functor: Functor<URI>, fa: Parser<A>, b: B): Parser<B>
+    flap(functor: Functor<URI>): <A, B>(ff: Parser<(a: A) => B>, a: A) => Parser<B>
+  }
+}
+
+declare module 'fp-ts/lib/Apply' {
+  interface Ops {
+    applyFirst(apply: Apply<URI>): <A, B>(fa: Parser<A>, fb: Parser<B>) => Parser<A>
+    applySecond(apply: Apply<URI>): <A, B>(fa: Parser<A>, fb: Parser<B>) => Parser<B>
+    liftA2<A, B, C>(apply: Apply<URI>, f: Curried2<A, B, C>): (fa: Parser<A>, fb: Parser<B>) => Parser<C>
+    liftA3<A, B, C, D>(
+      apply: Apply<URI>,
+      f: Curried3<A, B, C, D>
+    ): (fa: Parser<A>, fb: Parser<B>, fc: Parser<C>) => Parser<D>
+    liftA4<A, B, C, D, E>(
+      apply: Apply<URI>,
+      f: Curried4<A, B, C, D, E>
+    ): (fa: Parser<A>, fb: Parser<B>, fc: Parser<C>, fd: Parser<D>) => Parser<E>
+  }
+}
+
+declare module 'fp-ts/lib/Applicative' {
+  interface Ops {
+    when(applicative: Applicative<URI>): (condition: boolean, fu: Parser<void>) => Parser<void>
+  }
+}
+
+declare module 'fp-ts/lib/Chain' {
+  interface Ops {
+    flatten(chain: Chain<URI>): <A>(mma: Parser<Parser<A>>) => Parser<A>
+  }
+}

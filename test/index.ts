@@ -17,7 +17,6 @@ import { char } from '../src/char'
 import { eqEithers } from './helpers'
 
 describe('Parser', () => {
-
   it('unparser', () => {
     const { consumed, remaining } = unparser(zero(), 's')
     assert.strictEqual(remaining, 's')
@@ -56,5 +55,4 @@ describe('Parser', () => {
     const parser = sepBy(char(','), sat(c => c !== ','))
     eqEithers(parser.run('a,b,c'), createParseSuccess(['a', 'b', 'c'], ''))
   })
-
 })

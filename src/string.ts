@@ -1,4 +1,4 @@
-import { HKT, HKTS } from 'fp-ts/lib/HKT'
+import { HKT } from 'fp-ts/lib/HKT'
 import { Option, none, some } from 'fp-ts/lib/Option'
 import { Foldable } from 'fp-ts/lib/Foldable'
 import * as array from 'fp-ts/lib/Array'
@@ -30,15 +30,15 @@ export function getAndNext(s: string, prefix: string): Option<[string, string]> 
 
 /** Matches the exact string provided. */
 export function string(prefix: string): Parser<string> {
-  return new Parser(s => getAndNext(s, prefix)
-    .fold(
+  return new Parser(s =>
+    getAndNext(s, prefix).fold(
       () => p.createParseFailure<string>(s, JSON.stringify(prefix)),
       ([c, s]) => p.createParseSuccess(c, s)
     )
   )
 }
 
-export function oneOfF<F extends HKTS>(foldable: Foldable<F>): (fs: HKT<string>[F]) => Parser<string> {
+export function oneOfF<F>(foldable: Foldable<F>): (fs: HKT<F, string>) => Parser<string> {
   return fs => foldable.reduce((p, s: string) => p.alt(string(s)), p.zero<string>(), fs)
 }
 
@@ -64,31 +64,19 @@ function fromString(s: string): Option<number> {
   return isNaN(n) ? none : some(n)
 }
 
-const intParsers = [
-  p.maybe(c.char('-')),
-  c.many1(c.digit)
-]
+const intParsers = [p.maybe(c.char('-')), c.many1(c.digit)]
 
-export const int = p.expected(p.fold(intParsers)
-  .chain<number>(s => fromString(s).fold(
-    () => p.fail,
-    n => p.of(n)
-  )), 'an integer')
+export const int = p.expected(
+  p.fold(intParsers).chain<number>(s => fromString(s).fold(() => p.fail, n => p.of(n))),
+  'an integer'
+)
 
-const floatParsers = [
-  p.maybe(c.char('-')),
-  c.many(c.digit),
-  p.maybe(p.fold([
-    c.char('.'),
-    c.many1(c.digit)
-  ]))
-]
+const floatParsers = [p.maybe(c.char('-')), c.many(c.digit), p.maybe(p.fold([c.char('.'), c.many1(c.digit)]))]
 
-export const float = p.expected(p.fold(floatParsers)
-  .chain<number>(s => fromString(s).fold(
-    () => p.fail,
-    n => p.of(n)
-  )), 'an integer')
+export const float = p.expected(
+  p.fold(floatParsers).chain<number>(s => fromString(s).fold(() => p.fail, n => p.of(n))),
+  'an integer'
+)
 
 export const doubleQuote = c.char('"')
 

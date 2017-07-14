@@ -1,19 +1,8 @@
-import {
-  createParseSuccess,
-  createParseFailure
-} from '../src'
-import {
-  string,
-  many,
-  oneOf,
-  int,
-  float,
-  doubleQuotedString
-} from '../src/string'
+import { createParseSuccess, createParseFailure } from '../src'
+import { string, many, oneOf, int, float, doubleQuotedString } from '../src/string'
 import { eqEithers } from './helpers'
 
 describe('string', () => {
-
   it('string', () => {
     const parser = string('foo')
     eqEithers(parser.run('foo'), createParseSuccess('foo', ''))
@@ -67,5 +56,4 @@ describe('string', () => {
     eqEithers(parser.run('"ab"c'), createParseSuccess('ab', 'c'))
     eqEithers(parser.run('"a\\"b"'), createParseSuccess('a\\"b', ''))
   })
-
 })
