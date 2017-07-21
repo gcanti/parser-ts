@@ -8,6 +8,12 @@ import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import { Option, none, some } from 'fp-ts/lib/Option'
 import { fold as foldMonoid } from 'fp-ts/lib/Monoid'
 
+declare module 'fp-ts/lib/HKT' {
+  interface URI2HKT<A> {
+    Parser: Parser<A>
+  }
+}
+
 export const URI = 'Parser'
 
 export type URI = typeof URI
@@ -253,47 +259,4 @@ export const parser: Monad<URI> & Alternative<URI> & Monoid<Parser<string>> = {
   alt,
   empty,
   concat
-}
-
-//
-// overloadings
-//
-
-import { Curried2, Curried3, Curried4 } from 'fp-ts/lib/function'
-
-declare module 'fp-ts/lib/Functor' {
-  interface Ops {
-    lift<A, B>(functor: Functor<URI>, f: (a: A) => B): (fa: Parser<A>) => Parser<B>
-    voidRight<A, B>(functor: Functor<URI>, a: A, fb: Parser<B>): Parser<A>
-    voidLeft<A, B>(functor: Functor<URI>, fa: Parser<A>, b: B): Parser<B>
-    flap(functor: Functor<URI>): <A, B>(ff: Parser<(a: A) => B>, a: A) => Parser<B>
-  }
-}
-
-declare module 'fp-ts/lib/Apply' {
-  interface Ops {
-    applyFirst(apply: Apply<URI>): <A, B>(fa: Parser<A>, fb: Parser<B>) => Parser<A>
-    applySecond(apply: Apply<URI>): <A, B>(fa: Parser<A>, fb: Parser<B>) => Parser<B>
-    liftA2<A, B, C>(apply: Apply<URI>, f: Curried2<A, B, C>): (fa: Parser<A>, fb: Parser<B>) => Parser<C>
-    liftA3<A, B, C, D>(
-      apply: Apply<URI>,
-      f: Curried3<A, B, C, D>
-    ): (fa: Parser<A>, fb: Parser<B>, fc: Parser<C>) => Parser<D>
-    liftA4<A, B, C, D, E>(
-      apply: Apply<URI>,
-      f: Curried4<A, B, C, D, E>
-    ): (fa: Parser<A>, fb: Parser<B>, fc: Parser<C>, fd: Parser<D>) => Parser<E>
-  }
-}
-
-declare module 'fp-ts/lib/Applicative' {
-  interface Ops {
-    when(applicative: Applicative<URI>): (condition: boolean, fu: Parser<void>) => Parser<void>
-  }
-}
-
-declare module 'fp-ts/lib/Chain' {
-  interface Ops {
-    flatten(chain: Chain<URI>): <A>(mma: Parser<Parser<A>>) => Parser<A>
-  }
 }
