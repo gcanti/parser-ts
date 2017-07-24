@@ -1,6 +1,6 @@
 {
   "name": "parser-ts",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "String parser combinators for TypeScript",
   "files": ["lib"],
   "main": "lib/index.js",
@@ -25,17 +25,17 @@
   },
   "homepage": "https://github.com/gcanti/parser-ts",
   "dependencies": {
-    "fp-ts": "^0.4.0"
+    "fp-ts": "^0.4.1"
   },
   "devDependencies": {
     "@types/mocha": "2.2.38",
     "@types/node": "7.0.4",
     "mocha": "3.2.0",
     "prettier": "1.5.2",
+    "ts-node": "3.2.0",
     "tslint": "4.4.2",
     "tslint-config-standard": "4.0.0",
-    "ts-node": "^3.2.0",
-    "typescript": "2.3.3",
+    "typescript": "2.4.2",
     "typings-checker": "1.1.2"
   },
   "tags": ["typescript", "parser-combinators", "functional-programming", "fp-ts"],
