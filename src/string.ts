@@ -85,5 +85,5 @@ export const doubleQuote = c.char('"')
  * of string escaping.
  */
 export const doubleQuotedString = doubleQuote
-  .chain(() => many(p.either(string('\\"'), c.notChar('"'))))
+  .chain(() => many(p.either(string('\\"'))(c.notChar('"'))))
   .chain(s => doubleQuote.chain(() => p.of(s)))
