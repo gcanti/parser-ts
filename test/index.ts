@@ -30,7 +30,7 @@ describe('Parser', () => {
   })
 
   it('alt', () => {
-    const parser = alt(sat(c => c === 'a'))(sat(c => c === 'b'))
+    const parser = alt(sat(c => c === 'a'), sat(c => c === 'b'))
     assert.strictEqual(remaining(parser.run('a')), '')
     assert.strictEqual(remaining(parser.run('b')), '')
     assert.strictEqual(remaining(parser.run('c')), 'c')

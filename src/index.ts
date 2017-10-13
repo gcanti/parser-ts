@@ -59,7 +59,7 @@ export const ap = <A, B>(fab: Parser<(a: A) => B>, fa: Parser<A>): Parser<B> => 
 
 export const chain = <A, B>(f: (a: A) => Parser<B>, fa: Parser<A>): Parser<B> => fa.chain(f)
 
-export const alt = <A>(fx: Parser<A>) => (fy: Parser<A>): Parser<A> => fx.alt(fy)
+export const alt = <A>(fx: Parser<A>, fy: Parser<A>): Parser<A> => fx.alt(fy)
 
 export const zero = <A>(): Parser<A> => fail
 
@@ -181,7 +181,7 @@ export const fold = (ps: Array<Parser<string>>): Parser<string> => foldMonoid(pa
  * Read that as "match this parser zero or more times and give me a list of
  * the results."
  */
-export const many = <A>(parser: Parser<A>): Parser<Array<A>> => alt(many1(parser).map(a => a.toArray()))(of([]))
+export const many = <A>(parser: Parser<A>): Parser<Array<A>> => alt(many1(parser).map(a => a.toArray()), of([]))
 
 /**
  * The `many1` combinator is just like the `many` combinator, except it
@@ -197,7 +197,7 @@ export const many1 = <A>(parser: Parser<A>): Parser<NonEmptyArray<A>> =>
  * use `sep` to match separator characters in between matches of `p`.
  */
 export const sepBy = <A, B>(sep: Parser<A>, parser: Parser<B>): Parser<Array<B>> =>
-  alt(sepBy1(sep, parser).map(a => a.toArray()))(alt(parser.map(a => [a]))(of([])))
+  alt(sepBy1(sep, parser).map(a => a.toArray()), alt(parser.map(a => [a]), of([])))
 
 /** Matches both parsers and return the value of the second */
 export const second = <A>(pa: Parser<A>) => <B>(pb: Parser<B>): Parser<B> =>
@@ -209,7 +209,7 @@ export const second = <A>(pa: Parser<A>) => <B>(pb: Parser<B>): Parser<B> =>
  * use `sep` to match separator characters in between matches of `p`.
  */
 export const sepBy1 = <A, B>(sep: Parser<A>, parser: Parser<B>): Parser<NonEmptyArray<B>> =>
-  parser.chain(head => alt(many(second(sep)(parser)))(of([])).chain(tail => of(new NonEmptyArray(head, tail))))
+  parser.chain(head => alt(many(second(sep)(parser)), of([])).chain(tail => of(new NonEmptyArray(head, tail))))
 
 export const parser: Monad<URI> & Alternative<URI> & Monoid<Parser<string>> = {
   URI,
