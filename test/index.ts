@@ -11,7 +11,8 @@ import {
   createParseSuccess,
   many,
   sepBy1,
-  sepBy
+  sepBy,
+  eof
 } from '../src'
 import { char } from '../src/char'
 import { eqEithers } from './helpers'
@@ -54,5 +55,11 @@ describe('Parser', () => {
   it('seqBy', () => {
     const parser = sepBy(char(','), sat(c => c !== ','))
     eqEithers(parser.run('a,b,c'), createParseSuccess(['a', 'b', 'c'], ''))
+  })
+
+  it('eof', () => {
+    const parser = eof
+    eqEithers(parser.run('aa'), createParseFailure('aa', 'end of file'))
+    eqEithers(parser.run(''), createParseSuccess(undefined, ''))
   })
 })

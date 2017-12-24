@@ -1,6 +1,6 @@
 {
   "name": "parser-ts",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "String parser combinators for TypeScript",
   "files": ["lib"],
   "main": "lib/index.js",
@@ -32,11 +32,11 @@
     "@types/mocha": "2.2.38",
     "@types/node": "7.0.4",
     "mocha": "3.2.0",
-    "prettier": "1.5.2",
+    "prettier": "1.9.2",
     "ts-node": "3.2.0",
     "tslint": "4.4.2",
     "tslint-config-standard": "4.0.0",
-    "typescript": "2.6.0-rc",
+    "typescript": "2.6.2",
     "typings-checker": "1.1.2"
   },
   "tags": ["typescript", "parser-combinators", "functional-programming", "fp-ts"],

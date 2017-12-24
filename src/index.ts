@@ -170,6 +170,13 @@ export const sat = (predicate: Predicate<string>): Parser<string> =>
  */
 export const maybe = (parser: Parser<string>): Parser<string> => parser.alt(empty())
 
+/**
+ * Matches the end of the input
+ */
+export const eof: Parser<undefined> = new Parser(
+  s => (s === '' ? createParseSuccess(undefined, '') : createParseFailure(s, 'end of file'))
+)
+
 export const fold = (ps: Array<Parser<string>>): Parser<string> => foldMonoid(parser)(ps)
 
 /**
