@@ -1,49 +1,55 @@
 # Changelog
 
 > **Tags:**
-> - [New Feature]
-> - [Bug Fix]
-> - [Breaking Change]
-> - [Documentation]
-> - [Internal]
-> - [Polish]
-> - [Experimental]
+>
+> * [New Feature]
+> * [Bug Fix]
+> * [Breaking Change]
+> * [Documentation]
+> * [Internal]
+> * [Polish]
+> * [Experimental]
 
-**Note**: Gaps between patch versions are faulty/broken releases.
-**Note**: A feature tagged as Experimental is in a high state of flux, you're at risk of it changing without notice.
+**Note**: Gaps between patch versions are faulty/broken releases. **Note**: A feature tagged as Experimental is in a
+high state of flux, you're at risk of it changing without notice.
+
+# 0.4.1
+
+* **New Feature**
+  * add `eof` parser, closes #8 (@gcanti)
 
 # 0.4.0
 
-- **Breaking Change**
-  - upgrade to latest `fp-ts` (0.6.0) (@gcanti)
+* **Breaking Change**
+  * upgrade to latest `fp-ts` (0.6.0) (@gcanti)
 
 # 0.3.0
 
-- **Breaking Change**
-  - upgrade to latest `fp-ts` (0.5.1) (@gcanti)
+* **Breaking Change**
+  * upgrade to latest `fp-ts` (0.5.1) (@gcanti)
 
 # 0.2.1
 
-- **Internal**
-  - upgrade to latest `fp-ts` (0.4.3) (@gcanti)
+* **Internal**
+  * upgrade to latest `fp-ts` (0.4.3) (@gcanti)
 
 # 0.2.0
 
-- **Breaking Change**
-  - upgrade to latest `fp-ts` (@gcanti)
+* **Breaking Change**
+  * upgrade to latest `fp-ts` (@gcanti)
 
 # 0.1.0
 
-- **Breaking Change**
-  - upgrade to latest `fp-ts` (`parser-ts` APIs are not changed though) (@gcanti)
-  - drop `lib-jsnext` folder
-- **Polish**
-  - use fp-ts's `applySecond` (@gcanti)
+* **Breaking Change**
+  * upgrade to latest `fp-ts` (`parser-ts` APIs are not changed though) (@gcanti)
+  * drop `lib-jsnext` folder
+* **Polish**
+  * use fp-ts's `applySecond` (@gcanti)
 
 # 0.0.2
 
-- **Bug Fix**
-  - fix `sepBy1`, https://github.com/gcanti/parser-ts/pull/1 (@sledorze)
+* **Bug Fix**
+  * fix `sepBy1`, https://github.com/gcanti/parser-ts/pull/1 (@sledorze)
 
 # 0.0.1
 
