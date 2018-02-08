@@ -1,5 +1,5 @@
 import { createParseSuccess, createParseFailure } from '../src'
-import { string, many, oneOf, int, float, doubleQuotedString } from '../src/string'
+import { string, many, oneOf, int, float, doubleQuotedString, spaces, spaces1 } from '../src/string'
 import { eqEithers } from './helpers'
 
 describe('string', () => {
@@ -55,5 +55,21 @@ describe('string', () => {
     eqEithers(parser.run('"ab"'), createParseSuccess('ab', ''))
     eqEithers(parser.run('"ab"c'), createParseSuccess('ab', 'c'))
     eqEithers(parser.run('"a\\"b"'), createParseSuccess('a\\"b', ''))
+  })
+
+  it('spaces', () => {
+    const parser = spaces
+    eqEithers(parser.run(' '), createParseSuccess(' ', ''))
+    eqEithers(parser.run('\t'), createParseSuccess('\t', ''))
+    eqEithers(parser.run('\n'), createParseSuccess('\n', ''))
+    eqEithers(parser.run('\n\t'), createParseSuccess('\n\t', ''))
+    eqEithers(parser.run('a'), createParseSuccess('', 'a'))
+  })
+
+  it('spaces1', () => {
+    const parser = spaces1
+    eqEithers(parser.run('\n\t'), createParseSuccess('\n\t', ''))
+    eqEithers(parser.run(''), createParseFailure('', 'whitespace'))
+    eqEithers(parser.run('a'), createParseFailure('a', 'whitespace'))
   })
 })

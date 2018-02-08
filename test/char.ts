@@ -46,6 +46,7 @@ describe('char', () => {
     const parser = space
     eqEithers(parser.run(' '), createParseSuccess(' ', ''))
     eqEithers(parser.run('\t'), createParseSuccess('\t', ''))
+    eqEithers(parser.run('\n'), createParseSuccess('\n', ''))
     eqEithers(parser.run('a'), createParseFailure('a', 'whitespace'))
   })
 
