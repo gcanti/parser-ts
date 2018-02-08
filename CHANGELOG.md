@@ -16,7 +16,7 @@ high state of flux, you're at risk of it changing without notice.
 # 0.4.2
 
 * **Bug fix**
-  * The whitespace parser only accepts space, fix #10 (@gcanti)
+  * The whitespace parser only accepts space, fix #10 (@danr, @gcanti)
 
 # 0.4.1
 
