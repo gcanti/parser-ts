@@ -48,8 +48,10 @@ function isDigit(c: Char): boolean {
 /** Matches a single digit. */
 export const digit = p.expected(p.sat(isDigit), 'a digit')
 
+const spaceRe = /^\s$/
+
 function isSpace(c: Char): boolean {
-  return c === ' '
+  return spaceRe.test(c)
 }
 
 /** Matches a single whitespace character. */
