@@ -7,6 +7,7 @@ import {
   zero,
   sat,
   alt,
+  alts,
   fold,
   createParseSuccess,
   many,
@@ -35,6 +36,14 @@ describe('Parser', () => {
     assert.strictEqual(remaining(parser.run('a')), '')
     assert.strictEqual(remaining(parser.run('b')), '')
     assert.strictEqual(remaining(parser.run('c')), 'c')
+  })
+
+  it('alts', () => {
+    const parser = alts(sat(c => c === 'a'), sat(c => c === 'b'), sat(c => c === 'c'))
+    assert.strictEqual(remaining(parser.run('a')), '')
+    assert.strictEqual(remaining(parser.run('b')), '')
+    assert.strictEqual(remaining(parser.run('c')), '')
+    assert.strictEqual(remaining(parser.run('d')), 'd')
   })
 
   it('fold', () => {
