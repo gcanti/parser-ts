@@ -13,6 +13,11 @@
 **Note**: Gaps between patch versions are faulty/broken releases. **Note**: A feature tagged as Experimental is in a
 high state of flux, you're at risk of it changing without notice.
 
+# 0.4.3
+
+* **New Feature**
+  * Add n-ary alts combinator, fixes #12 (@danr)
+
 # 0.4.2
 
 * **Bug fix**
