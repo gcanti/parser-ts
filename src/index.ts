@@ -61,6 +61,8 @@ export const chain = <A, B>(f: (a: A) => Parser<B>, fa: Parser<A>): Parser<B> =>
 
 export const alt = <A>(fx: Parser<A>, fy: Parser<A>): Parser<A> => fx.alt(fy)
 
+export const alts = <A>(...fs: Parser<A>[]): Parser<A> => fs.reduce((fx, fy) => fx.alt(fy), fail)
+
 export const zero = <A>(): Parser<A> => fail
 
 export const emptyString = of('')
