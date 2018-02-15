@@ -10,7 +10,7 @@ describe('languages', () => {
       .string('hi')
       .chain(() => s.spaces1)
       .chain(() => s.many1(c.letter))
-      .chain(name => s.string('!').chain(() => p.of(name)))
+      .chain(name => s.string('!').chain(() => p.succeed(name)))
     eqEithers(parser.run('hi Giulio!'), p.createParseSuccess('Giulio', ''))
     eqEithers(parser.run('hi Giulio'), p.createParseFailure('', '"!"'))
   })
@@ -26,7 +26,7 @@ describe('languages', () => {
               .chain(() => s.string('HTTP/')) // Match the string "HTTP/"
               .chain(() => p.fold([c.many1(c.digit), s.string('.'), c.many1(c.digit)])) // Parse the version string
               .chain(version =>
-                p.of({
+                p.succeed({
                   // Return the final parsed value
                   method,
                   path,

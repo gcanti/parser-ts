@@ -4,28 +4,32 @@ import * as p from '.'
 
 export type Char = string
 
-/** The `char` parser constructor returns a parser which matches only the
+/**
+ * The `char` parser constructor returns a parser which matches only the
  * specified single character
  */
 export function char(c: Char): Parser<Char> {
   return p.expected(p.sat(s => s === c), `"${c}"`)
 }
 
-/** Takes a `Parser<string>` and matches it zero or more times, returning
+/**
+ * Takes a `Parser<string>` and matches it zero or more times, returning
  * a `String` of what was matched.
  */
 export function many(parser: Parser<Char>): Parser<string> {
   return p.maybe(many1(parser))
 }
 
-/** Takes a `Parser<string>` and matches it one or more times, returning
+/**
+ * Takes a `Parser<string>` and matches it one or more times, returning
  * a `String` of what was matched.
  */
 export function many1(parser: Parser<Char>): Parser<string> {
   return p.many1(parser).map(nea => nea.toArray().join(''))
 }
 
-/** The `notChar` parser constructor makes a parser which will match any
+/**
+ * The `notChar` parser constructor makes a parser which will match any
  * single character other than the one provided.
  */
 export function notChar(c: Char): Parser<Char> {

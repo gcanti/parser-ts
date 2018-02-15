@@ -1,7 +1,7 @@
 import { Monoid } from 'fp-ts/lib/Monoid'
 import { applySecond } from 'fp-ts/lib/Apply'
-import { Monad, FantasyMonad } from 'fp-ts/lib/Monad'
-import { Alternative, FantasyAlternative } from 'fp-ts/lib/Alternative'
+import { Monad1 } from 'fp-ts/lib/Monad'
+import { Alternative1 } from 'fp-ts/lib/Alternative'
 import { Either, left, right } from 'fp-ts/lib/Either'
 import { Predicate, tuple } from 'fp-ts/lib/function'
 import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
@@ -27,7 +27,7 @@ export type ParseSuccess<A> = [A, string]
 
 export type ParseResult<A> = Either<ParseFailure, ParseSuccess<A>>
 
-export class Parser<A> implements FantasyMonad<URI, A>, FantasyAlternative<URI, A> {
+export class Parser<A> {
   readonly _A: A
   readonly _URI: URI
   constructor(public readonly run: (s: string) => ParseResult<A>) {}
@@ -40,9 +40,6 @@ export class Parser<A> implements FantasyMonad<URI, A>, FantasyAlternative<URI, 
   chain<B>(f: (a: A) => Parser<B>): Parser<B> {
     return new Parser(s => this.run(s).chain(([a, s1]) => f(a).run(s1)))
   }
-  zero<B>(): Parser<B> {
-    return zero<B>()
-  }
   alt(fa: Parser<A>): Parser<A> {
     return new Parser(s => {
       const e = this.run(s)
@@ -51,33 +48,30 @@ export class Parser<A> implements FantasyMonad<URI, A>, FantasyAlternative<URI, 
   }
 }
 
-export const map = <A, B>(f: (a: A) => B, fa: Parser<A>): Parser<B> => fa.map(f)
+const map = <A, B>(fa: Parser<A>, f: (a: A) => B): Parser<B> => fa.map(f)
 
-export const of = <A>(a: A): Parser<A> => new Parser(s => createParseSuccess(a, s))
+const of = <A>(a: A): Parser<A> => new Parser(s => createParseSuccess(a, s))
 
-export const ap = <A, B>(fab: Parser<(a: A) => B>, fa: Parser<A>): Parser<B> => fa.ap(fab)
+const ap = <A, B>(fab: Parser<(a: A) => B>, fa: Parser<A>): Parser<B> => fa.ap(fab)
 
-export const chain = <A, B>(f: (a: A) => Parser<B>, fa: Parser<A>): Parser<B> => fa.chain(f)
+const chain = <A, B>(fa: Parser<A>, f: (a: A) => Parser<B>): Parser<B> => fa.chain(f)
 
-export const alt = <A>(fx: Parser<A>, fy: Parser<A>): Parser<A> => fx.alt(fy)
+const alt = <A>(fx: Parser<A>, fy: Parser<A>): Parser<A> => fx.alt(fy)
+
+const zero = <A>(): Parser<A> => fail
+
+const empty: Parser<string> = of('')
+
+const concat = (x: Parser<string>, y: Parser<string>): Parser<string> => y.ap(x.map(a => (b: string) => a + b))
 
 export const alts = <A>(...fs: Parser<A>[]): Parser<A> => fs.reduce((fx, fy) => fx.alt(fy), fail)
-
-export const zero = <A>(): Parser<A> => fail
-
-export const emptyString = of('')
-
-export const empty = (): Parser<string> => emptyString
-
-export const concat = (x: Parser<string>) => (y: Parser<string>): Parser<string> =>
-  y.ap(x.map(a => (b: string) => a + b))
 
 //
 // helpers
 //
 
 export const createParseFailure = <A>(remaining: string, message: string): ParseResult<A> =>
-  left<ParseFailure, ParseSuccess<A>>({ remaining, message })
+  left({ remaining, message })
 
 export const createParseSuccess = <A>(a: A, s: string): ParseResult<A> => right<ParseFailure, ParseSuccess<A>>([a, s])
 
@@ -107,14 +101,6 @@ export const failWith = <A>(message: string): Parser<A> => new Parser(s => creat
 export const fail = failWith<never>('Parse failed on `fail`')
 
 /**
- * A parser combinator which returns the provided parser unchanged, except
- * that if it fails, the provided error message will be returned in the
- * `ParseFailure`.
- */
-export const expected = <A>(parser: Parser<A>, message: string): Parser<A> =>
-  new Parser(s => parser.run(s).mapLeft(({ remaining }) => ({ remaining, message })))
-
-/**
  * The `succeed` parser constructor creates a parser which will simply
  * return the value provided as its argument, without consuming any input.
  *
@@ -122,14 +108,19 @@ export const expected = <A>(parser: Parser<A>, message: string): Parser<A> =>
  */
 export const succeed = of
 
+/**
+ * A parser combinator which returns the provided parser unchanged, except
+ * that if it fails, the provided error message will be returned in the
+ * `ParseFailure`.
+ */
+export const expected = <A>(parser: Parser<A>, message: string): Parser<A> =>
+  new Parser(s => parser.run(s).mapLeft(({ remaining }) => ({ remaining, message })))
+
 /** The `item` parser consumes a single value, regardless of what it is,
  * and returns it as its result.
  */
 export const item = new Parser<string>(s => {
-  return getAndNext(s).fold(
-    () => createParseFailure<string>(s, 'Parse failed on item'),
-    ([c, s]) => createParseSuccess(c, s)
-  )
+  return getAndNext(s).foldL(() => createParseFailure(s, 'Parse failed on item'), ([c, s]) => createParseSuccess(c, s))
 })
 
 /**
@@ -162,7 +153,7 @@ export const sat = (predicate: Predicate<string>): Parser<string> =>
   new Parser(s =>
     getAndNext(s)
       .chain(x => (predicate(x[0]) ? some(x) : none))
-      .fold(() => createParseFailure(s, 'Parse failed on sat'), ([c, s]) => createParseSuccess(c, s))
+      .foldL(() => createParseFailure(s, 'Parse failed on sat'), ([c, s]) => createParseSuccess(c, s))
   )
 
 /**
@@ -170,7 +161,7 @@ export const sat = (predicate: Predicate<string>): Parser<string> =>
  * parser on the input, and if it fails, it will returns the empty string (as
  * a result, without consuming any input.
  */
-export const maybe = (parser: Parser<string>): Parser<string> => parser.alt(empty())
+export const maybe = (parser: Parser<string>): Parser<string> => parser.alt(empty)
 
 /**
  * Matches the end of the input
@@ -178,8 +169,6 @@ export const maybe = (parser: Parser<string>): Parser<string> => parser.alt(empt
 export const eof: Parser<undefined> = new Parser(
   s => (s === '' ? createParseSuccess(undefined, '') : createParseFailure(s, 'end of file'))
 )
-
-export const fold = (ps: Array<Parser<string>>): Parser<string> => foldMonoid(parser)(ps)
 
 /**
  * The `many` combinator takes a parser, and returns a new parser which will
@@ -210,7 +199,7 @@ export const sepBy = <A, B>(sep: Parser<A>, parser: Parser<B>): Parser<Array<B>>
 
 /** Matches both parsers and return the value of the second */
 export const second = <A>(pa: Parser<A>) => <B>(pb: Parser<B>): Parser<B> =>
-  new Parser(s => applySecond(parser)(pa)(pb).run(s))
+  new Parser(s => applySecondParser(pa, pb).run(s))
 
 /**
  * Matches the provided parser `p` one or more times, but requires the
@@ -220,7 +209,7 @@ export const second = <A>(pa: Parser<A>) => <B>(pb: Parser<B>): Parser<B> =>
 export const sepBy1 = <A, B>(sep: Parser<A>, parser: Parser<B>): Parser<NonEmptyArray<B>> =>
   parser.chain(head => alt(many(second(sep)(parser)), of([])).chain(tail => of(new NonEmptyArray(head, tail))))
 
-export const parser: Monad<URI> & Alternative<URI> & Monoid<Parser<string>> = {
+export const parser: Monad1<URI> & Alternative1<URI> & Monoid<Parser<string>> = {
   URI,
   map,
   of,
@@ -231,3 +220,7 @@ export const parser: Monad<URI> & Alternative<URI> & Monoid<Parser<string>> = {
   empty,
   concat
 }
+
+export const fold: (ps: Array<Parser<string>>) => Parser<string> = foldMonoid(parser)
+
+const applySecondParser = applySecond(parser)
