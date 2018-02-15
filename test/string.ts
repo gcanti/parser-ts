@@ -45,7 +45,7 @@ describe('string', () => {
     eqEithers(parser.run('-10'), createParseSuccess(-10, ''))
     eqEithers(parser.run('0.1'), createParseSuccess(0.1, ''))
     eqEithers(parser.run('-0.1'), createParseSuccess(-0.1, ''))
-    eqEithers(parser.run('a'), createParseFailure('a', `an integer`))
+    eqEithers(parser.run('a'), createParseFailure('a', `a float`))
   })
 
   it('doubleQuotedString', () => {
