@@ -74,4 +74,22 @@ describe('Parser', () => {
     eqEithers(parser.run('ab'), P.createParseSuccess('a', 'b'))
     eqEithers(parser.run(''), P.createParseFailure('', 'Parse failed on item'))
   })
+
+  it('ap_', () => {
+    const parser = P.parser
+      .of((a: string) => (b: string) => a + b + a + b)
+      .ap_(C.char('a'))
+      .ap_(C.char('b'))
+    eqEithers(parser.run('ab'), P.createParseSuccess('abab', ''))
+  })
+
+  it('applyFirst', () => {
+    const parser = C.char('a').applyFirst(C.char('b'))
+    eqEithers(parser.run('ab'), P.createParseSuccess('a', ''))
+  })
+
+  it('applySecond', () => {
+    const parser = C.char('a').applySecond(C.char('b'))
+    eqEithers(parser.run('ab'), P.createParseSuccess('b', ''))
+  })
 })

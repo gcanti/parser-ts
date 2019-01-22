@@ -3,7 +3,7 @@ import { applySecond } from 'fp-ts/lib/Apply'
 import { Monad1 } from 'fp-ts/lib/Monad'
 import { Alternative1 } from 'fp-ts/lib/Alternative'
 import { Either, left, right } from 'fp-ts/lib/Either'
-import { Predicate, tuple } from 'fp-ts/lib/function'
+import { Predicate, tuple, constant, constIdentity } from 'fp-ts/lib/function'
 import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import { Option, none, some } from 'fp-ts/lib/Option'
 
@@ -35,6 +35,24 @@ export class Parser<A> {
   }
   ap<B>(fab: Parser<(a: A) => B>): Parser<B> {
     return fab.chain(f => this.map(f)) // <= derived
+  }
+  /**
+   * Flipped version of {@link ap}
+   */
+  ap_<B, C>(this: Parser<(b: B) => C>, fb: Parser<B>): Parser<C> {
+    return fb.ap(this)
+  }
+  /**
+   * Combine two effectful actions, keeping only the result of the first
+   */
+  applyFirst<B>(fb: Parser<B>): Parser<A> {
+    return fb.ap(this.map(constant))
+  }
+  /**
+   * Combine two effectful actions, keeping only the result of the second
+   */
+  applySecond<B>(fb: Parser<B>): Parser<B> {
+    return fb.ap(this.map(constIdentity as () => (b: B) => B))
   }
   chain<B>(f: (a: A) => Parser<B>): Parser<B> {
     return new Parser(s => this.run(s).chain(([a, s1]) => f(a).run(s1)))
