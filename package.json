@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/gcanti/parser-ts",
   "dependencies": {
-    "fp-ts": "^1.0.1"
+    "fp-ts": "^1.13.0"
   },
   "devDependencies": {
     "@types/jest": "^23.3.13",
