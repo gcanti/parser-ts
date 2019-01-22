@@ -1,22 +1,21 @@
-import { Option, none, some } from 'fp-ts/lib/Option'
-import { Parser } from '.'
-import * as p from '.'
-import * as c from './char'
+import { none, Option, some } from 'fp-ts/lib/Option'
+import * as P from '.'
+import * as C from './char'
 
 /**
  * Matches the given parser zero or more times, returning a string of the
  * entire match
  */
-export function many(parser: Parser<string>): Parser<string> {
-  return p.maybe(many1(parser))
+export function many(parser: P.Parser<string>): P.Parser<string> {
+  return P.maybe(many1(parser))
 }
 
 /**
  * Matches the given parser one or more times, returning a string of the
  * entire match
  */
-export function many1(parser: Parser<string>): Parser<string> {
-  return p.many1(parser).map(nea => nea.toArray().join(''))
+export function many1(parser: P.Parser<string>): P.Parser<string> {
+  return P.many1(parser).map(nea => nea.toArray().join(''))
 }
 
 export function getAndNext(s: string, prefix: string): Option<[string, string]> {
@@ -28,46 +27,46 @@ export function getAndNext(s: string, prefix: string): Option<[string, string]> 
 }
 
 /** Matches the exact string provided. */
-export function string(prefix: string): Parser<string> {
-  return new Parser(s =>
+export function string(prefix: string): P.Parser<string> {
+  return new P.Parser(s =>
     getAndNext(s, prefix).foldL(
-      () => p.createParseFailure(s, JSON.stringify(prefix)),
-      ([c, s]) => p.createParseSuccess(c, s)
+      () => P.createParseFailure(s, JSON.stringify(prefix)),
+      ([c, s]) => P.createParseSuccess(c, s)
     )
   )
 }
 
 /** Matches one of a list of strings. */
-export function oneOf(ss: Array<string>): Parser<string> {
-  return p.expected(p.alts(...ss.map(string)), `one of ${JSON.stringify(ss)}`)
+export function oneOf(ss: Array<string>): P.Parser<string> {
+  return P.expected(P.alts(...ss.map(string)), `one of ${JSON.stringify(ss)}`)
 }
 
 /** Matches zero or more whitespace characters. */
-export const spaces = c.many(c.space)
+export const spaces = C.many(C.space)
 
 /** Matches one or more whitespace characters. */
-export const spaces1 = c.many1(c.space)
+export const spaces1 = C.many1(C.space)
 
 /** Matches zero or more non-whitespace characters. */
-export const notSpaces = c.many(c.notSpace)
+export const notSpaces = C.many(C.notSpace)
 
 /** Matches one or more non-whitespace characters. */
-export const notSpaces1 = c.many1(c.notSpace)
+export const notSpaces1 = C.many1(C.notSpace)
 
 function fromString(s: string): Option<number> {
   const n = parseFloat(s)
   return isNaN(n) ? none : some(n)
 }
 
-const intParsers = [p.maybe(c.char('-')), c.many1(c.digit)]
+const intParsers = [P.maybe(C.char('-')), C.many1(C.digit)]
 
-export const int = p.expected(p.fold(intParsers).chain(s => fromString(s).fold(p.fail, p.succeed)), 'an integer')
+export const int = P.expected(P.fold(intParsers).chain(s => fromString(s).fold(P.fail, P.succeed)), 'an integer')
 
-const floatParsers = [p.maybe(c.char('-')), c.many(c.digit), p.maybe(p.fold([c.char('.'), c.many1(c.digit)]))]
+const floatParsers = [P.maybe(C.char('-')), C.many(C.digit), P.maybe(P.fold([C.char('.'), C.many1(C.digit)]))]
 
-export const float = p.expected(p.fold(floatParsers).chain(s => fromString(s).fold(p.fail, p.succeed)), 'a float')
+export const float = P.expected(P.fold(floatParsers).chain(s => fromString(s).fold(P.fail, P.succeed)), 'a float')
 
-export const doubleQuote = c.char('"')
+export const doubleQuote = C.char('"')
 
 /**
  * Parses a double quoted string, with support for escaping double quotes
@@ -75,5 +74,5 @@ export const doubleQuote = c.char('"')
  * of string escaping.
  */
 export const doubleQuotedString = doubleQuote
-  .chain(() => many(p.either(string('\\"'), c.notChar('"'))))
-  .chain(s => doubleQuote.chain(() => p.succeed(s)))
+  .chain(() => many(P.either(string('\\"'), C.notChar('"'))))
+  .chain(s => doubleQuote.chain(() => P.succeed(s)))

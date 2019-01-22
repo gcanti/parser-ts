@@ -1,73 +1,77 @@
 import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import * as assert from 'assert'
-import {
-  unparser,
-  remaining,
-  createParseFailure,
-  sat,
-  alts,
-  fold,
-  createParseSuccess,
-  many,
-  sepBy1,
-  sepBy,
-  eof,
-  parser as p
-} from '../src'
-import { char } from '../src/char'
+import * as P from '../src'
+import * as C from '../src/char'
 import { eqEithers } from './helpers'
+import { right } from 'fp-ts/lib/Either'
 
 describe('Parser', () => {
   it('unparser', () => {
-    const { consumed, remaining } = unparser(p.zero())('s')
-    assert.strictEqual(remaining, 's')
-    eqEithers(consumed, createParseFailure('s', 'Parse failed on `fail`'))
+    const { consumed: c1, remaining: r1 } = P.unparser(P.parser.zero())('a')
+    assert.strictEqual(r1, 'a')
+    eqEithers(c1, P.createParseFailure('a', 'Parse failed on `fail`'))
+    const { consumed: c2, remaining: r2 } = P.unparser(C.char('a'))('a')
+    assert.strictEqual(r2, '')
+    assert.deepEqual(c2, right('a'))
   })
 
   it('sat', () => {
-    const parser = sat(c => c === 'a')
-    assert.strictEqual(remaining(parser.run('a')), '')
-    assert.strictEqual(remaining(parser.run('b')), 'b')
+    const parser = P.sat(c => c === 'a')
+    assert.strictEqual(P.remaining(parser.run('a')), '')
+    assert.strictEqual(P.remaining(parser.run('b')), 'b')
   })
 
   it('alt', () => {
-    const parser = p.alt(sat(c => c === 'a'), sat(c => c === 'b'))
-    assert.strictEqual(remaining(parser.run('a')), '')
-    assert.strictEqual(remaining(parser.run('b')), '')
-    assert.strictEqual(remaining(parser.run('c')), 'c')
+    const parser = P.parser.alt(P.sat(c => c === 'a'), P.sat(c => c === 'b'))
+    assert.strictEqual(P.remaining(parser.run('a')), '')
+    assert.strictEqual(P.remaining(parser.run('b')), '')
+    assert.strictEqual(P.remaining(parser.run('c')), 'c')
   })
 
   it('alts', () => {
-    const parser = alts(sat(c => c === 'a'), sat(c => c === 'b'), sat(c => c === 'c'))
-    assert.strictEqual(remaining(parser.run('a')), '')
-    assert.strictEqual(remaining(parser.run('b')), '')
-    assert.strictEqual(remaining(parser.run('c')), '')
-    assert.strictEqual(remaining(parser.run('d')), 'd')
+    const parser = P.alts(P.sat(c => c === 'a'), P.sat(c => c === 'b'), P.sat(c => c === 'c'))
+    assert.strictEqual(P.remaining(parser.run('a')), '')
+    assert.strictEqual(P.remaining(parser.run('b')), '')
+    assert.strictEqual(P.remaining(parser.run('c')), '')
+    assert.strictEqual(P.remaining(parser.run('d')), 'd')
   })
 
   it('fold', () => {
-    const parser = fold([char('a'), char('b')])
-    eqEithers(parser.run('ab'), createParseSuccess('ab', ''))
+    const parser = P.fold([C.char('a'), C.char('b')])
+    eqEithers(parser.run('ab'), P.createParseSuccess('ab', ''))
   })
 
   it('many', () => {
-    const parser = many(char('a'))
-    eqEithers(parser.run('aa'), createParseSuccess(['a', 'a'], ''))
+    const parser = P.many(C.char('a'))
+    eqEithers(parser.run('aa'), P.createParseSuccess(['a', 'a'], ''))
   })
 
   it('sepBy1', () => {
-    const parser = sepBy1(char(','), sat(c => c !== ','))
-    eqEithers(parser.run('a,b,c'), createParseSuccess(new NonEmptyArray('a', ['b', 'c']), ''))
+    const parser = P.sepBy1(C.char(','), P.sat(c => c !== ','))
+    eqEithers(parser.run('a,b,c'), P.createParseSuccess(new NonEmptyArray('a', ['b', 'c']), ''))
   })
 
   it('seqBy', () => {
-    const parser = sepBy(char(','), sat(c => c !== ','))
-    eqEithers(parser.run('a,b,c'), createParseSuccess(['a', 'b', 'c'], ''))
+    const parser = P.sepBy(C.char(','), P.sat(c => c !== ','))
+    eqEithers(parser.run('a,b,c'), P.createParseSuccess(['a', 'b', 'c'], ''))
+    eqEithers(parser.run('a'), P.createParseSuccess(['a'], ''))
+    eqEithers(parser.run(''), P.createParseSuccess([], ''))
   })
 
   it('eof', () => {
-    const parser = eof
-    eqEithers(parser.run('aa'), createParseFailure('aa', 'end of file'))
-    eqEithers(parser.run(''), createParseSuccess(undefined, ''))
+    const parser = P.eof
+    eqEithers(parser.run('aa'), P.createParseFailure('aa', 'end of file'))
+    eqEithers(parser.run(''), P.createParseSuccess(undefined, ''))
+  })
+
+  it('chain', () => {
+    const parser = P.parser.chain(C.char('a'), () => C.char('b'))
+    eqEithers(parser.run('ab'), P.createParseSuccess('b', ''))
+  })
+
+  it('item', () => {
+    const parser = P.item
+    eqEithers(parser.run('ab'), P.createParseSuccess('a', 'b'))
+    eqEithers(parser.run(''), P.createParseFailure('', 'Parse failed on item'))
   })
 })

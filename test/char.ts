@@ -1,5 +1,5 @@
 import { createParseSuccess, createParseFailure } from '../src'
-import { char, many, many1, notChar, oneOf, digit, space, alphanum } from '../src/char'
+import { char, many, many1, notChar, oneOf, digit, space, alphanum, lower, notOneOf } from '../src/char'
 import { eqEithers } from './helpers'
 
 describe('char', () => {
@@ -56,5 +56,18 @@ describe('char', () => {
     eqEithers(parser.run('1'), createParseSuccess('1', ''))
     eqEithers(parser.run('_'), createParseSuccess('_', ''))
     eqEithers(parser.run('@'), createParseFailure('@', 'a word character'))
+  })
+
+  it('lower', () => {
+    const parser = lower
+    eqEithers(parser.run('a'), createParseSuccess('a', ''))
+    eqEithers(parser.run('A'), createParseFailure('A', 'a lower case letter'))
+  })
+
+  it('notOneOf', () => {
+    const parser = notOneOf('bc')
+    eqEithers(parser.run('a'), createParseSuccess('a', ''))
+    eqEithers(parser.run('b'), createParseFailure('b', 'Not one of "bc"'))
+    eqEithers(parser.run('c'), createParseFailure('c', 'Not one of "bc"'))
   })
 })
