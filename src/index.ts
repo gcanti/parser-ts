@@ -130,8 +130,10 @@ export const succeed = of
  * that if it fails, the provided error message will be returned in the
  * `ParseFailure`.
  */
-export const expected = <A>(parser: Parser<A>, message: string): Parser<A> =>
-  new Parser(s => parser.run(s).mapLeft(({ remaining }) => ({ remaining, message })))
+export const expected = <A>(parser: Parser<A>, message: string): Parser<A> => expectedL(parser, () => message)
+
+export const expectedL = <A>(parser: Parser<A>, message: (remaining: string) => string): Parser<A> =>
+  new Parser(s => parser.run(s).mapLeft(({ remaining }) => ({ remaining, message: message(remaining) })))
 
 /** The `item` parser consumes a single value, regardless of what it is,
  * and returns it as its result.

@@ -92,4 +92,9 @@ describe('Parser', () => {
     const parser = C.char('a').applySecond(C.char('b'))
     eqEithers(parser.run('ab'), P.createParseSuccess('b', ''))
   })
+
+  it('expectedL', () => {
+    const parser = P.expectedL(C.char('a'), remaining => `Expected "a", got ${JSON.stringify(remaining)}`)
+    eqEithers(parser.run('bc'), P.createParseFailure('bc', 'Expected "a", got "bc"'))
+  })
 })
