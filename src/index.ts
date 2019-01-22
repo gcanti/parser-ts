@@ -1,4 +1,4 @@
-import { Monoid } from 'fp-ts/lib/Monoid'
+import { Monoid, fold as foldMonoid } from 'fp-ts/lib/Monoid'
 import { applySecond } from 'fp-ts/lib/Apply'
 import { Monad1 } from 'fp-ts/lib/Monad'
 import { Alternative1 } from 'fp-ts/lib/Alternative'
@@ -6,7 +6,6 @@ import { Either, left, right } from 'fp-ts/lib/Either'
 import { Predicate, tuple } from 'fp-ts/lib/function'
 import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import { Option, none, some } from 'fp-ts/lib/Option'
-import { fold as foldMonoid } from 'fp-ts/lib/Monoid'
 
 declare module 'fp-ts/lib/HKT' {
   interface URI2HKT<A> {
@@ -28,8 +27,8 @@ export type ParseSuccess<A> = [A, string]
 export type ParseResult<A> = Either<ParseFailure, ParseSuccess<A>>
 
 export class Parser<A> {
-  readonly _A: A
-  readonly _URI: URI
+  readonly _A!: A
+  readonly _URI!: URI
   constructor(public readonly run: (s: string) => ParseResult<A>) {}
   map<B>(f: (a: A) => B): Parser<B> {
     return new Parser(s => this.run(s).map(([a, s1]): [B, string] => [f(a), s1]))
@@ -166,8 +165,8 @@ export const maybe = (parser: Parser<string>): Parser<string> => parser.alt(empt
 /**
  * Matches the end of the input
  */
-export const eof: Parser<undefined> = new Parser(
-  s => (s === '' ? createParseSuccess(undefined, '') : createParseFailure(s, 'end of file'))
+export const eof: Parser<undefined> = new Parser(s =>
+  s === '' ? createParseSuccess(undefined, '') : createParseFailure(s, 'end of file')
 )
 
 /**
@@ -195,7 +194,7 @@ export const many1 = <A>(parser: Parser<A>): Parser<NonEmptyArray<A>> =>
  * use `sep` to match separator characters in between matches of `p`.
  */
 export const sepBy = <A, B>(sep: Parser<A>, parser: Parser<B>): Parser<Array<B>> =>
-  alt(sepBy1(sep, parser).map(a => a.toArray()), alt(parser.map(a => [a]), of([])))
+  alt(sepBy1(sep, parser).map(a => a.toArray()), of([]))
 
 /** Matches both parsers and return the value of the second */
 export const second = <A>(pa: Parser<A>) => <B>(pb: Parser<B>): Parser<B> =>

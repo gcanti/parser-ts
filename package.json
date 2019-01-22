@@ -8,14 +8,14 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "lint": "tslint src/**/*.ts test/**/*.ts",
-    "typings-checker": "typings-checker --allow-expect-error --project typings-checker/tsconfig.json typings-checker/index.ts",
-    "mocha": "TS_NODE_CACHE=false TS_NODE_PROJECT=test/tsconfig.json mocha -r ts-node/register test/*.ts",
+    "lint": "tslint -p tsconfig.json src/**/*.ts test/**/*.ts",
+    "mocha": "mocha -r ts-node/register test/*.ts",
     "prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --list-different \"{src,test}/**/*.ts\"",
     "fix-prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --write \"{src,test}/**/*.ts\"",
-    "test": "npm run lint && npm run prettier && npm run typings-checker && npm run mocha",
+    "test": "npm run lint && npm run prettier && npm run jest",
     "clean": "rm -rf lib/*",
-    "build": "npm run clean && tsc"
+    "build": "npm run clean && tsc",
+    "jest": "jest --ci --coverage"
   },
   "repository": {
     "type": "git",
@@ -31,15 +31,18 @@
     "fp-ts": "^1.0.1"
   },
   "devDependencies": {
-    "@types/mocha": "2.2.38",
+    "@types/jest": "^23.3.13",
+    "@types/mocha": "^5.2.5",
     "@types/node": "7.0.4",
-    "mocha": "3.2.0",
-    "prettier": "^1.11.0",
-    "ts-node": "3.2.0",
-    "tslint": "4.4.2",
-    "tslint-config-standard": "4.0.0",
-    "typescript": "2.6.2",
-    "typings-checker": "1.1.2"
+    "dtslint": "^0.4.2",
+    "jest": "^23.6.0",
+    "mocha": "^5.2.0",
+    "prettier": "^1.16.0",
+    "ts-jest": "^23.10.5",
+    "ts-node": "^8.0.1",
+    "tslint": "^5.12.1",
+    "tslint-config-standard": "^8.0.1",
+    "typescript": "^3.2.4"
   },
   "tags": [
     "typescript",
@@ -52,5 +55,29 @@
     "parser-combinators",
     "functional-programming",
     "fp-ts"
-  ]
+  ],
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{ts}"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "test",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testPathIgnorePatterns": [
+      "helpers.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 0
+      }
+    }
+  }
 }
