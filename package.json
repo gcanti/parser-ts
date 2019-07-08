@@ -1,6 +1,6 @@
 {
   "name": "parser-ts",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "String parser combinators for TypeScript",
   "files": [
     "lib"
@@ -15,6 +15,7 @@
     "test": "npm run lint && npm run prettier && npm run jest && npm run docs",
     "clean": "rm -rf lib/*",
     "build": "npm run clean && tsc",
+    "prepublish": "npm run build",
     "jest": "jest --ci --coverage",
     "docs": "docs-ts"
   },
@@ -28,22 +29,23 @@
     "url": "https://github.com/gcanti/parser-ts/issues"
   },
   "homepage": "https://github.com/gcanti/parser-ts",
-  "dependencies": {
-    "fp-ts": "^1.13.0"
+  "peerDependencies": {
+    "fp-ts": "^2.0.0"
   },
   "devDependencies": {
     "@types/jest": "^23.3.13",
     "@types/node": "7.0.4",
-    "docs-ts": "0.0.1",
+    "docs-ts": "^0.1.0",
     "dtslint": "^0.4.2",
-    "jest": "^23.6.0",
+    "fp-ts": "^2.0.0",
+    "jest": "^24.8.0",
     "mocha": "^5.2.0",
-    "prettier": "^1.16.0",
-    "ts-jest": "^23.10.5",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2",
     "ts-node": "^8.0.1",
     "tslint": "^5.12.1",
     "tslint-config-standard": "^8.0.1",
-    "typescript": "^3.2.4"
+    "typescript": "^3.5.2"
   },
   "tags": [
     "typescript",
@@ -57,28 +59,7 @@
     "functional-programming",
     "fp-ts"
   ],
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{ts}"
-    ],
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testRegex": "test",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "testPathIgnorePatterns": [
-      "helpers.ts"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 100,
-        "functions": 100,
-        "lines": 100,
-        "statements": 0
-      }
-    }
+  "dependencies": {
+    "@babel/code-frame": "^7.0.0"
   }
 }

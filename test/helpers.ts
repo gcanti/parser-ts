@@ -1,12 +1,8 @@
-import * as assert from 'assert'
-import { Either, isLeft, isRight } from 'fp-ts/lib/Either'
+import { Char } from '../src/char'
+import { ParseResult } from '../src/ParseResult'
+import { stream } from '../src/Stream'
+import { Parser } from '../src/Parser'
 
-export function eqEithers<L, A>(x: Either<L, A>, y: Either<L, A>) {
-  if (isRight(x) && isRight(y)) {
-    assert.deepEqual(x.value, y.value)
-  } else if (isLeft(x) && isLeft(y)) {
-    assert.deepEqual(x.value, y.value)
-  } else {
-    assert.strictEqual(isLeft(x), isLeft(y), `${x} != ${y}`)
-  }
+export function run<A>(p: Parser<Char, A>, s: string): ParseResult<Char, A> {
+  return p(stream(s.split('')))
 }

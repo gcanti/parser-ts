@@ -38,6 +38,8 @@ parent: Modules
 export type Char = string
 ```
 
+Added in v0.6.0
+
 # alphanum (constant)
 
 Matches a single letter, digit or underscore character.
@@ -45,8 +47,10 @@ Matches a single letter, digit or underscore character.
 **Signature**
 
 ```ts
-export const alphanum = ...
+export const alphanum: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # digit (constant)
 
@@ -55,8 +59,10 @@ Matches a single digit.
 **Signature**
 
 ```ts
-export const digit = ...
+export const digit: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # letter (constant)
 
@@ -68,6 +74,8 @@ Matches a single ASCII letter.
 export const letter = ...
 ```
 
+Added in v0.6.0
+
 # lower (constant)
 
 Matches a single lower case ASCII letter.
@@ -75,8 +83,10 @@ Matches a single lower case ASCII letter.
 **Signature**
 
 ```ts
-export const lower = ...
+export const lower: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # notAlphanum (constant)
 
@@ -85,8 +95,10 @@ Matches a single character which isn't a letter, digit or underscore.
 **Signature**
 
 ```ts
-export const notAlphanum = ...
+export const notAlphanum: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # notDigit (constant)
 
@@ -95,8 +107,10 @@ Matches a single character which isn't a digit.
 **Signature**
 
 ```ts
-export const notDigit = ...
+export const notDigit: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # notLetter (constant)
 
@@ -105,8 +119,10 @@ Matches a single character which isn't an ASCII letter.
 **Signature**
 
 ```ts
-export const notLetter = ...
+export const notLetter: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # notLower (constant)
 
@@ -115,8 +131,10 @@ Matches a single character which isn't a lower case ASCII letter.
 **Signature**
 
 ```ts
-export const notLower = ...
+export const notLower: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # notSpace (constant)
 
@@ -125,8 +143,10 @@ Matches a single character which isn't whitespace.
 **Signature**
 
 ```ts
-export const notSpace = ...
+export const notSpace: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # notUpper (constant)
 
@@ -135,8 +155,10 @@ Matches a single character which isn't an upper case ASCII letter.
 **Signature**
 
 ```ts
-export const notUpper = ...
+export const notUpper: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # space (constant)
 
@@ -145,8 +167,10 @@ Matches a single whitespace character.
 **Signature**
 
 ```ts
-export const space = ...
+export const space: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # upper (constant)
 
@@ -155,8 +179,10 @@ Matches a single upper case ASCII letter.
 **Signature**
 
 ```ts
-export const upper = ...
+export const upper: P.Parser<Char, Char> = ...
 ```
+
+Added in v0.6.0
 
 # char (function)
 
@@ -166,30 +192,36 @@ specified single character
 **Signature**
 
 ```ts
-export function char(c: Char): P.Parser<Char> { ... }
+export function char(c: Char): P.Parser<Char, Char> { ... }
 ```
+
+Added in v0.6.0
 
 # many (function)
 
-Takes a `P.Parser<string>` and matches it zero or more times, returning
-a `String` of what was matched.
+Takes a `Parser<Char, string>` and matches it zero or more times, returning
+a `string` of what was matched.
 
 **Signature**
 
 ```ts
-export function many(parser: P.Parser<Char>): P.Parser<string> { ... }
+export function many(parser: P.Parser<Char, Char>): P.Parser<Char, string> { ... }
 ```
+
+Added in v0.6.0
 
 # many1 (function)
 
-Takes a `P.Parser<string>` and matches it one or more times, returning
-a `String` of what was matched.
+Takes a `Parser<Char, string>` and matches it one or more times, returning
+a `string` of what was matched.
 
 **Signature**
 
 ```ts
-export function many1(parser: P.Parser<Char>): P.Parser<string> { ... }
+export function many1(parser: P.Parser<Char, Char>): P.Parser<Char, string> { ... }
 ```
+
+Added in v0.6.0
 
 # notChar (function)
 
@@ -199,8 +231,10 @@ single character other than the one provided.
 **Signature**
 
 ```ts
-export function notChar(c: Char): P.Parser<Char> { ... }
+export function notChar(c: Char): P.Parser<Char, Char> { ... }
 ```
+
+Added in v0.6.0
 
 # notOneOf (function)
 
@@ -209,8 +243,10 @@ Matches a single character which isn't a character from the provided string.
 **Signature**
 
 ```ts
-export function notOneOf(s: string): P.Parser<Char> { ... }
+export function notOneOf(s: string): P.Parser<Char, Char> { ... }
 ```
+
+Added in v0.6.0
 
 # oneOf (function)
 
@@ -219,5 +255,7 @@ Matches any one character from the provided string.
 **Signature**
 
 ```ts
-export function oneOf(s: string): P.Parser<Char> { ... }
+export function oneOf(s: string): P.Parser<Char, Char> { ... }
 ```
+
+Added in v0.6.0

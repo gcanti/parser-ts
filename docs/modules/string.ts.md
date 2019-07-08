@@ -1,6 +1,6 @@
 ---
 title: string.ts
-nav_order: 3
+nav_order: 7
 parent: Modules
 ---
 
@@ -8,29 +8,21 @@ parent: Modules
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [doubleQuote (constant)](#doublequote-constant)
 - [doubleQuotedString (constant)](#doublequotedstring-constant)
 - [float (constant)](#float-constant)
+- [fold (constant)](#fold-constant)
 - [int (constant)](#int-constant)
+- [maybe (constant)](#maybe-constant)
 - [notSpaces (constant)](#notspaces-constant)
 - [notSpaces1 (constant)](#notspaces1-constant)
 - [spaces (constant)](#spaces-constant)
 - [spaces1 (constant)](#spaces1-constant)
-- [getAndNext (function)](#getandnext-function)
 - [many (function)](#many-function)
 - [many1 (function)](#many1-function)
 - [oneOf (function)](#oneof-function)
 - [string (function)](#string-function)
 
 ---
-
-# doubleQuote (constant)
-
-**Signature**
-
-```ts
-export const doubleQuote = ...
-```
 
 # doubleQuotedString (constant)
 
@@ -44,21 +36,47 @@ of string escaping.
 export const doubleQuotedString = ...
 ```
 
+Added in v0.6.0
+
 # float (constant)
 
 **Signature**
 
 ```ts
-export const float = ...
+export const float: P.Parser<C.Char, number> = ...
 ```
+
+Added in v0.6.0
+
+# fold (constant)
+
+**Signature**
+
+```ts
+export const fold: <I>(as: P.Parser<I, string>[]) => P.Parser<I, string> = ...
+```
+
+Added in v0.6.0
 
 # int (constant)
 
 **Signature**
 
 ```ts
-export const int = ...
+export const int: P.Parser<C.Char, number> = ...
 ```
+
+Added in v0.6.0
+
+# maybe (constant)
+
+**Signature**
+
+```ts
+export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = ...
+```
+
+Added in v0.6.0
 
 # notSpaces (constant)
 
@@ -67,8 +85,10 @@ Matches zero or more non-whitespace characters.
 **Signature**
 
 ```ts
-export const notSpaces = ...
+export const notSpaces: P.Parser<C.Char, string> = ...
 ```
+
+Added in v0.6.0
 
 # notSpaces1 (constant)
 
@@ -77,8 +97,10 @@ Matches one or more non-whitespace characters.
 **Signature**
 
 ```ts
-export const notSpaces1 = ...
+export const notSpaces1: P.Parser<C.Char, string> = ...
 ```
+
+Added in v0.6.0
 
 # spaces (constant)
 
@@ -87,8 +109,10 @@ Matches zero or more whitespace characters.
 **Signature**
 
 ```ts
-export const spaces = ...
+export const spaces: P.Parser<C.Char, string> = ...
 ```
+
+Added in v0.6.0
 
 # spaces1 (constant)
 
@@ -97,16 +121,10 @@ Matches one or more whitespace characters.
 **Signature**
 
 ```ts
-export const spaces1 = ...
+export const spaces1: P.Parser<C.Char, string> = ...
 ```
 
-# getAndNext (function)
-
-**Signature**
-
-```ts
-export function getAndNext(s: string, prefix: string): Option<[string, string]> { ... }
-```
+Added in v0.6.0
 
 # many (function)
 
@@ -116,8 +134,10 @@ entire match
 **Signature**
 
 ```ts
-export function many(parser: P.Parser<string>): P.Parser<string> { ... }
+export function many(parser: P.Parser<C.Char, string>): P.Parser<C.Char, string> { ... }
 ```
+
+Added in v0.6.0
 
 # many1 (function)
 
@@ -127,8 +147,10 @@ entire match
 **Signature**
 
 ```ts
-export function many1(parser: P.Parser<string>): P.Parser<string> { ... }
+export function many1(parser: P.Parser<C.Char, string>): P.Parser<C.Char, string> { ... }
 ```
+
+Added in v0.6.0
 
 # oneOf (function)
 
@@ -137,8 +159,11 @@ Matches one of a list of strings.
 **Signature**
 
 ```ts
-export function oneOf(ss: Array<string>): P.Parser<string> { ... }
+export function oneOf<F extends URIS>(F: Functor1<F> & Foldable1<F>): (ss: Kind<F, string>) => P.Parser<C.Char, string>
+export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string> { ... }
 ```
+
+Added in v0.6.0
 
 # string (function)
 
@@ -147,5 +172,7 @@ Matches the exact string provided.
 **Signature**
 
 ```ts
-export function string(prefix: string): P.Parser<string> { ... }
+export function string(s: string): P.Parser<C.Char, string> { ... }
 ```
+
+Added in v0.6.0
