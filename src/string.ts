@@ -1,3 +1,6 @@
+/**
+ * @since 0.6.0
+ */
 import { Foldable, Foldable1 } from 'fp-ts/lib/Foldable'
 import { Functor, Functor1 } from 'fp-ts/lib/Functor'
 import { HKT, Kind, URIS } from 'fp-ts/lib/HKT'
@@ -110,7 +113,7 @@ export const notSpaces1: P.Parser<C.Char, string> = C.many1(C.notSpace)
 /**
  * @since 0.6.0
  */
-export const fold: <I>(as: P.Parser<I, string>[]) => P.Parser<I, string> = M.fold(P.getMonoid(M.monoidString))
+export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = M.fold(P.getMonoid(M.monoidString))
 
 function fromString(s: string): O.Option<number> {
   const n = +s

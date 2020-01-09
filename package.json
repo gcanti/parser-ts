@@ -1,20 +1,23 @@
 {
   "name": "parser-ts",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "String parser combinators for TypeScript",
   "files": [
-    "lib"
+    "lib",
+    "es6"
   ],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "lint": "tslint -p tsconfig.json src/**/*.ts test/**/*.ts",
+    "lint": "tslint -p .",
     "mocha": "mocha -r ts-node/register test/*.ts",
     "prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --list-different \"{src,test}/**/*.ts\"",
     "fix-prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --write \"{src,test}/**/*.ts\"",
     "test": "npm run lint && npm run prettier && npm run jest && npm run docs",
-    "clean": "rm -rf lib/*",
-    "build": "npm run clean && tsc",
+    "clean": "rm -rf ./lib ./es6",
+    "prebuild": "npm run clean",
+    "build": "tsc -p ./tsconfig.build.json && tsc -p ./tsconfig.build-es6.json",
+    "postbuild": "import-path-rewrite",
     "prepublish": "npm run build",
     "jest": "jest --ci --coverage",
     "docs": "docs-ts"
@@ -35,12 +38,13 @@
   "devDependencies": {
     "@types/jest": "^23.3.13",
     "@types/node": "7.0.4",
-    "docs-ts": "^0.1.0",
+    "docs-ts": "^0.3.0",
     "dtslint": "^0.4.2",
     "fp-ts": "^2.0.0",
+    "import-path-rewrite": "github:gcanti/import-path-rewrite",
     "jest": "^24.8.0",
     "mocha": "^5.2.0",
-    "prettier": "^1.18.2",
+    "prettier": "^1.19.1",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.0.1",
     "tslint": "^5.12.1",

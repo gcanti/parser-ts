@@ -4,6 +4,10 @@ nav_order: 3
 parent: Modules
 ---
 
+# index overview
+
+Added in v0.6.0
+
 ---
 
 <h2 class="text-delta">Table of contents</h2>
@@ -21,37 +25,47 @@ parent: Modules
 **Signature**
 
 ```ts
-export { char }
+typeof char
 ```
+
+Added in v0.6.0
 
 # parseResult (export)
 
 **Signature**
 
 ```ts
-export { parseResult }
+typeof parseResult
 ```
+
+Added in v0.6.0
 
 # parser (export)
 
 **Signature**
 
 ```ts
-export { parser }
+typeof parser
 ```
+
+Added in v0.6.0
 
 # stream (export)
 
 **Signature**
 
 ```ts
-export { stream }
+typeof stream
 ```
+
+Added in v0.6.0
 
 # string (export)
 
 **Signature**
 
 ```ts
-export { string }
+typeof string
 ```
+
+Added in v0.6.0

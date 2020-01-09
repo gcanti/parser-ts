@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
+    "noEmit": true,
     "outDir": "./lib",
-    "sourceMap": true,
-    "declaration": true,
+    "target": "es5",
     "module": "commonjs",
-    "noImplicitReturns": false,
+    "moduleResolution": "node",
+    "lib": ["es6", "dom"],
+    "sourceMap": false,
+    "declaration": true,
+    "strict": true,
+    "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noEmitOnError": false,
-    "strict": true,
-    "target": "es5",
-    "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true,
-    "lib": ["es2015"]
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["./src/**/*"]
+  "include": ["./src", "./test"]
 }

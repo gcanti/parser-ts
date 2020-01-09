@@ -1,3 +1,6 @@
+/**
+ * @since 0.6.0
+ */
 import { not } from 'fp-ts/lib/function'
 import { monoidString } from 'fp-ts/lib/Monoid'
 import { pipe } from 'fp-ts/lib/pipeable'
@@ -40,7 +43,10 @@ export function many1(parser: P.Parser<Char, Char>): P.Parser<Char, string> {
  * @since 0.6.0
  */
 export function char(c: Char): P.Parser<Char, Char> {
-  return P.expected(P.sat(s => s === c), `"${c}"`)
+  return P.expected(
+    P.sat(s => s === c),
+    `"${c}"`
+  )
 }
 
 /**
@@ -50,7 +56,10 @@ export function char(c: Char): P.Parser<Char, Char> {
  * @since 0.6.0
  */
 export function notChar(c: Char): P.Parser<Char, Char> {
-  return P.expected(P.sat(c1 => c1 !== c), `anything but "${c}"`)
+  return P.expected(
+    P.sat(c1 => c1 !== c),
+    `anything but "${c}"`
+  )
 }
 
 function isOneOf(s: string, c: Char): boolean {
@@ -63,7 +72,10 @@ function isOneOf(s: string, c: Char): boolean {
  * @since 0.6.0
  */
 export function oneOf(s: string): P.Parser<Char, Char> {
-  return P.expected(P.sat(c => isOneOf(s, c)), `One of "${s}"`)
+  return P.expected(
+    P.sat(c => isOneOf(s, c)),
+    `One of "${s}"`
+  )
 }
 
 function isDigit(c: Char): boolean {
@@ -144,7 +156,10 @@ export const lower: P.Parser<Char, Char> = P.expected(P.sat(isLower), 'a lower c
  * @since 0.6.0
  */
 export function notOneOf(s: string): P.Parser<Char, Char> {
-  return P.expected(P.sat(c => !isOneOf(s, c)), `Not one of ${JSON.stringify(s)}`)
+  return P.expected(
+    P.sat(c => !isOneOf(s, c)),
+    `Not one of ${JSON.stringify(s)}`
+  )
 }
 
 /**

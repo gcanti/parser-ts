@@ -4,6 +4,10 @@ nav_order: 1
 parent: Modules
 ---
 
+# char overview
+
+Added in v0.6.0
+
 ---
 
 <h2 class="text-delta">Table of contents</h2>
@@ -71,7 +75,7 @@ Matches a single ASCII letter.
 **Signature**
 
 ```ts
-export const letter = ...
+export const letter: P.Parser<string, string> = ...
 ```
 
 Added in v0.6.0

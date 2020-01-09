@@ -1,3 +1,6 @@
+/**
+ * @since 0.6.0
+ */
 import { getEq as getArrayEq, lookup } from 'fp-ts/lib/Array'
 import { Eq, fromEquals } from 'fp-ts/lib/Eq'
 import { map, Option } from 'fp-ts/lib/Option'

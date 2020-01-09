@@ -1,3 +1,6 @@
+/**
+ * @since 0.6.0
+ */
 import { bimap, Either } from 'fp-ts/lib/Either'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { Char } from './char'
