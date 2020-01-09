@@ -4,6 +4,10 @@ nav_order: 7
 parent: Modules
 ---
 
+# string overview
+
+Added in v0.6.0
+
 ---
 
 <h2 class="text-delta">Table of contents</h2>
@@ -33,7 +37,7 @@ of string escaping.
 **Signature**
 
 ```ts
-export const doubleQuotedString = ...
+export const doubleQuotedString: P.Parser<string, string> = ...
 ```
 
 Added in v0.6.0
@@ -53,7 +57,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export const fold: <I>(as: P.Parser<I, string>[]) => P.Parser<I, string> = ...
+export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = ...
 ```
 
 Added in v0.6.0

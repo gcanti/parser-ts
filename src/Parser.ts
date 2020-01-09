@@ -1,3 +1,6 @@
+/**
+ * @since 0.6.0
+ */
 import { Alternative2 } from 'fp-ts/lib/Alternative'
 import { empty } from 'fp-ts/lib/Array'
 import * as E from 'fp-ts/lib/Either'
@@ -89,7 +92,10 @@ export function item<I>(): Parser<I, I> {
   return i =>
     pipe(
       getAndNext(i),
-      O.fold(() => error(i), ({ value, next }) => success(value, next, i))
+      O.fold(
+        () => error(i),
+        ({ value, next }) => success(value, next, i)
+      )
     )
 }
 
@@ -101,11 +107,7 @@ export function item<I>(): Parser<I, I> {
  * @since 0.6.0
  */
 export function cut<I, A>(p: Parser<I, A>): Parser<I, A> {
-  return i =>
-    pipe(
-      p(i),
-      E.mapLeft(escalate)
-    )
+  return i => pipe(p(i), E.mapLeft(escalate))
 }
 
 /**
@@ -116,10 +118,7 @@ export function cut<I, A>(p: Parser<I, A>): Parser<I, A> {
  * @since 0.6.0
  */
 export function cutWith<I, A, B>(p1: Parser<I, A>, p2: Parser<I, B>): Parser<I, B> {
-  return pipe(
-    p1,
-    apSecond(cut(p2))
-  )
+  return pipe(p1, apSecond(cut(p2)))
 }
 
 /**
@@ -269,12 +268,7 @@ export function sepBy<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Ar
  * @since 0.6.0
  */
 export function sepBy1<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, NonEmptyArray<B>> {
-  const bs = many(
-    pipe(
-      sep,
-      apSecond(p)
-    )
-  )
+  const bs = many(pipe(sep, apSecond(p)))
   return parser.chain(p, head => parser.map(bs, tail => cons(head, tail)))
 }
 
@@ -293,7 +287,11 @@ export function sepByCut<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I,
  */
 export function getMonoid<I, A>(M: Monoid<A>): Monoid<Parser<I, A>> {
   return {
-    concat: (x, y) => parser.ap(parser.map(x, (x: A) => (y: A) => M.concat(x, y)), y),
+    concat: (x, y) =>
+      parser.ap(
+        parser.map(x, (x: A) => (y: A) => M.concat(x, y)),
+        y
+      ),
     empty: succeed(M.empty)
   }
 }
@@ -313,4 +311,37 @@ export const parser: Monad2<URI> & Alternative2<URI> = {
 
 const { alt, ap, apFirst, apSecond, chain, chainFirst, flatten, map } = pipeable(parser)
 
-export { alt, ap, apFirst, apSecond, chain, chainFirst, flatten, map }
+export {
+  /**
+   * @since 0.6.0
+   */
+  alt,
+  /**
+   * @since 0.6.0
+   */
+  ap,
+  /**
+   * @since 0.6.0
+   */
+  apFirst,
+  /**
+   * @since 0.6.0
+   */
+  apSecond,
+  /**
+   * @since 0.6.0
+   */
+  chain,
+  /**
+   * @since 0.6.0
+   */
+  chainFirst,
+  /**
+   * @since 0.6.0
+   */
+  flatten,
+  /**
+   * @since 0.6.0
+   */
+  map
+}

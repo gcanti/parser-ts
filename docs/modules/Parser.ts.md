@@ -4,6 +4,10 @@ nav_order: 4
 parent: Modules
 ---
 
+# Parser overview
+
+Added in v0.6.0
+
 ---
 
 <h2 class="text-delta">Table of contents</h2>
@@ -31,6 +35,14 @@ parent: Modules
 - [seq (function)](#seq-function)
 - [succeed (function)](#succeed-function)
 - [withStart (function)](#withstart-function)
+- [alt (export)](#alt-export)
+- [ap (export)](#ap-export)
+- [apFirst (export)](#apfirst-export)
+- [apSecond (export)](#apsecond-export)
+- [chain (export)](#chain-export)
+- [chainFirst (export)](#chainfirst-export)
+- [flatten (export)](#flatten-export)
+- [map (export)](#map-export)
 
 ---
 
@@ -61,7 +73,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export const URI = ...
+export const URI: "Parser" = ...
 ```
 
 Added in v0.6.0
@@ -344,6 +356,86 @@ token came from.
 
 ```ts
 export function withStart<I, A>(p: Parser<I, A>): Parser<I, [A, Stream<I>]> { ... }
+```
+
+Added in v0.6.0
+
+# alt (export)
+
+**Signature**
+
+```ts
+<E, A>(that: () => Parser<E, A>) => (fa: Parser<E, A>) => Parser<E, A>
+```
+
+Added in v0.6.0
+
+# ap (export)
+
+**Signature**
+
+```ts
+<E, A>(fa: Parser<E, A>) => <B>(fab: Parser<E, (a: A) => B>) => Parser<E, B>
+```
+
+Added in v0.6.0
+
+# apFirst (export)
+
+**Signature**
+
+```ts
+<E, B>(fb: Parser<E, B>) => <A>(fa: Parser<E, A>) => Parser<E, A>
+```
+
+Added in v0.6.0
+
+# apSecond (export)
+
+**Signature**
+
+```ts
+<e, B>(fb: Parser<e, B>) => <A>(fa: Parser<e, A>) => Parser<e, B>
+```
+
+Added in v0.6.0
+
+# chain (export)
+
+**Signature**
+
+```ts
+<E, A, B>(f: (a: A) => Parser<E, B>) => (ma: Parser<E, A>) => Parser<E, B>
+```
+
+Added in v0.6.0
+
+# chainFirst (export)
+
+**Signature**
+
+```ts
+<E, A, B>(f: (a: A) => Parser<E, B>) => (ma: Parser<E, A>) => Parser<E, A>
+```
+
+Added in v0.6.0
+
+# flatten (export)
+
+**Signature**
+
+```ts
+<E, A>(mma: Parser<E, Parser<E, A>>) => Parser<E, A>
+```
+
+Added in v0.6.0
+
+# map (export)
+
+**Signature**
+
+```ts
+<A, B>(f: (a: A) => B) => <E>(fa: Parser<E, A>) => Parser<E, B>
 ```
 
 Added in v0.6.0

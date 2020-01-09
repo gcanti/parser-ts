@@ -1,3 +1,6 @@
+/**
+ * @since 0.6.0
+ */
 import { empty } from 'fp-ts/lib/Array'
 import { Either, left, right } from 'fp-ts/lib/Either'
 import { Stream } from './Stream'

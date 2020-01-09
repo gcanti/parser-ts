@@ -1,10 +1,30 @@
+/**
+ * @since 0.6.0
+ */
 import * as char from './char'
-export { char }
 import * as parser from './Parser'
-export { parser }
 import * as parseResult from './ParseResult'
-export { parseResult }
 import * as stream from './Stream'
-export { stream }
 import * as string from './string'
-export { string }
+export {
+  /**
+   * @since 0.6.0
+   */
+  char,
+  /**
+   * @since 0.6.0
+   */
+  parser,
+  /**
+   * @since 0.6.0
+   */
+  parseResult,
+  /**
+   * @since 0.6.0
+   */
+  stream,
+  /**
+   * @since 0.6.0
+   */
+  string
+}
