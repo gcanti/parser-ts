@@ -1,13 +1,15 @@
 {
   "name": "parser-ts",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "String parser combinators for TypeScript",
   "files": [
     "lib",
     "es6"
   ],
   "main": "lib/index.js",
+  "module": "es6/index.js",
   "typings": "lib/index.d.ts",
+  "sideEffects": false,
   "scripts": {
     "lint": "tslint -p .",
     "mocha": "mocha -r ts-node/register test/*.ts",
