@@ -12,15 +12,15 @@ Added in v0.6.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [char (export)](#char-export)
-- [parseResult (export)](#parseresult-export)
-- [parser (export)](#parser-export)
-- [stream (export)](#stream-export)
-- [string (export)](#string-export)
+- [char](#char)
+- [parseResult](#parseresult)
+- [parser](#parser)
+- [stream](#stream)
+- [string](#string)
 
 ---
 
-# char (export)
+# char
 
 **Signature**
 
@@ -30,7 +30,7 @@ typeof char
 
 Added in v0.6.0
 
-# parseResult (export)
+# parseResult
 
 **Signature**
 
@@ -40,7 +40,7 @@ typeof parseResult
 
 Added in v0.6.0
 
-# parser (export)
+# parser
 
 **Signature**
 
@@ -50,7 +50,7 @@ typeof parser
 
 Added in v0.6.0
 
-# stream (export)
+# stream
 
 **Signature**
 
@@ -60,7 +60,7 @@ typeof stream
 
 Added in v0.6.0
 
-# string (export)
+# string
 
 **Signature**
 

@@ -1,6 +1,6 @@
 {
   "name": "parser-ts",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "String parser combinators for TypeScript",
   "files": [
     "lib",
@@ -40,7 +40,7 @@
   "devDependencies": {
     "@types/jest": "^23.3.13",
     "@types/node": "7.0.4",
-    "docs-ts": "^0.3.0",
+    "docs-ts": "^0.3.4",
     "dtslint": "^0.4.2",
     "fp-ts": "^2.0.0",
     "import-path-rewrite": "github:gcanti/import-path-rewrite",

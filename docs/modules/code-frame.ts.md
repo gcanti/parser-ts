@@ -12,11 +12,11 @@ Added in v0.6.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [run (function)](#run-function)
+- [run](#run)
 
 ---
 
-# run (function)
+# run
 
 Returns a pretty printed error message using `@babel/code-frame`
 

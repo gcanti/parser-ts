@@ -15,11 +15,11 @@ Added in v0.6.0
 - [ParseError (interface)](#parseerror-interface)
 - [ParseSuccess (interface)](#parsesuccess-interface)
 - [ParseResult (type alias)](#parseresult-type-alias)
-- [error (function)](#error-function)
-- [escalate (function)](#escalate-function)
-- [extend (function)](#extend-function)
-- [success (function)](#success-function)
-- [withExpected (function)](#withexpected-function)
+- [error](#error)
+- [escalate](#escalate)
+- [extend](#extend)
+- [success](#success)
+- [withExpected](#withexpected)
 
 ---
 
@@ -61,7 +61,7 @@ export type ParseResult<I, A> = Either<ParseError<I>, ParseSuccess<I, A>>
 
 Added in v0.6.0
 
-# error (function)
+# error
 
 **Signature**
 
@@ -75,7 +75,7 @@ export function error<I, A = never>(
 
 Added in v0.6.0
 
-# escalate (function)
+# escalate
 
 **Signature**
 
@@ -85,7 +85,7 @@ export function escalate<I>(err: ParseError<I>): ParseError<I> { ... }
 
 Added in v0.6.0
 
-# extend (function)
+# extend
 
 **Signature**
 
@@ -95,7 +95,7 @@ export function extend<I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<
 
 Added in v0.6.0
 
-# success (function)
+# success
 
 **Signature**
 
@@ -105,7 +105,7 @@ export function success<I, A>(value: A, next: Stream<I>, start: Stream<I>): Pars
 
 Added in v0.6.0
 
-# withExpected (function)
+# withExpected
 
 **Signature**
 

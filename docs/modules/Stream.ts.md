@@ -13,11 +13,11 @@ Added in v0.6.0
 <h2 class="text-delta">Table of contents</h2>
 
 - [Stream (interface)](#stream-interface)
-- [atEnd (function)](#atend-function)
-- [get (function)](#get-function)
-- [getAndNext (function)](#getandnext-function)
-- [getEq (function)](#geteq-function)
-- [stream (function)](#stream-function)
+- [atEnd](#atend)
+- [get](#get)
+- [getAndNext](#getandnext)
+- [getEq](#geteq)
+- [stream](#stream)
 
 ---
 
@@ -34,7 +34,7 @@ export interface Stream<A> {
 
 Added in v0.6.0
 
-# atEnd (function)
+# atEnd
 
 **Signature**
 
@@ -44,7 +44,7 @@ export function atEnd<A>(s: Stream<A>): boolean { ... }
 
 Added in v0.6.0
 
-# get (function)
+# get
 
 **Signature**
 
@@ -54,7 +54,7 @@ export function get<A>(s: Stream<A>): Option<A> { ... }
 
 Added in v0.6.0
 
-# getAndNext (function)
+# getAndNext
 
 **Signature**
 
@@ -64,7 +64,7 @@ export function getAndNext<A>(s: Stream<A>): Option<{ value: A; next: Stream<A> 
 
 Added in v0.6.0
 
-# getEq (function)
+# getEq
 
 **Signature**
 
@@ -74,7 +74,7 @@ export function getEq<A>(E: Eq<A>): Eq<Stream<A>> { ... }
 
 Added in v0.6.0
 
-# stream (function)
+# stream
 
 **Signature**
 
