@@ -283,6 +283,29 @@ export function sepByCut<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I,
 }
 
 /**
+ * Matches the provided parser `p` that occurs between the provided `left` and `right` parsers.
+ *
+ * @since 0.6.4
+ */
+export function between<I, A>(left: Parser<I, A>, right: Parser<I, A>): (p: Parser<I, A>) => Parser<I, A> {
+  return p =>
+    pipe(
+      left,
+      chain(() => p),
+      chainFirst(() => right)
+    )
+}
+
+/**
+ * Matches the provided parser `p` that is surrounded by the `bound` parser. Shortcut for `between(bound, bound)`.
+ *
+ * @since 0.6.4
+ */
+export function surroundedBy<I, A>(bound: Parser<I, A>): (p: Parser<I, A>) => Parser<I, A> {
+  return between(bound, bound)
+}
+
+/**
  * @since 0.6.0
  */
 export function getMonoid<I, A>(M: Monoid<A>): Monoid<Parser<I, A>> {

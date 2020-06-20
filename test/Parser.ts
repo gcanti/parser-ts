@@ -56,4 +56,18 @@ describe('Parser', () => {
     assert.deepStrictEqual(run(parser, 'a,b'), error(stream(['a', ',', 'b'], 2), ['"a"'], true))
     assert.deepStrictEqual(run(parser, 'a,a'), success(['a', 'a'], stream(['a', ',', 'a'], 3), stream(['a', ',', 'a'])))
   })
+
+  it('between', () => {
+    const betweenParens = P.between(C.char('('), C.char(')'))
+    const parser = betweenParens(C.char('a'))
+    assert.deepStrictEqual(run(parser, '(a'), error(stream(['(', 'a'], 2), ['")"']))
+    assert.deepStrictEqual(run(parser, '(a)'), success('a', stream(['(', 'a', ')'], 3), stream(['(', 'a', ')'])))
+  })
+
+  it('surroundedBy', () => {
+    const surroundedByPipes = P.surroundedBy(C.char('|'))
+    const parser = surroundedByPipes(C.char('a'))
+    assert.deepStrictEqual(run(parser, '|a'), error(stream(['|', 'a'], 2), ['"|"']))
+    assert.deepStrictEqual(run(parser, '|a|'), success('a', stream(['|', 'a', '|'], 3), stream(['|', 'a', '|'])))
+  })
 })
