@@ -19,6 +19,7 @@ Added in v0.6.0
 - [ap](#ap)
 - [apFirst](#apfirst)
 - [apSecond](#apsecond)
+- [between](#between)
 - [chain](#chain)
 - [chainFirst](#chainfirst)
 - [cut](#cut)
@@ -42,6 +43,7 @@ Added in v0.6.0
 - [sepByCut](#sepbycut)
 - [seq](#seq)
 - [succeed](#succeed)
+- [surroundedBy](#surroundedby)
 - [withStart](#withstart)
 
 ---
@@ -117,6 +119,18 @@ Added in v0.6.0
 ```
 
 Added in v0.6.0
+
+# between
+
+Matches the provided parser `p` that occurs between the provided `left` and `right` parsers.
+
+**Signature**
+
+```ts
+export function between<I, A>(left: Parser<I, A>, right: Parser<I, A>): (p: Parser<I, A>) => Parser<I, A> { ... }
+```
+
+Added in v0.6.4
 
 # chain
 
@@ -423,6 +437,18 @@ export function succeed<I, A>(a: A): Parser<I, A> { ... }
 ```
 
 Added in v0.6.0
+
+# surroundedBy
+
+Matches the provided parser `p` that is surrounded by the `bound` parser. Shortcut for `between(bound, bound)`.
+
+**Signature**
+
+```ts
+export function surroundedBy<I, A>(bound: Parser<I, A>): (p: Parser<I, A>) => Parser<I, A> { ... }
+```
+
+Added in v0.6.4
 
 # withStart
 
