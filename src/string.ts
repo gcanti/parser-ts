@@ -154,13 +154,4 @@ export const float: P.Parser<C.Char, number> = P.expected(
  *
  * @since 0.6.0
  */
-export const doubleQuotedString = pipe(
-  C.char('"'),
-  P.chain(() => many(P.either(string('\\"'), () => C.notChar('"')))),
-  P.chain(s =>
-    pipe(
-      C.char('"'),
-      P.chain(() => P.succeed(s))
-    )
-  )
-)
+export const doubleQuotedString = P.surroundedBy(C.char('"'))(many(P.either(string('\\"'), () => C.notChar('"'))))
