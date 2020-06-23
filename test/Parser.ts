@@ -57,17 +57,35 @@ describe('Parser', () => {
     assert.deepStrictEqual(run(parser, 'a,a'), success(['a', 'a'], stream(['a', ',', 'a'], 3), stream(['a', ',', 'a'])))
   })
 
-  it('between', () => {
-    const betweenParens = P.between(C.char('('), C.char(')'))
-    const parser = betweenParens(C.char('a'))
-    assert.deepStrictEqual(run(parser, '(a'), error(stream(['(', 'a'], 2), ['")"']))
-    assert.deepStrictEqual(run(parser, '(a)'), success('a', stream(['(', 'a', ')'], 3), stream(['(', 'a', ')'])))
+  describe('between', () => {
+    it('monomorphic', () => {
+      const betweenParens = P.between(C.char('('), C.char(')'))
+      const parser = betweenParens(C.char('a'))
+      assert.deepStrictEqual(run(parser, '(a'), error(stream(['(', 'a'], 2), ['")"']))
+      assert.deepStrictEqual(run(parser, '(a)'), success('a', stream(['(', 'a', ')'], 3), stream(['(', 'a', ')'])))
+    })
+
+    it('polymorphic', () => {
+      const betweenParens = P.between(C.char('('), C.char(')'))
+      const parser = betweenParens(S.int)
+      assert.deepStrictEqual(run(parser, '(1'), error(stream(['(', '1'], 2), ['")"']))
+      assert.deepStrictEqual(run(parser, '(1)'), success(1, stream(['(', '1', ')'], 3), stream(['(', '1', ')'])))
+    })
   })
 
-  it('surroundedBy', () => {
-    const surroundedByPipes = P.surroundedBy(C.char('|'))
-    const parser = surroundedByPipes(C.char('a'))
-    assert.deepStrictEqual(run(parser, '|a'), error(stream(['|', 'a'], 2), ['"|"']))
-    assert.deepStrictEqual(run(parser, '|a|'), success('a', stream(['|', 'a', '|'], 3), stream(['|', 'a', '|'])))
+  describe('surroundedBy', () => {
+    it('monomorphic', () => {
+      const surroundedByPipes = P.surroundedBy(C.char('|'))
+      const parser = surroundedByPipes(C.char('a'))
+      assert.deepStrictEqual(run(parser, '|a'), error(stream(['|', 'a'], 2), ['"|"']))
+      assert.deepStrictEqual(run(parser, '|a|'), success('a', stream(['|', 'a', '|'], 3), stream(['|', 'a', '|'])))
+    })
+
+    it('polymorphic', () => {
+      const surroundedByPipes = P.surroundedBy(C.char('|'))
+      const parser = surroundedByPipes(S.int)
+      assert.deepStrictEqual(run(parser, '|1'), error(stream(['|', '1'], 2), ['"|"']))
+      assert.deepStrictEqual(run(parser, '|1|'), success(1, stream(['|', '1', '|'], 3), stream(['|', '1', '|'])))
+    })
   })
 })
