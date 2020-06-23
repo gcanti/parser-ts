@@ -124,10 +124,12 @@ Added in v0.6.0
 
 Matches the provided parser `p` that occurs between the provided `left` and `right` parsers.
 
+`p` is polymorphic in its return type, because in general bounds and actual parser could return different types.
+
 **Signature**
 
 ```ts
-export function between<I, A>(left: Parser<I, A>, right: Parser<I, A>): (p: Parser<I, A>) => Parser<I, A> { ... }
+export function between<I, A>(left: Parser<I, A>, right: Parser<I, A>): <B>(p: Parser<I, B>) => Parser<I, B> { ... }
 ```
 
 Added in v0.6.4
@@ -445,7 +447,7 @@ Matches the provided parser `p` that is surrounded by the `bound` parser. Shortc
 **Signature**
 
 ```ts
-export function surroundedBy<I, A>(bound: Parser<I, A>): (p: Parser<I, A>) => Parser<I, A> { ... }
+export function surroundedBy<I, A>(bound: Parser<I, A>): <B>(p: Parser<I, B>) => Parser<I, B> { ... }
 ```
 
 Added in v0.6.4
