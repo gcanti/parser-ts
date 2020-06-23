@@ -1,6 +1,6 @@
 {
   "name": "parser-ts",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "String parser combinators for TypeScript",
   "files": [
     "lib",
