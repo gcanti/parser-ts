@@ -199,7 +199,7 @@ const cmd = 'foo'
 const source = 'foo ./bar -b --baz=qux'
 
 // tslint:disable-next-line: no-console
-parseCommand(cmd, c => console.error(`command not found: ${c}`))(source)
+console.log(JSON.stringify(parseCommand(cmd, c => console.error(`command not found: ${c}`))(source), null, 2))
 /*
 {
   _tag: 'Right',
