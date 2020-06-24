@@ -13,18 +13,18 @@
  *
  * ```
  * {
- *   command: 'foo',
- *   source: 'foo ./bar -b --baz=qux',
+ *   command: "foo",
+ *   source: "foo ./bar -b --baz=qux",
  *   arguments: {
- *     flags: {
- *       b: true
- *     }
+ *     flags: [
+ *       "b"
+ *     ],
  *     named: {
  *       baz: "qux",
  *     },
- *     positional: {
- *       0: "./bar",
- *     },
+ *     positional: [
+ *       "./bar"
+ *     ]
  *   }
  * }
  * ```
@@ -33,79 +33,114 @@
  * For example, one could generalize the parser exemplified below to accept any command. Then, the
  * structure of the parsed AST for specific commands can be enforced using instances of `io-ts` `Schema`s.
  */
-import { array, filter } from 'fp-ts/lib/Array'
-import { bimap, Either } from 'fp-ts/lib/Either'
-import { fromFoldableMap, isEmpty } from 'fp-ts/lib/Record'
-import { getLastSemigroup } from 'fp-ts/lib/Semigroup'
-import { fold } from 'fp-ts/lib/boolean'
-import { identity, tuple, Refinement } from 'fp-ts/lib/function'
-import { pipe } from 'fp-ts/lib/pipeable'
 import { Do } from 'fp-ts-contrib/lib/Do'
+import * as A from 'fp-ts/lib/Array'
+import { mapLeft, Either } from 'fp-ts/lib/Either'
+import { getStructMonoid, Monoid } from 'fp-ts/lib/Monoid'
+import * as R from 'fp-ts/lib/Record'
+import { getLastSemigroup } from 'fp-ts/lib/Semigroup'
+import { absurd } from 'fp-ts/lib/function'
+import { pipe } from 'fp-ts/lib/pipeable'
 import * as C from '../src/char'
+import { run } from '../src/code-frame'
 import * as S from '../src/string'
 import * as P from '../src/Parser'
-import { run } from '../src/code-frame'
 
 // -------------------------------------------------------------------------------------
 // models
 // -------------------------------------------------------------------------------------
 
-export type Statement = Command | Argument
-
-export interface Command {
-  _tag: 'Command'
-  value: string
-}
-
 export type Argument = Flag | Named | Positional
 
 export interface Flag {
-  _tag: 'Flag'
-  value: string
+  readonly _tag: 'Flag'
+  readonly value: string
 }
 
 export interface Named {
-  _tag: 'Named'
-  name: string
-  value: string
+  readonly _tag: 'Named'
+  readonly name: string
+  readonly value: string
 }
 
 export interface Positional {
-  _tag: 'Positional'
-  value: string
+  readonly _tag: 'Positional'
+  readonly value: string
+}
+
+export interface Args {
+  readonly flags: Array<string>
+  readonly named: Record<string, string>
+  readonly positional: Array<string>
 }
 
 export interface Ast {
-  command: string
-  source: string
-  args: {
-    flags: Record<string, true> | null
-    named: Record<string, string> | null
-    positional: Record<number, string> | null
-  }
+  readonly command: string
+  readonly source: string
+  readonly args: Args
 }
 
 // -------------------------------------------------------------------------------------
-// guards
+// instances
 // -------------------------------------------------------------------------------------
 
-const isFlag: Refinement<Argument, Flag> = (a): a is Flag => a._tag === 'Flag'
-
-const isNamed: Refinement<Argument, Named> = (a): a is Named => a._tag === 'Named'
-
-const isPositional: Refinement<Argument, Positional> = (a): a is Positional => a._tag === 'Positional'
+const monoidArgs: Monoid<Args> = getStructMonoid({
+  flags: A.getMonoid<string>(),
+  named: R.getMonoid(getLastSemigroup<string>()),
+  positional: A.getMonoid<string>()
+})
 
 // -------------------------------------------------------------------------------------
 // constructors
 // -------------------------------------------------------------------------------------
-
-export const Command = (value: string): Command => ({ _tag: 'Command', value })
 
 export const Flag = (value: string): Flag => ({ _tag: 'Flag', value })
 
 export const Named = (name: string, value: string): Named => ({ _tag: 'Named', name, value })
 
 export const Positional = (value: string): Positional => ({ _tag: 'Positional', value })
+
+export const FlagArg = (value: string): Args => ({
+  flags: [value],
+  named: R.empty,
+  positional: A.empty
+})
+
+export const NamedArg = (name: string, value: string): Args => ({
+  flags: A.empty,
+  named: { [name]: value },
+  positional: A.empty
+})
+
+export const PositionalArg = (value: string): Args => ({
+  flags: A.empty,
+  named: R.empty,
+  positional: [value]
+})
+
+// -------------------------------------------------------------------------------------
+// destructors
+// -------------------------------------------------------------------------------------
+
+export const fold = <R>(
+  onFlag: (value: string) => R,
+  onNamed: (name: string, value: string) => R,
+  onPositional: (value: string) => R
+) => (a: Argument): R => {
+  switch (a._tag) {
+    case 'Flag':
+      return onFlag(a.value)
+
+    case 'Named':
+      return onNamed(a.name, a.value)
+
+    case 'Positional':
+      return onPositional(a.value)
+
+    default:
+      return absurd<R>(a)
+  }
+}
 
 // -------------------------------------------------------------------------------------
 // parsers
@@ -143,37 +178,13 @@ const statement = (cmd: string) =>
     .bind('args', P.many(whitespaceSurrounded(argument)))
     .done()
 
-const namedToRecord = (as: Array<Named>): Record<string, string> =>
-  fromFoldableMap(getLastSemigroup<string>(), array)(as, a => [a.name, a.value])
-
-const positionalToRecord = (as: Array<Positional>): Record<number, string> => {
-  const withIndex = array.mapWithIndex(as, (i, a) => tuple(String(i), a.value))
-  return fromFoldableMap(getLastSemigroup<string>(), array)(withIndex, identity)
-}
-
-const flagToRecord = (as: Array<Flag>): Record<string, true> =>
-  fromFoldableMap(getLastSemigroup<true>(), array)(as, a => [a.value, true])
-
-const nullIfEmpty = <A extends Record<any, unknown>>(a: A): A | null =>
-  pipe(
-    isEmpty(a),
-    fold(
-      () => a,
-      () => null
-    )
-  )
-
 const ast = (command: string, source: string): P.Parser<string, Ast> => {
   return pipe(
     statement(command),
     P.map(({ command, args }) => ({
       command,
       source,
-      args: {
-        flags: pipe(args, filter(isFlag), flagToRecord, nullIfEmpty),
-        named: pipe(args, filter(isNamed), namedToRecord, nullIfEmpty),
-        positional: pipe(args, filter(isPositional), positionalToRecord, nullIfEmpty)
-      }
+      args: pipe(args, A.foldMap(monoidArgs)(fold(FlagArg, NamedArg, PositionalArg)))
     }))
   )
 }
@@ -181,12 +192,13 @@ const ast = (command: string, source: string): P.Parser<string, Ast> => {
 const parseCommand = <E>(cmd: string, onLeft: (cmd: string) => E) => (source: string): Either<E, Ast> =>
   pipe(
     run(ast(cmd, source), source),
-    bimap(() => onLeft(cmd), identity)
+    mapLeft(() => onLeft(cmd))
   )
 
 const cmd = 'foo'
 const source = 'foo ./bar -b --baz=qux'
 
+// tslint:disable-next-line: no-console
 parseCommand(cmd, c => console.error(`command not found: ${c}`))(source)
 /*
 {
@@ -194,16 +206,16 @@ parseCommand(cmd, c => console.error(`command not found: ${c}`))(source)
   right: {
     command: 'foo',
     source: 'foo ./bar -b --baz=qux',
-    args: {
-      flags: {
-        b: true
-      },
+    arguments: {
+      flags: [
+        "b"
+      ],
       named: {
-        baz: 'qux'
+        baz: "qux",
       },
-      positional: {
-        '0': './bar'
-      }
+      positional: [
+        "./bar",
+      ],
     }
   }
 }
