@@ -13,8 +13,8 @@
   "scripts": {
     "lint": "tslint -p .",
     "mocha": "mocha -r ts-node/register test/*.ts",
-    "prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --list-different \"{src,test}/**/*.ts\"",
-    "fix-prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --write \"{src,test}/**/*.ts\"",
+    "prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --list-different \"{src,test,examples}/**/*.ts\"",
+    "fix-prettier": "prettier --no-semi --single-quote --print-width 120 --parser typescript --write \"{src,test,examples}/**/*.ts\"",
     "test": "npm run lint && npm run prettier && npm run jest && npm run docs",
     "clean": "rm -rf ./lib ./es6",
     "prebuild": "npm run clean",
@@ -43,6 +43,7 @@
     "docs-ts": "^0.3.4",
     "dtslint": "^0.4.2",
     "fp-ts": "^2.0.0",
+    "fp-ts-contrib": "^0.1.17",
     "import-path-rewrite": "github:gcanti/import-path-rewrite",
     "jest": "^24.8.0",
     "mocha": "^5.2.0",
