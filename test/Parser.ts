@@ -94,4 +94,10 @@ describe('Parser', () => {
     assert.deepStrictEqual(run(parser, 'a'), error(stream(['a'], 1), ['"b"']))
     assert.deepStrictEqual(run(parser, 'ab'), success('abb', stream(['a', 'b'], 2), stream(['a', 'b'])))
   })
+
+  it('takeUntil', () => {
+    const parser = P.takeUntil((char: C.Char) => char === 'c')
+    assert.deepStrictEqual(run(parser, 'ab'), success(['a', 'b'], stream(['a', 'b'], 2), stream(['a', 'b'])))
+    assert.deepStrictEqual(run(parser, 'abc'), success(['a', 'b'], stream(['a', 'b', 'c'], 2), stream(['a', 'b', 'c'])))
+  })
 })

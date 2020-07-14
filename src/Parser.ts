@@ -4,7 +4,7 @@
 import { Alternative2 } from 'fp-ts/lib/Alternative'
 import { empty } from 'fp-ts/lib/Array'
 import * as E from 'fp-ts/lib/Either'
-import { Predicate } from 'fp-ts/lib/function'
+import { not, Predicate } from 'fp-ts/lib/function'
 import { Monad2 } from 'fp-ts/lib/Monad'
 import { Monoid } from 'fp-ts/lib/Monoid'
 import { cons, NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
@@ -323,9 +323,28 @@ export function surroundedBy<I, A>(bound: Parser<I, A>): <B>(p: Parser<I, B>) =>
  *
  * run(parser, 'hello world')
  * // { _tag: 'Right', right: 'hello worldwor' }
+ *
+ * @since 0.6.6
  */
 export const lookAhead = <I, A>(p: Parser<I, A>): Parser<I, A> => i =>
   E.either.chain(p(i), next => success(next.value, i, i))
+
+/**
+ * Takes a `Predicate` and continues parsing until the given `Predicate` is satisfied.
+ *
+ * @example
+ * import * as C from 'parser-ts/lib/char'
+ * import { run } from 'parser-ts/lib/code-frame'
+ * import * as P from 'parser-ts/lib/Parser'
+ *
+ * const parser = P.takeUntil((c: C.Char) => c === 'w')
+ *
+ * run(parser, 'hello world')
+ * // { _tag: 'Right', right: [ 'h', 'e', 'l', 'l', 'o', ' ' ] }
+ *
+ * @since 0.6.6
+ */
+export const takeUntil = <I>(predicate: Predicate<I>): Parser<I, Array<I>> => many(sat(not(predicate)))
 
 /**
  * @since 0.6.0
