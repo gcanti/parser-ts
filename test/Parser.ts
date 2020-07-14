@@ -88,4 +88,10 @@ describe('Parser', () => {
       assert.deepStrictEqual(run(parser, '|1|'), success(1, stream(['|', '1', '|'], 3), stream(['|', '1', '|'])))
     })
   })
+
+  it('lookAhead', () => {
+    const parser = S.fold([S.string('a'), P.lookAhead(S.string('b')), S.string('b')])
+    assert.deepStrictEqual(run(parser, 'a'), error(stream(['a'], 1), ['"b"']))
+    assert.deepStrictEqual(run(parser, 'ab'), success('abb', stream(['a', 'b'], 2), stream(['a', 'b'])))
+  })
 })

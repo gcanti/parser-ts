@@ -308,6 +308,26 @@ export function surroundedBy<I, A>(bound: Parser<I, A>): <B>(p: Parser<I, B>) =>
 }
 
 /**
+ * Takes a `Parser` and tries to match it without consuming any input.
+ *
+ * @example
+ * import { run } from 'parser-ts/lib/code-frame'
+ * import * as P from 'parser-ts/lib/Parser'
+ * import * as S from 'parser-ts/lib/string'
+ *
+ * const parser = S.fold([
+ *   S.string('hello '),
+ *    P.lookAhead(S.string('world')),
+ *    S.string('wor')
+ * ])
+ *
+ * run(parser, 'hello world')
+ * // { _tag: 'Right', right: 'hello worldwor' }
+ */
+export const lookAhead = <I, A>(p: Parser<I, A>): Parser<I, A> => i =>
+  E.either.chain(p(i), next => success(next.value, i, i))
+
+/**
  * @since 0.6.0
  */
 export function getMonoid<I, A>(M: Monoid<A>): Monoid<Parser<I, A>> {
