@@ -32,6 +32,7 @@ Added in v0.6.0
 - [flatten](#flatten)
 - [getMonoid](#getmonoid)
 - [item](#item)
+- [lookAhead](#lookahead)
 - [many](#many)
 - [many1](#many1)
 - [map](#map)
@@ -44,6 +45,7 @@ Added in v0.6.0
 - [seq](#seq)
 - [succeed](#succeed)
 - [surroundedBy](#surroundedby)
+- [takeUntil](#takeuntil)
 - [withStart](#withstart)
 
 ---
@@ -285,6 +287,32 @@ export function item<I>(): Parser<I, I> { ... }
 
 Added in v0.6.0
 
+# lookAhead
+
+Takes a `Parser` and tries to match it without consuming any input.
+
+**Signature**
+
+```ts
+export const lookAhead = <I, A>(p: Parser<I, A>): Parser<I, A> => i =>
+  E.either.chain(p(i), next => ...
+```
+
+**Example**
+
+```ts
+import { run } from 'parser-ts/lib/code-frame'
+import * as P from 'parser-ts/lib/Parser'
+import * as S from 'parser-ts/lib/string'
+
+const parser = S.fold([S.string('hello '), P.lookAhead(S.string('world')), S.string('wor')])
+
+run(parser, 'hello world')
+// { _tag: 'Right', right: 'hello worldwor' }
+```
+
+Added in v0.6.6
+
 # many
 
 The `many` combinator takes a parser, and returns a new parser which will
@@ -451,6 +479,31 @@ export function surroundedBy<I, A>(bound: Parser<I, A>): <B>(p: Parser<I, B>) =>
 ```
 
 Added in v0.6.4
+
+# takeUntil
+
+Takes a `Predicate` and continues parsing until the given `Predicate` is satisfied.
+
+**Signature**
+
+```ts
+export const takeUntil = <I>(predicate: Predicate<I>): Parser<I, Array<I>> => ...
+```
+
+**Example**
+
+```ts
+import * as C from 'parser-ts/lib/char'
+import { run } from 'parser-ts/lib/code-frame'
+import * as P from 'parser-ts/lib/Parser'
+
+const parser = P.takeUntil((c: C.Char) => c === 'w')
+
+run(parser, 'hello world')
+// { _tag: 'Right', right: [ 'h', 'e', 'l', 'l', 'o', ' ' ] }
+```
+
+Added in v0.6.6
 
 # withStart
 
