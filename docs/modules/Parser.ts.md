@@ -4,7 +4,7 @@ nav_order: 4
 parent: Modules
 ---
 
-# Parser overview
+## Parser overview
 
 Added in v0.6.0
 
@@ -12,45 +12,48 @@ Added in v0.6.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [Parser (interface)](#parser-interface)
-- [URI (type alias)](#uri-type-alias)
-- [URI](#uri)
-- [alt](#alt)
-- [ap](#ap)
-- [apFirst](#apfirst)
-- [apSecond](#apsecond)
-- [between](#between)
-- [chain](#chain)
-- [chainFirst](#chainfirst)
-- [cut](#cut)
-- [cutWith](#cutwith)
-- [either](#either)
-- [eof](#eof)
-- [expected](#expected)
-- [fail](#fail)
-- [failAt](#failat)
-- [flatten](#flatten)
-- [getMonoid](#getmonoid)
-- [item](#item)
-- [lookAhead](#lookahead)
-- [many](#many)
-- [many1](#many1)
-- [map](#map)
-- [maybe](#maybe)
-- [parser](#parser)
-- [sat](#sat)
-- [sepBy](#sepby)
-- [sepBy1](#sepby1)
-- [sepByCut](#sepbycut)
-- [seq](#seq)
-- [succeed](#succeed)
-- [surroundedBy](#surroundedby)
-- [takeUntil](#takeuntil)
-- [withStart](#withstart)
+- [utils](#utils)
+  - [Parser (interface)](#parser-interface)
+  - [URI](#uri)
+  - [URI (type alias)](#uri-type-alias)
+  - [alt](#alt)
+  - [ap](#ap)
+  - [apFirst](#apfirst)
+  - [apSecond](#apsecond)
+  - [between](#between)
+  - [chain](#chain)
+  - [chainFirst](#chainfirst)
+  - [cut](#cut)
+  - [cutWith](#cutwith)
+  - [either](#either)
+  - [eof](#eof)
+  - [expected](#expected)
+  - [fail](#fail)
+  - [failAt](#failat)
+  - [flatten](#flatten)
+  - [getMonoid](#getmonoid)
+  - [item](#item)
+  - [lookAhead](#lookahead)
+  - [many](#many)
+  - [many1](#many1)
+  - [map](#map)
+  - [maybe](#maybe)
+  - [parser](#parser)
+  - [sat](#sat)
+  - [sepBy](#sepby)
+  - [sepBy1](#sepby1)
+  - [sepByCut](#sepbycut)
+  - [seq](#seq)
+  - [succeed](#succeed)
+  - [surroundedBy](#surroundedby)
+  - [takeUntil](#takeuntil)
+  - [withStart](#withstart)
 
 ---
 
-# Parser (interface)
+# utils
+
+## Parser (interface)
 
 **Signature**
 
@@ -62,7 +65,17 @@ export interface Parser<I, A> {
 
 Added in v0.6.0
 
-# URI (type alias)
+## URI
+
+**Signature**
+
+```ts
+export declare const URI: 'Parser'
+```
+
+Added in v0.6.0
+
+## URI (type alias)
 
 **Signature**
 
@@ -72,57 +85,47 @@ export type URI = typeof URI
 
 Added in v0.6.0
 
-# URI
+## alt
 
 **Signature**
 
 ```ts
-export const URI: "Parser" = ...
+export declare const alt: <E, A>(that: () => Parser<E, A>) => (fa: Parser<E, A>) => Parser<E, A>
 ```
 
 Added in v0.6.0
 
-# alt
+## ap
 
 **Signature**
 
 ```ts
-<E, A>(that: () => Parser<E, A>) => (fa: Parser<E, A>) => Parser<E, A>
+export declare const ap: <E, A>(fa: Parser<E, A>) => <B>(fab: Parser<E, (a: A) => B>) => Parser<E, B>
 ```
 
 Added in v0.6.0
 
-# ap
+## apFirst
 
 **Signature**
 
 ```ts
-<E, A>(fa: Parser<E, A>) => <B>(fab: Parser<E, (a: A) => B>) => Parser<E, B>
+export declare const apFirst: <E, B>(fb: Parser<E, B>) => <A>(fa: Parser<E, A>) => Parser<E, A>
 ```
 
 Added in v0.6.0
 
-# apFirst
+## apSecond
 
 **Signature**
 
 ```ts
-<E, B>(fb: Parser<E, B>) => <A>(fa: Parser<E, A>) => Parser<E, A>
+export declare const apSecond: <e, B>(fb: Parser<e, B>) => <A>(fa: Parser<e, A>) => Parser<e, B>
 ```
 
 Added in v0.6.0
 
-# apSecond
-
-**Signature**
-
-```ts
-<e, B>(fb: Parser<e, B>) => <A>(fa: Parser<e, A>) => Parser<e, B>
-```
-
-Added in v0.6.0
-
-# between
+## between
 
 Matches the provided parser `p` that occurs between the provided `left` and `right` parsers.
 
@@ -131,32 +134,32 @@ Matches the provided parser `p` that occurs between the provided `left` and `rig
 **Signature**
 
 ```ts
-export function between<I, A>(left: Parser<I, A>, right: Parser<I, A>): <B>(p: Parser<I, B>) => Parser<I, B> { ... }
+export declare function between<I, A>(left: Parser<I, A>, right: Parser<I, A>): <B>(p: Parser<I, B>) => Parser<I, B>
 ```
 
 Added in v0.6.4
 
-# chain
+## chain
 
 **Signature**
 
 ```ts
-<E, A, B>(f: (a: A) => Parser<E, B>) => (ma: Parser<E, A>) => Parser<E, B>
+export declare const chain: <E, A, B>(f: (a: A) => Parser<E, B>) => (ma: Parser<E, A>) => Parser<E, B>
 ```
 
 Added in v0.6.0
 
-# chainFirst
+## chainFirst
 
 **Signature**
 
 ```ts
-<E, A, B>(f: (a: A) => Parser<E, B>) => (ma: Parser<E, A>) => Parser<E, A>
+export declare const chainFirst: <E, A, B>(f: (a: A) => Parser<E, B>) => (ma: Parser<E, A>) => Parser<E, A>
 ```
 
 Added in v0.6.0
 
-# cut
+## cut
 
 The `cut` parser combinator takes a parser and produces a new parser for
 which all errors are fatal, causing either to stop trying further
@@ -165,12 +168,12 @@ parsers and return immediately with a fatal error.
 **Signature**
 
 ```ts
-export function cut<I, A>(p: Parser<I, A>): Parser<I, A> { ... }
+export declare function cut<I, A>(p: Parser<I, A>): Parser<I, A>
 ```
 
 Added in v0.6.0
 
-# cutWith
+## cutWith
 
 Takes two parsers `p1` and `p2`, returning a parser which will match
 `p1` first, discard the result, then either match `p2` or produce a fatal
@@ -179,12 +182,12 @@ error.
 **Signature**
 
 ```ts
-export function cutWith<I, A, B>(p1: Parser<I, A>, p2: Parser<I, B>): Parser<I, B> { ... }
+export declare function cutWith<I, A, B>(p1: Parser<I, A>, p2: Parser<I, B>): Parser<I, B>
 ```
 
 Added in v0.6.0
 
-# either
+## either
 
 The `either` combinator takes two parsers, runs the first on the input
 stream, and if that fails, it will backtrack and attempt the second
@@ -198,24 +201,24 @@ This is equivalent to the `alt` operation.
 **Signature**
 
 ```ts
-export function either<I, A>(p: Parser<I, A>, f: () => Parser<I, A>): Parser<I, A> { ... }
+export declare function either<I, A>(p: Parser<I, A>, f: () => Parser<I, A>): Parser<I, A>
 ```
 
 Added in v0.6.0
 
-# eof
+## eof
 
 Matches the end of the stream.
 
 **Signature**
 
 ```ts
-export function eof<I>(): Parser<I, void> { ... }
+export declare function eof<I>(): Parser<I, void>
 ```
 
 Added in v0.6.0
 
-# expected
+## expected
 
 A parser combinator which returns the provided parser unchanged, except
 that if it fails, the provided error message will be returned in the
@@ -224,24 +227,24 @@ ParseError`.
 **Signature**
 
 ```ts
-export function expected<I, A>(p: Parser<I, A>, message: string): Parser<I, A> { ... }
+export declare function expected<I, A>(p: Parser<I, A>, message: string): Parser<I, A>
 ```
 
 Added in v0.6.0
 
-# fail
+## fail
 
 The `fail` parser will just fail immediately without consuming any input
 
 **Signature**
 
 ```ts
-export function fail<I, A = never>(): Parser<I, A> { ... }
+export declare function fail<I, A = never>(): Parser<I, A>
 ```
 
 Added in v0.6.0
 
-# failAt
+## failAt
 
 The `failAt` parser will fail immediately without consuming any input,
 but will report the failure at the provided input position.
@@ -249,32 +252,32 @@ but will report the failure at the provided input position.
 **Signature**
 
 ```ts
-export function failAt<I, A = never>(i: Stream<I>): Parser<I, A> { ... }
+export declare function failAt<I, A = never>(i: Stream<I>): Parser<I, A>
 ```
 
 Added in v0.6.0
 
-# flatten
+## flatten
 
 **Signature**
 
 ```ts
-<E, A>(mma: Parser<E, Parser<E, A>>) => Parser<E, A>
+export declare const flatten: <E, A>(mma: Parser<E, Parser<E, A>>) => Parser<E, A>
 ```
 
 Added in v0.6.0
 
-# getMonoid
+## getMonoid
 
 **Signature**
 
 ```ts
-export function getMonoid<I, A>(M: Monoid<A>): Monoid<Parser<I, A>> { ... }
+export declare function getMonoid<I, A>(M: Monoid<A>): Monoid<Parser<I, A>>
 ```
 
 Added in v0.6.0
 
-# item
+## item
 
 The `item` parser consumes a single value, regardless of what it is,
 and returns it as its result.
@@ -282,20 +285,19 @@ and returns it as its result.
 **Signature**
 
 ```ts
-export function item<I>(): Parser<I, I> { ... }
+export declare function item<I>(): Parser<I, I>
 ```
 
 Added in v0.6.0
 
-# lookAhead
+## lookAhead
 
 Takes a `Parser` and tries to match it without consuming any input.
 
 **Signature**
 
 ```ts
-export const lookAhead = <I, A>(p: Parser<I, A>): Parser<I, A> => i =>
-  E.either.chain(p(i), next => ...
+export declare const lookAhead: <I, A>(p: Parser<I, A>) => Parser<I, A>
 ```
 
 **Example**
@@ -313,7 +315,7 @@ run(parser, 'hello world')
 
 Added in v0.6.6
 
-# many
+## many
 
 The `many` combinator takes a parser, and returns a new parser which will
 run the parser repeatedly on the input stream until it fails, returning
@@ -326,12 +328,12 @@ the results."
 **Signature**
 
 ```ts
-export function many<I, A>(p: Parser<I, A>): Parser<I, Array<A>> { ... }
+export declare function many<I, A>(p: Parser<I, A>): Parser<I, Array<A>>
 ```
 
 Added in v0.6.0
 
-# many1
+## many1
 
 The `many1` combinator is just like the `many` combinator, except it
 requires its wrapped parser to match at least once. The resulting list is
@@ -340,22 +342,22 @@ thus guaranteed to contain at least one value.
 **Signature**
 
 ```ts
-export function many1<I, A>(p: Parser<I, A>): Parser<I, NonEmptyArray<A>> { ... }
+export declare function many1<I, A>(p: Parser<I, A>): Parser<I, NonEmptyArray<A>>
 ```
 
 Added in v0.6.0
 
-# map
+## map
 
 **Signature**
 
 ```ts
-<A, B>(f: (a: A) => B) => <E>(fa: Parser<E, A>) => Parser<E, B>
+export declare const map: <A, B>(f: (a: A) => B) => <E>(fa: Parser<E, A>) => Parser<E, B>
 ```
 
 Added in v0.6.0
 
-# maybe
+## maybe
 
 The `maybe` parser combinator creates a parser which will run the provided
 parser on the input, and if it fails, it will returns the empty value (as
@@ -364,22 +366,22 @@ defined by `empty`) as a result, without consuming any input.
 **Signature**
 
 ```ts
-export function maybe<A>(M: Monoid<A>): <I>(p: Parser<I, A>) => Parser<I, A> { ... }
+export declare function maybe<A>(M: Monoid<A>): <I>(p: Parser<I, A>) => Parser<I, A>
 ```
 
 Added in v0.6.0
 
-# parser
+## parser
 
 **Signature**
 
 ```ts
-export const parser: Monad2<URI> & Alternative2<URI> = ...
+export declare const parser: Monad2<'Parser'> & Alternative2<'Parser'>
 ```
 
 Added in v0.6.0
 
-# sat
+## sat
 
 The `sat` parser constructor takes a predicate function, and will consume
 a single character if calling that predicate function with the character
@@ -389,12 +391,12 @@ fail.
 **Signature**
 
 ```ts
-export function sat<I>(predicate: Predicate<I>): Parser<I, I> { ... }
+export declare function sat<I>(predicate: Predicate<I>): Parser<I, I>
 ```
 
 Added in v0.6.0
 
-# sepBy
+## sepBy
 
 Matches the provided parser `p` zero or more times, but requires the
 parser `sep` to match once in between each match of `p`. In other words,
@@ -403,12 +405,12 @@ use `sep` to match separator characters in between matches of `p`.
 **Signature**
 
 ```ts
-export function sepBy<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Array<B>> { ... }
+export declare function sepBy<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Array<B>>
 ```
 
 Added in v0.6.0
 
-# sepBy1
+## sepBy1
 
 Matches the provided parser `p` one or more times, but requires the
 parser `sep` to match once in between each match of `p`. In other words,
@@ -417,12 +419,12 @@ use `sep` to match separator characters in between matches of `p`.
 **Signature**
 
 ```ts
-export function sepBy1<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, NonEmptyArray<B>> { ... }
+export declare function sepBy1<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, NonEmptyArray<B>>
 ```
 
 Added in v0.6.0
 
-# sepByCut
+## sepByCut
 
 Like `sepBy1`, but cut on the separator, so that matching a `sep` not
 followed by a `p` will cause a fatal error.
@@ -430,12 +432,12 @@ followed by a `p` will cause a fatal error.
 **Signature**
 
 ```ts
-export function sepByCut<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, NonEmptyArray<B>> { ... }
+export declare function sepByCut<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, NonEmptyArray<B>>
 ```
 
 Added in v0.6.0
 
-# seq
+## seq
 
 The `seq` combinator takes a parser, and a function which will receive
 the result of that parser if it succeeds, and which should return another
@@ -448,12 +450,12 @@ This is equivalent to the monadic `chain` operation.
 **Signature**
 
 ```ts
-export function seq<I, A, B>(fa: Parser<I, A>, f: (a: A) => Parser<I, B>): Parser<I, B> { ... }
+export declare function seq<I, A, B>(fa: Parser<I, A>, f: (a: A) => Parser<I, B>): Parser<I, B>
 ```
 
 Added in v0.6.0
 
-# succeed
+## succeed
 
 The `succeed` parser constructor creates a parser which will simply
 return the value provided as its argument, without consuming any input.
@@ -463,31 +465,31 @@ This is equivalent to the monadic `of`.
 **Signature**
 
 ```ts
-export function succeed<I, A>(a: A): Parser<I, A> { ... }
+export declare function succeed<I, A>(a: A): Parser<I, A>
 ```
 
 Added in v0.6.0
 
-# surroundedBy
+## surroundedBy
 
 Matches the provided parser `p` that is surrounded by the `bound` parser. Shortcut for `between(bound, bound)`.
 
 **Signature**
 
 ```ts
-export function surroundedBy<I, A>(bound: Parser<I, A>): <B>(p: Parser<I, B>) => Parser<I, B> { ... }
+export declare function surroundedBy<I, A>(bound: Parser<I, A>): <B>(p: Parser<I, B>) => Parser<I, B>
 ```
 
 Added in v0.6.4
 
-# takeUntil
+## takeUntil
 
 Takes a `Predicate` and continues parsing until the given `Predicate` is satisfied.
 
 **Signature**
 
 ```ts
-export const takeUntil = <I>(predicate: Predicate<I>): Parser<I, Array<I>> => ...
+export declare const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, I[]>
 ```
 
 **Example**
@@ -505,7 +507,7 @@ run(parser, 'hello world')
 
 Added in v0.6.6
 
-# withStart
+## withStart
 
 Converts a parser into one which will return the point in the stream where
 it started parsing in addition to its parsed value.
@@ -516,7 +518,7 @@ token came from.
 **Signature**
 
 ```ts
-export function withStart<I, A>(p: Parser<I, A>): Parser<I, [A, Stream<I>]> { ... }
+export declare function withStart<I, A>(p: Parser<I, A>): Parser<I, [A, Stream<I>]>
 ```
 
 Added in v0.6.0

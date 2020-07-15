@@ -4,7 +4,7 @@ nav_order: 6
 parent: Modules
 ---
 
-# Stream overview
+## Stream overview
 
 Added in v0.6.0
 
@@ -12,16 +12,19 @@ Added in v0.6.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [Stream (interface)](#stream-interface)
-- [atEnd](#atend)
-- [get](#get)
-- [getAndNext](#getandnext)
-- [getEq](#geteq)
-- [stream](#stream)
+- [utils](#utils)
+  - [Stream (interface)](#stream-interface)
+  - [atEnd](#atend)
+  - [get](#get)
+  - [getAndNext](#getandnext)
+  - [getEq](#geteq)
+  - [stream](#stream)
 
 ---
 
-# Stream (interface)
+# utils
+
+## Stream (interface)
 
 **Signature**
 
@@ -34,52 +37,52 @@ export interface Stream<A> {
 
 Added in v0.6.0
 
-# atEnd
+## atEnd
 
 **Signature**
 
 ```ts
-export function atEnd<A>(s: Stream<A>): boolean { ... }
+export declare function atEnd<A>(s: Stream<A>): boolean
 ```
 
 Added in v0.6.0
 
-# get
+## get
 
 **Signature**
 
 ```ts
-export function get<A>(s: Stream<A>): Option<A> { ... }
+export declare function get<A>(s: Stream<A>): Option<A>
 ```
 
 Added in v0.6.0
 
-# getAndNext
+## getAndNext
 
 **Signature**
 
 ```ts
-export function getAndNext<A>(s: Stream<A>): Option<{ value: A; next: Stream<A> }> { ... }
+export declare function getAndNext<A>(s: Stream<A>): Option<{ value: A; next: Stream<A> }>
 ```
 
 Added in v0.6.0
 
-# getEq
+## getEq
 
 **Signature**
 
 ```ts
-export function getEq<A>(E: Eq<A>): Eq<Stream<A>> { ... }
+export declare function getEq<A>(E: Eq<A>): Eq<Stream<A>>
 ```
 
 Added in v0.6.0
 
-# stream
+## stream
 
 **Signature**
 
 ```ts
-export function stream<A>(buffer: Array<A>, cursor: number = 0): Stream<A> { ... }
+export declare function stream<A>(buffer: Array<A>, cursor: number = 0): Stream<A>
 ```
 
 Added in v0.6.0

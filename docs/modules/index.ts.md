@@ -4,7 +4,7 @@ nav_order: 3
 parent: Modules
 ---
 
-# index overview
+## index overview
 
 Added in v0.6.0
 
@@ -12,60 +12,63 @@ Added in v0.6.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [char](#char)
-- [parseResult](#parseresult)
-- [parser](#parser)
-- [stream](#stream)
-- [string](#string)
+- [utils](#utils)
+  - [char](#char)
+  - [parseResult](#parseresult)
+  - [parser](#parser)
+  - [stream](#stream)
+  - [string](#string)
 
 ---
 
-# char
+# utils
+
+## char
 
 **Signature**
 
 ```ts
-typeof char
+export declare const char: typeof char
 ```
 
 Added in v0.6.0
 
-# parseResult
+## parseResult
 
 **Signature**
 
 ```ts
-typeof parseResult
+export declare const parseResult: typeof parseResult
 ```
 
 Added in v0.6.0
 
-# parser
+## parser
 
 **Signature**
 
 ```ts
-typeof parser
+export declare const parser: typeof parser
 ```
 
 Added in v0.6.0
 
-# stream
+## stream
 
 **Signature**
 
 ```ts
-typeof stream
+export declare const stream: typeof stream
 ```
 
 Added in v0.6.0
 
-# string
+## string
 
 **Signature**
 
 ```ts
-typeof string
+export declare const string: typeof string
 ```
 
 Added in v0.6.0

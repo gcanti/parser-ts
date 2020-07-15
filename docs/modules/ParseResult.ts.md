@@ -4,7 +4,7 @@ nav_order: 5
 parent: Modules
 ---
 
-# ParseResult overview
+## ParseResult overview
 
 Added in v0.6.0
 
@@ -12,18 +12,21 @@ Added in v0.6.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [ParseError (interface)](#parseerror-interface)
-- [ParseSuccess (interface)](#parsesuccess-interface)
-- [ParseResult (type alias)](#parseresult-type-alias)
-- [error](#error)
-- [escalate](#escalate)
-- [extend](#extend)
-- [success](#success)
-- [withExpected](#withexpected)
+- [utils](#utils)
+  - [ParseError (interface)](#parseerror-interface)
+  - [ParseResult (type alias)](#parseresult-type-alias)
+  - [ParseSuccess (interface)](#parsesuccess-interface)
+  - [error](#error)
+  - [escalate](#escalate)
+  - [extend](#extend)
+  - [success](#success)
+  - [withExpected](#withexpected)
 
 ---
 
-# ParseError (interface)
+# utils
+
+## ParseError (interface)
 
 **Signature**
 
@@ -37,7 +40,17 @@ export interface ParseError<I> {
 
 Added in v0.6.0
 
-# ParseSuccess (interface)
+## ParseResult (type alias)
+
+**Signature**
+
+```ts
+export type ParseResult<I, A> = Either<ParseError<I>, ParseSuccess<I, A>>
+```
+
+Added in v0.6.0
+
+## ParseSuccess (interface)
 
 **Signature**
 
@@ -51,66 +64,56 @@ export interface ParseSuccess<I, A> {
 
 Added in v0.6.0
 
-# ParseResult (type alias)
+## error
 
 **Signature**
 
 ```ts
-export type ParseResult<I, A> = Either<ParseError<I>, ParseSuccess<I, A>>
-```
-
-Added in v0.6.0
-
-# error
-
-**Signature**
-
-```ts
-export function error<I, A = never>(
+export declare function error<I, A = never>(
   input: Stream<I>,
   expected: Array<string> = empty,
   fatal: boolean = false
-): ParseResult<I, A> { ... }
+): ParseResult<I, A>
 ```
 
 Added in v0.6.0
 
-# escalate
+## escalate
 
 **Signature**
 
 ```ts
-export function escalate<I>(err: ParseError<I>): ParseError<I> { ... }
+export declare function escalate<I>(err: ParseError<I>): ParseError<I>
 ```
 
 Added in v0.6.0
 
-# extend
+## extend
 
 **Signature**
 
 ```ts
-export function extend<I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<I> { ... }
+export declare function extend<I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<I>
 ```
 
 Added in v0.6.0
 
-# success
+## success
 
 **Signature**
 
 ```ts
-export function success<I, A>(value: A, next: Stream<I>, start: Stream<I>): ParseResult<I, A> { ... }
+export declare function success<I, A>(value: A, next: Stream<I>, start: Stream<I>): ParseResult<I, A>
 ```
 
 Added in v0.6.0
 
-# withExpected
+## withExpected
 
 **Signature**
 
 ```ts
-export function withExpected<I>(err: ParseError<I>, expected: Array<string>): ParseError<I> { ... }
+export declare function withExpected<I>(err: ParseError<I>, expected: Array<string>): ParseError<I>
 ```
 
 Added in v0.6.0
