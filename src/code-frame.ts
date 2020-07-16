@@ -42,8 +42,8 @@ function getLocation(source: string, cursor: number): Location {
  *
  * @since 0.6.0
  */
-export function run<A>(p: Parser<Char, A>, source: string): Either<string, A> {
-  return pipe(
+export const run: <A>(p: Parser<Char, A>, source: string) => Either<string, A> = (p, source) =>
+  pipe(
     p(stream(source.split(''))),
     bimap(
       err =>
@@ -53,4 +53,3 @@ export function run<A>(p: Parser<Char, A>, source: string): Either<string, A> {
       succ => succ.value
     )
   )
-}
