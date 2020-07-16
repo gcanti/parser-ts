@@ -24,6 +24,16 @@ high state of flux, you're at risk of it changing without notice.
     - Add `Alt` instance
     - Add `Alternative` instance
   - remove `pipeable` from `Parser` module (@IMax153)
+- **New Feature**
+  - add `Semigroup` instance to `ParseError` (@IMax153)
+- **Bug Fix**
+  - account for all common line terminators in `code-frame` (@IMax153)
+- **Polish**
+  - make `ParseError` and `ParseSuccess` models `readonly` in `ParseResult` (@IMax153)
+  - standardize export declarations in all modules (@IMax153)
+  - add `category` tags to module exports (@IMax153)
+- **Internal**
+  - make `Location` model `readonly` in `code-frame` (@IMax153)
 
 # 0.6.6
 
@@ -33,7 +43,7 @@ high state of flux, you're at risk of it changing without notice.
 # 0.6.5
 
 - **Polish**
-  - Make `between` and `surroundedBy` polymorphic in return type, #23 (@YBogomolov)
+  - make `between` and `surroundedBy` polymorphic in return type, #23 (@YBogomolov)
 
 # 0.6.4
 
