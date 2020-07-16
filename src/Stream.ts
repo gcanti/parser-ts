@@ -27,9 +27,10 @@ export interface Stream<A> {
  * @category constructors
  * @since 0.6.0
  */
-export function stream<A>(buffer: Array<A>, cursor: number = 0): Stream<A> {
-  return { buffer, cursor }
-}
+export const stream: <A>(buffer: Array<A>, cursor: number) => Stream<A> = (buffer, cursor = 0) => ({
+  buffer,
+  cursor
+})
 
 // -------------------------------------------------------------------------------------
 // destructors
@@ -39,28 +40,23 @@ export function stream<A>(buffer: Array<A>, cursor: number = 0): Stream<A> {
  * @category destructors
  * @since 0.6.0
  */
-export function get<A>(s: Stream<A>): Option<A> {
-  return lookup(s.cursor, s.buffer)
-}
+export const get: <A>(s: Stream<A>) => Option<A> = (s) => lookup(s.cursor, s.buffer)
 
 /**
  * @category destructors
  * @since 0.6.0
  */
-export function atEnd<A>(s: Stream<A>): boolean {
-  return s.cursor >= s.buffer.length
-}
+export const atEnd: <A>(s: Stream<A>) => boolean = (s) => s.cursor >= s.buffer.length
 
 /**
  * @category destructors
  * @since 0.6.0
  */
-export function getAndNext<A>(s: Stream<A>): Option<{ value: A; next: Stream<A> }> {
-  return pipe(
+export const getAndNext: <A>(s: Stream<A>) => Option<{ value: A; next: Stream<A> }> = (s) =>
+  pipe(
     get(s),
     map(a => ({ value: a, next: { buffer: s.buffer, cursor: s.cursor + 1 } }))
   )
-}
 
 // -------------------------------------------------------------------------------------
 // instances
@@ -70,7 +66,7 @@ export function getAndNext<A>(s: Stream<A>): Option<{ value: A; next: Stream<A> 
  * @category instances
  * @since 0.6.0
  */
-export function getEq<A>(E: Eq<A>): Eq<Stream<A>> {
+export const getEq: <A>(E: Eq<A>) => Eq<Stream<A>> = (E) => {
   const EA = getArrayEq(E)
   return fromEquals((x, y) => x.cursor === y.cursor && EA.equals(x.buffer, y.buffer))
 }
