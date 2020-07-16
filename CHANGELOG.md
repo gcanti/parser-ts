@@ -13,6 +13,18 @@
 **Note**: Gaps between patch versions are faulty/broken releases. **Note**: A feature tagged as Experimental is in a
 high state of flux, you're at risk of it changing without notice.
 
+# 0.7.0
+
+- **Breaking Change**
+  - upgrade to `fp-ts@2.7.0` (@IMax153)
+  - split "mega" parser instance into individual instances (@IMax153)
+    - Add `Functor` instance
+    - Add `Applicative` instance
+    - Add `Monad` instance
+    - Add `Alt` instance
+    - Add `Alternative` instance
+  - remove `pipeable` from `Parser` module (@IMax153)
+
 # 0.6.6
 
 - **New Feature**
