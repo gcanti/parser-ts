@@ -29,12 +29,11 @@ export type Char = string
  * @category constructors
  * @since 0.6.0
  */
-export function char(c: Char): P.Parser<Char, Char> {
-  return P.expected(
+export const char: (c: Char) => P.Parser<Char, Char> = c =>
+  P.expected(
     P.sat(s => s === c),
     `"${c}"`
   )
-}
 
 /**
  * The `notChar` parser constructor makes a parser which will match any
@@ -43,16 +42,13 @@ export function char(c: Char): P.Parser<Char, Char> {
  * @category constructors
  * @since 0.6.0
  */
-export function notChar(c: Char): P.Parser<Char, Char> {
-  return P.expected(
+export const notChar: (c: Char) => P.Parser<Char, Char> = c =>
+  P.expected(
     P.sat(c1 => c1 !== c),
     `anything but "${c}"`
   )
-}
 
-function isOneOf(s: string, c: Char): boolean {
-  return s.indexOf(c) !== -1
-}
+const isOneOf: (s: string, c: Char) => boolean = (s, c) => s.indexOf(c) !== -1
 
 /**
  * Matches any one character from the provided string.
@@ -60,12 +56,11 @@ function isOneOf(s: string, c: Char): boolean {
  * @category constructors
  * @since 0.6.0
  */
-export function oneOf(s: string): P.Parser<Char, Char> {
-  return P.expected(
+export const oneOf: (s: string) => P.Parser<Char, Char> = s =>
+  P.expected(
     P.sat(c => isOneOf(s, c)),
     `One of "${s}"`
   )
-}
 
 /**
  * Matches a single character which isn't a character from the provided string.
@@ -73,12 +68,11 @@ export function oneOf(s: string): P.Parser<Char, Char> {
  * @category constructors
  * @since 0.6.0
  */
-export function notOneOf(s: string): P.Parser<Char, Char> {
-  return P.expected(
+export const notOneOf: (s: string) => P.Parser<Char, Char> = s =>
+  P.expected(
     P.sat(c => !isOneOf(s, c)),
     `Not one of ${JSON.stringify(s)}`
   )
-}
 
 // -------------------------------------------------------------------------------------
 // combinators
@@ -91,9 +85,7 @@ export function notOneOf(s: string): P.Parser<Char, Char> {
  * @category combinators
  * @since 0.6.0
  */
-export function many(parser: P.Parser<Char, Char>): P.Parser<Char, string> {
-  return maybe(many1(parser))
-}
+export const many: (parser: P.Parser<Char, Char>) => P.Parser<Char, string> = parser => maybe(many1(parser))
 
 /**
  * Takes a `Parser<Char, string>` and matches it one or more times, returning
@@ -102,16 +94,13 @@ export function many(parser: P.Parser<Char, Char>): P.Parser<Char, string> {
  * @category combinators
  * @since 0.6.0
  */
-export function many1(parser: P.Parser<Char, Char>): P.Parser<Char, string> {
-  return pipe(
+export const many1: (parser: P.Parser<Char, Char>) => P.Parser<Char, string> = parser =>
+  pipe(
     P.many1(parser),
     P.map(nea => nea.join(''))
   )
-}
 
-function isDigit(c: Char): boolean {
-  return '0123456789'.indexOf(c) !== -1
-}
+const isDigit: (c: Char) => boolean = c => '0123456789'.indexOf(c) !== -1
 
 /**
  * Matches a single digit.
@@ -123,9 +112,7 @@ export const digit: P.Parser<Char, Char> = P.expected(P.sat(isDigit), 'a digit')
 
 const spaceRe = /^\s$/
 
-function isSpace(c: Char): boolean {
-  return spaceRe.test(c)
-}
+const isSpace: (c: Char) => boolean = c => spaceRe.test(c)
 
 /**
  * Matches a single whitespace character.
@@ -135,17 +122,11 @@ function isSpace(c: Char): boolean {
  */
 export const space: P.Parser<Char, Char> = P.expected(P.sat(isSpace), 'a whitespace')
 
-function isUnderscore(c: Char): boolean {
-  return c === '_'
-}
+const isUnderscore: (c: Char) => boolean = c => c === '_'
 
-function isLetter(c: Char): boolean {
-  return /[a-z]/.test(c.toLowerCase())
-}
+const isLetter: (c: Char) => boolean = c => /[a-z]/.test(c.toLowerCase())
 
-function isAlphanum(c: Char): boolean {
-  return isLetter(c) || isDigit(c) || isUnderscore(c)
-}
+const isAlphanum: (c: Char) => boolean = c => isLetter(c) || isDigit(c) || isUnderscore(c)
 
 /**
  * Matches a single letter, digit or underscore character.
@@ -162,9 +143,7 @@ export const alphanum: P.Parser<Char, Char> = P.expected(P.sat(isAlphanum), 'a w
  */
 export const letter = P.expected(P.sat(isLetter), 'a letter')
 
-function isUpper(c: Char): boolean {
-  return isLetter(c) && c === c.toUpperCase()
-}
+const isUpper: (c: Char) => boolean = c => isLetter(c) && c === c.toUpperCase()
 
 /**
  * Matches a single upper case ASCII letter.
@@ -174,9 +153,7 @@ function isUpper(c: Char): boolean {
  */
 export const upper: P.Parser<Char, Char> = P.expected(P.sat(isUpper), 'an upper case letter')
 
-function isLower(c: Char): boolean {
-  return isLetter(c) && c === c.toLowerCase()
-}
+const isLower: (c: Char) => boolean = c => isLetter(c) && c === c.toLowerCase()
 
 /**
  * Matches a single lower case ASCII letter.
