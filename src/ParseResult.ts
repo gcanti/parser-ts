@@ -5,7 +5,12 @@ import { empty } from 'fp-ts/lib/Array'
 import { Either, left, right } from 'fp-ts/lib/Either'
 import { Stream } from './Stream'
 
+// -------------------------------------------------------------------------------------
+// model
+// -------------------------------------------------------------------------------------
+
 /**
+ * @category model
  * @since 0.6.0
  */
 export interface ParseError<I> {
@@ -15,6 +20,7 @@ export interface ParseError<I> {
 }
 
 /**
+ * @category model
  * @since 0.6.0
  */
 export interface ParseSuccess<I, A> {
@@ -24,11 +30,49 @@ export interface ParseSuccess<I, A> {
 }
 
 /**
+ * @category model
  * @since 0.6.0
  */
 export type ParseResult<I, A> = Either<ParseError<I>, ParseSuccess<I, A>>
 
+// -------------------------------------------------------------------------------------
+// constructors
+// -------------------------------------------------------------------------------------
+
 /**
+ * @category constructors
+ * @since 0.6.0
+ */
+export function success<I, A>(value: A, next: Stream<I>, start: Stream<I>): ParseResult<I, A> {
+  return right({
+    value,
+    next,
+    start
+  })
+}
+
+/**
+ * @category constructors
+ * @since 0.6.0
+ */
+export function error<I, A = never>(
+  input: Stream<I>,
+  expected: Array<string> = empty,
+  fatal: boolean = false
+): ParseResult<I, A> {
+  return left({
+    input,
+    expected,
+    fatal
+  })
+}
+
+// -------------------------------------------------------------------------------------
+// combinators
+// -------------------------------------------------------------------------------------
+
+/**
+ * @category combinators
  * @since 0.6.0
  */
 export function withExpected<I>(err: ParseError<I>, expected: Array<string>): ParseError<I> {
@@ -39,6 +83,7 @@ export function withExpected<I>(err: ParseError<I>, expected: Array<string>): Pa
 }
 
 /**
+ * @category combinators
  * @since 0.6.0
  */
 export function escalate<I>(err: ParseError<I>): ParseError<I> {
@@ -49,6 +94,7 @@ export function escalate<I>(err: ParseError<I>): ParseError<I> {
 }
 
 /**
+ * @category combinators
  * @since 0.6.0
  */
 export function extend<I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<I> {
@@ -62,30 +108,4 @@ export function extend<I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<
       expected: err1.expected.concat(err2.expected)
     }
   }
-}
-
-/**
- * @since 0.6.0
- */
-export function success<I, A>(value: A, next: Stream<I>, start: Stream<I>): ParseResult<I, A> {
-  return right({
-    value,
-    next,
-    start
-  })
-}
-
-/**
- * @since 0.6.0
- */
-export function error<I, A = never>(
-  input: Stream<I>,
-  expected: Array<string> = empty,
-  fatal: boolean = false
-): ParseResult<I, A> {
-  return left({
-    input,
-    expected,
-    fatal
-  })
 }
