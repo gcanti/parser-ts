@@ -8,38 +8,25 @@ import * as P from './Parser'
 
 const maybe = P.maybe(monoidString)
 
+// -------------------------------------------------------------------------------------
+// model
+// -------------------------------------------------------------------------------------
+
 /**
+ * @category model
  * @since 0.6.0
  */
 export type Char = string
 
-/**
- * Takes a `Parser<Char, string>` and matches it zero or more times, returning
- * a `string` of what was matched.
- *
- * @since 0.6.0
- */
-export function many(parser: P.Parser<Char, Char>): P.Parser<Char, string> {
-  return maybe(many1(parser))
-}
-
-/**
- * Takes a `Parser<Char, string>` and matches it one or more times, returning
- * a `string` of what was matched.
- *
- * @since 0.6.0
- */
-export function many1(parser: P.Parser<Char, Char>): P.Parser<Char, string> {
-  return pipe(
-    P.many1(parser),
-    P.map(nea => nea.join(''))
-  )
-}
+// -------------------------------------------------------------------------------------
+// constructors
+// -------------------------------------------------------------------------------------
 
 /**
  * The `char` parser constructor returns a parser which matches only the
  * specified single character
  *
+ * @category constructors
  * @since 0.6.0
  */
 export function char(c: Char): P.Parser<Char, Char> {
@@ -53,6 +40,7 @@ export function char(c: Char): P.Parser<Char, Char> {
  * The `notChar` parser constructor makes a parser which will match any
  * single character other than the one provided.
  *
+ * @category constructors
  * @since 0.6.0
  */
 export function notChar(c: Char): P.Parser<Char, Char> {
@@ -69,12 +57,55 @@ function isOneOf(s: string, c: Char): boolean {
 /**
  * Matches any one character from the provided string.
  *
+ * @category constructors
  * @since 0.6.0
  */
 export function oneOf(s: string): P.Parser<Char, Char> {
   return P.expected(
     P.sat(c => isOneOf(s, c)),
     `One of "${s}"`
+  )
+}
+
+/**
+ * Matches a single character which isn't a character from the provided string.
+ *
+ * @category constructors
+ * @since 0.6.0
+ */
+export function notOneOf(s: string): P.Parser<Char, Char> {
+  return P.expected(
+    P.sat(c => !isOneOf(s, c)),
+    `Not one of ${JSON.stringify(s)}`
+  )
+}
+
+// -------------------------------------------------------------------------------------
+// combinators
+// -------------------------------------------------------------------------------------
+
+/**
+ * Takes a `Parser<Char, string>` and matches it zero or more times, returning
+ * a `string` of what was matched.
+ *
+ * @category combinators
+ * @since 0.6.0
+ */
+export function many(parser: P.Parser<Char, Char>): P.Parser<Char, string> {
+  return maybe(many1(parser))
+}
+
+/**
+ * Takes a `Parser<Char, string>` and matches it one or more times, returning
+ * a `string` of what was matched.
+ *
+ * @category combinators
+ * @since 0.6.0
+ */
+export function many1(parser: P.Parser<Char, Char>): P.Parser<Char, string> {
+  return pipe(
+    P.many1(parser),
+    P.map(nea => nea.join(''))
   )
 }
 
@@ -85,6 +116,7 @@ function isDigit(c: Char): boolean {
 /**
  * Matches a single digit.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const digit: P.Parser<Char, Char> = P.expected(P.sat(isDigit), 'a digit')
@@ -98,6 +130,7 @@ function isSpace(c: Char): boolean {
 /**
  * Matches a single whitespace character.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const space: P.Parser<Char, Char> = P.expected(P.sat(isSpace), 'a whitespace')
@@ -117,6 +150,7 @@ function isAlphanum(c: Char): boolean {
 /**
  * Matches a single letter, digit or underscore character.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const alphanum: P.Parser<Char, Char> = P.expected(P.sat(isAlphanum), 'a word character')
@@ -135,6 +169,7 @@ function isUpper(c: Char): boolean {
 /**
  * Matches a single upper case ASCII letter.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const upper: P.Parser<Char, Char> = P.expected(P.sat(isUpper), 'an upper case letter')
@@ -146,25 +181,15 @@ function isLower(c: Char): boolean {
 /**
  * Matches a single lower case ASCII letter.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const lower: P.Parser<Char, Char> = P.expected(P.sat(isLower), 'a lower case letter')
 
 /**
- * Matches a single character which isn't a character from the provided string.
- *
- * @since 0.6.0
- */
-export function notOneOf(s: string): P.Parser<Char, Char> {
-  return P.expected(
-    P.sat(c => !isOneOf(s, c)),
-    `Not one of ${JSON.stringify(s)}`
-  )
-}
-
-/**
  * Matches a single character which isn't a digit.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const notDigit: P.Parser<Char, Char> = P.expected(P.sat(not(isDigit)), 'a non-digit')
@@ -172,6 +197,7 @@ export const notDigit: P.Parser<Char, Char> = P.expected(P.sat(not(isDigit)), 'a
 /**
  * Matches a single character which isn't whitespace.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const notSpace: P.Parser<Char, Char> = P.expected(P.sat(not(isSpace)), 'a non-whitespace character')
@@ -179,6 +205,7 @@ export const notSpace: P.Parser<Char, Char> = P.expected(P.sat(not(isSpace)), 'a
 /**
  * Matches a single character which isn't a letter, digit or underscore.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const notAlphanum: P.Parser<Char, Char> = P.expected(P.sat(not(isAlphanum)), 'a non-word character')
@@ -186,6 +213,7 @@ export const notAlphanum: P.Parser<Char, Char> = P.expected(P.sat(not(isAlphanum
 /**
  * Matches a single character which isn't an ASCII letter.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const notLetter: P.Parser<Char, Char> = P.expected(P.sat(not(isLetter)), 'a non-letter character')
@@ -193,6 +221,7 @@ export const notLetter: P.Parser<Char, Char> = P.expected(P.sat(not(isLetter)), 
 /**
  * Matches a single character which isn't an upper case ASCII letter.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const notUpper: P.Parser<Char, Char> = P.expected(P.sat(not(isUpper)), 'anything but an upper case letter')
@@ -200,6 +229,7 @@ export const notUpper: P.Parser<Char, Char> = P.expected(P.sat(not(isUpper)), 'a
 /**
  * Matches a single character which isn't a lower case ASCII letter.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const notLower: P.Parser<Char, Char> = P.expected(P.sat(not(isLower)), 'anything but a lower case letter')
