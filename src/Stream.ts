@@ -40,19 +40,19 @@ export const stream: <A>(buffer: Array<A>, cursor: number) => Stream<A> = (buffe
  * @category destructors
  * @since 0.6.0
  */
-export const get: <A>(s: Stream<A>) => Option<A> = (s) => lookup(s.cursor, s.buffer)
+export const get: <A>(s: Stream<A>) => Option<A> = s => lookup(s.cursor, s.buffer)
 
 /**
  * @category destructors
  * @since 0.6.0
  */
-export const atEnd: <A>(s: Stream<A>) => boolean = (s) => s.cursor >= s.buffer.length
+export const atEnd: <A>(s: Stream<A>) => boolean = s => s.cursor >= s.buffer.length
 
 /**
  * @category destructors
  * @since 0.6.0
  */
-export const getAndNext: <A>(s: Stream<A>) => Option<{ value: A; next: Stream<A> }> = (s) =>
+export const getAndNext: <A>(s: Stream<A>) => Option<{ value: A; next: Stream<A> }> = s =>
   pipe(
     get(s),
     map(a => ({ value: a, next: { buffer: s.buffer, cursor: s.cursor + 1 } }))
@@ -66,7 +66,7 @@ export const getAndNext: <A>(s: Stream<A>) => Option<{ value: A; next: Stream<A>
  * @category instances
  * @since 0.6.0
  */
-export const getEq: <A>(E: Eq<A>) => Eq<Stream<A>> = (E) => {
+export const getEq: <A>(E: Eq<A>) => Eq<Stream<A>> = E => {
   const EA = getArrayEq(E)
   return fromEquals((x, y) => x.cursor === y.cursor && EA.equals(x.buffer, y.buffer))
 }
