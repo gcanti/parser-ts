@@ -31,7 +31,7 @@ describe('Parser', () => {
   })
 
   it('ap', () => {
-    const parser = P.ap(C.char('a'))(P.of((s) => s.length))
+    const parser = P.ap(C.char('a'))(P.of(s => s.length))
     assert.deepStrictEqual(run(parser, 'a'), success(1, stream(['a'], 1), stream(['a'])))
   })
 
