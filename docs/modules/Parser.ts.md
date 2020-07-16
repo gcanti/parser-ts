@@ -334,7 +334,7 @@ thus guaranteed to contain at least one value.
 **Signature**
 
 ```ts
-export declare const many1: <I, A>(p: Parser<I, A>) => Parser<I, NonEmptyArray<A>>
+export declare const many1: <I, A>(p: Parser<I, A>) => Parser<I, NEA.NonEmptyArray<A>>
 ```
 
 Added in v0.6.0
@@ -376,7 +376,7 @@ use `sep` to match separator characters in between matches of `p`.
 **Signature**
 
 ```ts
-export declare const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NonEmptyArray<B>>
+export declare const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NEA.NonEmptyArray<B>>
 ```
 
 Added in v0.6.0
@@ -389,7 +389,7 @@ followed by a `p` will cause a fatal error.
 **Signature**
 
 ```ts
-export declare const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NonEmptyArray<B>>
+export declare const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NEA.NonEmptyArray<B>>
 ```
 
 Added in v0.6.0

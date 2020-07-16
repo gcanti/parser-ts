@@ -19,8 +19,6 @@ Added in v0.6.0
 - [constructors](#constructors)
   - [error](#error)
   - [success](#success)
-- [instances](#instances)
-  - [getSemigroup](#getsemigroup)
 - [model](#model)
   - [ParseError (interface)](#parseerror-interface)
   - [ParseResult (type alias)](#parseresult-type-alias)
@@ -89,18 +87,6 @@ export declare const success: <I, A>(
 ```
 
 Added in v0.6.0
-
-# instances
-
-## getSemigroup
-
-**Signature**
-
-```ts
-export declare const getSemigroup: <I>() => Semigroup<ParseError<I>>
-```
-
-Added in v0.7.0
 
 # model
 

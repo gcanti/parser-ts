@@ -99,11 +99,7 @@ export const extend = <I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<
 // instances
 // -------------------------------------------------------------------------------------
 
-/**
- * @category instances
- * @since 0.7.0
- */
-export const getSemigroup = <I>(): Semigroup<ParseError<I>> => ({
+const getSemigroup = <I>(): Semigroup<ParseError<I>> => ({
   concat: (x, y) => {
     if (x.input.cursor < y.input.cursor) return getLastSemigroup<ParseError<I>>().concat(x, y)
     if (x.input.cursor > y.input.cursor) return getFirstSemigroup<ParseError<I>>().concat(x, y)
