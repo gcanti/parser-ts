@@ -4,8 +4,8 @@
 import { Foldable, Foldable1 } from 'fp-ts/lib/Foldable'
 import { Functor, Functor1 } from 'fp-ts/lib/Functor'
 import { HKT, Kind, URIS } from 'fp-ts/lib/HKT'
-import { fold as foldMonoid, monoidString } from 'fp-ts/lib/Monoid'
-import { fold as foldOption, none, some, Option } from 'fp-ts/lib/Option'
+import * as M from 'fp-ts/lib/Monoid'
+import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as C from './char'
 import * as P from './Parser'
@@ -24,7 +24,7 @@ export const string: (s: string) => P.Parser<C.Char, string> = s => {
   const _string: (s2: string) => P.Parser<C.Char, string> = s2 =>
     pipe(
       charAt(0, s2),
-      foldOption(
+      O.fold(
         () => P.succeed(''),
         c =>
           pipe(
@@ -63,7 +63,7 @@ export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P
  * @category destructors
  * @since 0.6.0
  */
-export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = foldMonoid(P.getMonoid(monoidString))
+export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = M.fold(P.getMonoid(M.monoidString))
 
 // -------------------------------------------------------------------------------------
 // combinators
@@ -73,7 +73,7 @@ export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = 
  * @category combinators
  * @since 0.6.0
  */
-export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = P.maybe(monoidString)
+export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = P.maybe(M.monoidString)
 
 /**
  * Matches the given parser zero or more times, returning a string of the
@@ -97,8 +97,8 @@ export const many1: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, strin
     P.map(nea => nea.join(''))
   )
 
-const charAt: (index: number, s: string) => Option<C.Char> = (index, s) =>
-  index >= 0 && index < s.length ? some(s.charAt(index)) : none
+const charAt: (index: number, s: string) => O.Option<C.Char> = (index, s) =>
+  index >= 0 && index < s.length ? O.some(s.charAt(index)) : O.none
 
 /**
  * Matches zero or more whitespace characters.
@@ -132,9 +132,9 @@ export const notSpaces: P.Parser<C.Char, string> = C.many(C.notSpace)
  */
 export const notSpaces1: P.Parser<C.Char, string> = C.many1(C.notSpace)
 
-const fromString: (s: string) => Option<number> = s => {
+const fromString: (s: string) => O.Option<number> = s => {
   const n = +s
-  return isNaN(n) || s === '' ? none : some(n)
+  return isNaN(n) || s === '' ? O.none : O.some(n)
 }
 
 /**
@@ -159,7 +159,7 @@ export const float: P.Parser<C.Char, number> = P.expected(
     P.chain(s =>
       pipe(
         fromString(s),
-        foldOption(() => P.fail(), P.succeed)
+        O.fold(() => P.fail(), P.succeed)
       )
     )
   ),
