@@ -24,8 +24,6 @@ high state of flux, you're at risk of it changing without notice.
     - Add `Alt` instance
     - Add `Alternative` instance
   - remove `pipeable` from `Parser` module (@IMax153)
-- **New Feature**
-  - add `Semigroup` instance to `ParseError` (@IMax153)
 - **Bug Fix**
   - account for all common line terminators in `code-frame` (@IMax153)
 - **Polish**
