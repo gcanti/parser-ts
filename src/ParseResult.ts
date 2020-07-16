@@ -11,22 +11,22 @@ import { Stream } from './Stream'
 
 /**
  * @category model
- * @since 0.6.0
+ * @since 0.7.0
  */
 export interface ParseError<I> {
-  input: Stream<I>
-  expected: Array<string>
-  fatal: boolean
+  readonly input: Stream<I>
+  readonly expected: Array<string>
+  readonly fatal: boolean
 }
 
 /**
  * @category model
- * @since 0.6.0
+ * @since 0.7.0
  */
 export interface ParseSuccess<I, A> {
-  value: A
-  next: Stream<I>
-  start: Stream<I>
+  readonly value: A
+  readonly next: Stream<I>
+  readonly start: Stream<I>
 }
 
 /**
