@@ -20,9 +20,9 @@ import * as P from './Parser'
  * @category constructors
  * @since 0.6.0
  */
-export function string(s: string): P.Parser<C.Char, string> {
-  function _string(s2: string): P.Parser<C.Char, string> {
-    return pipe(
+export const string: (s: string) => P.Parser<C.Char, string> = s => {
+  const _string: (s2: string) => P.Parser<C.Char, string> = s2 =>
+    pipe(
       charAt(0, s2),
       foldOption(
         () => P.succeed(''),
@@ -34,7 +34,6 @@ export function string(s: string): P.Parser<C.Char, string> {
           )
       )
     )
-  }
   return P.expected(_string(s), JSON.stringify(s))
 }
 
@@ -83,9 +82,7 @@ export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = P.maybe
  * @category combinators
  * @since 0.6.0
  */
-export function many(parser: P.Parser<C.Char, string>): P.Parser<C.Char, string> {
-  return maybe(many1(parser))
-}
+export const many: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string> = parser => maybe(many1(parser))
 
 /**
  * Matches the given parser one or more times, returning a string of the
@@ -94,16 +91,14 @@ export function many(parser: P.Parser<C.Char, string>): P.Parser<C.Char, string>
  * @category combinators
  * @since 0.6.0
  */
-export function many1(parser: P.Parser<C.Char, string>): P.Parser<C.Char, string> {
-  return pipe(
+export const many1: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string> = parser =>
+  pipe(
     P.many1(parser),
     P.map(nea => nea.join(''))
   )
-}
 
-function charAt(index: number, s: string): Option<C.Char> {
-  return index >= 0 && index < s.length ? some(s.charAt(index)) : none
-}
+const charAt: (index: number, s: string) => Option<C.Char> = (index, s) =>
+  index >= 0 && index < s.length ? some(s.charAt(index)) : none
 
 /**
  * Matches zero or more whitespace characters.
@@ -137,7 +132,7 @@ export const notSpaces: P.Parser<C.Char, string> = C.many(C.notSpace)
  */
 export const notSpaces1: P.Parser<C.Char, string> = C.many1(C.notSpace)
 
-function fromString(s: string): Option<number> {
+const fromString: (s: string) => Option<number> = s => {
   const n = +s
   return isNaN(n) || s === '' ? none : some(n)
 }
@@ -179,4 +174,6 @@ export const float: P.Parser<C.Char, number> = P.expected(
  * @category combinators
  * @since 0.6.0
  */
-export const doubleQuotedString = P.surroundedBy(C.char('"'))(many(P.either(string('\\"'), () => C.notChar('"'))))
+export const doubleQuotedString: P.Parser<string, String> = P.surroundedBy(C.char('"'))(
+  many(P.either(string('\\"'), () => C.notChar('"')))
+)
