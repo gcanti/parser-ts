@@ -1,8 +1,9 @@
 /**
  * @since 0.6.0
  */
-import { empty } from 'fp-ts/lib/Array'
+import { empty, getMonoid } from 'fp-ts/lib/Array'
 import { Either, left, right } from 'fp-ts/lib/Either'
+import { getFirstSemigroup, getLastSemigroup, getStructSemigroup, Semigroup } from 'fp-ts/lib/Semigroup'
 import { Stream } from './Stream'
 
 // -------------------------------------------------------------------------------------
@@ -74,8 +75,8 @@ export const error: <I, A = never>(input: Stream<I>, expected?: Array<string>, f
  * @since 0.6.0
  */
 export const withExpected: <I>(err: ParseError<I>, expected: Array<string>) => ParseError<I> = (err, expected) => ({
-    ...err,
-    expected
+  ...err,
+  expected
 })
 
 /**
@@ -83,23 +84,34 @@ export const withExpected: <I>(err: ParseError<I>, expected: Array<string>) => P
  * @since 0.6.0
  */
 export const escalate: <I>(err: ParseError<I>) => ParseError<I> = err => ({
-    ...err,
-    fatal: true
+  ...err,
+  fatal: true
 })
 
 /**
  * @category combinators
  * @since 0.6.0
  */
-export function extend<I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<I> {
-  if (err1.input.cursor < err2.input.cursor) {
-    return err2
-  } else if (err1.input.cursor > err2.input.cursor) {
-    return err1
-  } else {
-    return {
-      ...err1,
-      expected: err1.expected.concat(err2.expected)
-    }
+export const extend = <I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<I> =>
+  getSemigroup<I>().concat(err1, err2)
+
+// -------------------------------------------------------------------------------------
+// instances
+// -------------------------------------------------------------------------------------
+
+/**
+ * @category instances
+ * @since 0.7.0
+ */
+export const getSemigroup = <I>(): Semigroup<ParseError<I>> => ({
+  concat: (x, y) => {
+    if (x.input.cursor < y.input.cursor) return getLastSemigroup<ParseError<I>>().concat(x, y)
+    if (x.input.cursor > y.input.cursor) return getFirstSemigroup<ParseError<I>>().concat(x, y)
+
+    return getStructSemigroup<ParseError<I>>({
+      input: getFirstSemigroup<Stream<I>>(),
+      fatal: getFirstSemigroup<boolean>(),
+      expected: getMonoid<string>()
+    }).concat(x, y)
   }
-}
+})
