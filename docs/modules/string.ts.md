@@ -12,24 +12,26 @@ Added in v0.6.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [utils](#utils)
+- [combinators](#combinators)
   - [doubleQuotedString](#doublequotedstring)
   - [float](#float)
-  - [fold](#fold)
   - [int](#int)
   - [many](#many)
   - [many1](#many1)
   - [maybe](#maybe)
   - [notSpaces](#notspaces)
   - [notSpaces1](#notspaces1)
-  - [oneOf](#oneof)
   - [spaces](#spaces)
   - [spaces1](#spaces1)
+- [constructors](#constructors)
+  - [oneOf](#oneof)
   - [string](#string)
+- [destructors](#destructors)
+  - [fold](#fold)
 
 ---
 
-# utils
+# combinators
 
 ## doubleQuotedString
 
@@ -51,16 +53,6 @@ Added in v0.6.0
 
 ```ts
 export declare const float: P.Parser<string, number>
-```
-
-Added in v0.6.0
-
-## fold
-
-**Signature**
-
-```ts
-export declare const fold: <I>(as: P.Parser<I, string>[]) => P.Parser<I, string>
 ```
 
 Added in v0.6.0
@@ -135,21 +127,6 @@ export declare const notSpaces1: P.Parser<string, string>
 
 Added in v0.6.0
 
-## oneOf
-
-Matches one of a list of strings.
-
-**Signature**
-
-```ts
-export declare function oneOf<F extends URIS>(
-  F: Functor1<F> & Foldable1<F>
-): (ss: Kind<F, string>) => P.Parser<C.Char, string>
-export declare function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string>
-```
-
-Added in v0.6.0
-
 ## spaces
 
 Matches zero or more whitespace characters.
@@ -174,6 +151,23 @@ export declare const spaces1: P.Parser<string, string>
 
 Added in v0.6.0
 
+# constructors
+
+## oneOf
+
+Matches one of a list of strings.
+
+**Signature**
+
+```ts
+export declare function oneOf<F extends URIS>(
+  F: Functor1<F> & Foldable1<F>
+): (ss: Kind<F, string>) => P.Parser<C.Char, string>
+export declare function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string>
+```
+
+Added in v0.6.0
+
 ## string
 
 Matches the exact string provided.
@@ -182,6 +176,18 @@ Matches the exact string provided.
 
 ```ts
 export declare function string(s: string): P.Parser<C.Char, string>
+```
+
+Added in v0.6.0
+
+# destructors
+
+## fold
+
+**Signature**
+
+```ts
+export declare const fold: <I>(as: P.Parser<I, string>[]) => P.Parser<I, string>
 ```
 
 Added in v0.6.0

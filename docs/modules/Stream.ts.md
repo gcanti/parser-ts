@@ -12,30 +12,32 @@ Added in v0.6.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [utils](#utils)
-  - [Stream (interface)](#stream-interface)
+- [constructors](#constructors)
+  - [stream](#stream)
+- [destructors](#destructors)
   - [atEnd](#atend)
   - [get](#get)
   - [getAndNext](#getandnext)
+- [instances](#instances)
   - [getEq](#geteq)
-  - [stream](#stream)
+- [model](#model)
+  - [Stream (interface)](#stream-interface)
 
 ---
 
-# utils
+# constructors
 
-## Stream (interface)
+## stream
 
 **Signature**
 
 ```ts
-export interface Stream<A> {
-  readonly buffer: Array<A>
-  readonly cursor: number
-}
+export declare function stream<A>(buffer: Array<A>, cursor: number = 0): Stream<A>
 ```
 
 Added in v0.6.0
+
+# destructors
 
 ## atEnd
 
@@ -67,6 +69,8 @@ export declare function getAndNext<A>(s: Stream<A>): Option<{ value: A; next: St
 
 Added in v0.6.0
 
+# instances
+
 ## getEq
 
 **Signature**
@@ -77,12 +81,17 @@ export declare function getEq<A>(E: Eq<A>): Eq<Stream<A>>
 
 Added in v0.6.0
 
-## stream
+# model
+
+## Stream (interface)
 
 **Signature**
 
 ```ts
-export declare function stream<A>(buffer: Array<A>, cursor: number = 0): Stream<A>
+export interface Stream<A> {
+  readonly buffer: Array<A>
+  readonly cursor: number
+}
 ```
 
 Added in v0.6.0
