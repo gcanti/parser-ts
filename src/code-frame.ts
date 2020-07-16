@@ -9,9 +9,9 @@ import { stream } from './Stream'
 const { codeFrameColumns } = require('@babel/code-frame')
 
 interface Location {
-  start: {
-    line: number
-    column: number
+  readonly start: {
+    readonly line: number
+    readonly column: number
   }
 }
 
