@@ -43,29 +43,27 @@ export type ParseResult<I, A> = Either<ParseError<I>, ParseSuccess<I, A>>
  * @category constructors
  * @since 0.6.0
  */
-export function success<I, A>(value: A, next: Stream<I>, start: Stream<I>): ParseResult<I, A> {
-  return right({
+export const success: <I, A>(value: A, next: Stream<I>, start: Stream<I>) => ParseResult<I, A> = (value, next, start) =>
+  right({
     value,
     next,
     start
   })
-}
 
 /**
  * @category constructors
  * @since 0.6.0
  */
-export function error<I, A = never>(
-  input: Stream<I>,
-  expected: Array<string> = empty,
-  fatal: boolean = false
-): ParseResult<I, A> {
-  return left({
+export const error: <I, A = never>(input: Stream<I>, expected?: Array<string>, fatal?: boolean) => ParseResult<I, A> = (
+  input,
+  expected = empty,
+  fatal = false
+) =>
+  left({
     input,
     expected,
     fatal
   })
-}
 
 // -------------------------------------------------------------------------------------
 // combinators
@@ -75,23 +73,19 @@ export function error<I, A = never>(
  * @category combinators
  * @since 0.6.0
  */
-export function withExpected<I>(err: ParseError<I>, expected: Array<string>): ParseError<I> {
-  return {
+export const withExpected: <I>(err: ParseError<I>, expected: Array<string>) => ParseError<I> = (err, expected) => ({
     ...err,
     expected
-  }
-}
+})
 
 /**
  * @category combinators
  * @since 0.6.0
  */
-export function escalate<I>(err: ParseError<I>): ParseError<I> {
-  return {
+export const escalate: <I>(err: ParseError<I>) => ParseError<I> = err => ({
     ...err,
     fatal: true
-  }
-}
+})
 
 /**
  * @category combinators
