@@ -15,14 +15,16 @@ interface Location {
   }
 }
 
-function getLocation(source: string, cursor: number): Location {
+const lineTerminatorRegex = /^\r\n$|^[\n\r]$/
+
+const getLocation: (source: string, cursor: number) => Location = (source, cursor) => {
   let line = 1
   let column = 1
   let i = 0
   while (i < cursor) {
     i++
     const c = source.charAt(i)
-    if (c === '\n') {
+    if (lineTerminatorRegex.test(c)) {
       line++
       column = 1
     } else {
