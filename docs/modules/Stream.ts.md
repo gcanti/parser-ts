@@ -32,7 +32,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare function stream<A>(buffer: Array<A>, cursor: number = 0): Stream<A>
+export declare const stream: <A>(buffer: A[], cursor?: number) => Stream<A>
 ```
 
 Added in v0.6.0
@@ -44,7 +44,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare function atEnd<A>(s: Stream<A>): boolean
+export declare const atEnd: <A>(s: Stream<A>) => boolean
 ```
 
 Added in v0.6.0
@@ -54,7 +54,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare function get<A>(s: Stream<A>): Option<A>
+export declare const get: <A>(s: Stream<A>) => Option<A>
 ```
 
 Added in v0.6.0
@@ -64,7 +64,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare function getAndNext<A>(s: Stream<A>): Option<{ value: A; next: Stream<A> }>
+export declare const getAndNext: <A>(s: Stream<A>) => Option<{ value: A; next: Stream<A> }>
 ```
 
 Added in v0.6.0
@@ -76,7 +76,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare function getEq<A>(E: Eq<A>): Eq<Stream<A>>
+export declare const getEq: <A>(E: Eq<A>) => Eq<Stream<A>>
 ```
 
 Added in v0.6.0

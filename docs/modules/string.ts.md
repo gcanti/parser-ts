@@ -42,7 +42,7 @@ of string escaping.
 **Signature**
 
 ```ts
-export declare const doubleQuotedString: P.Parser<string, string>
+export declare const doubleQuotedString: P.Parser<string, String>
 ```
 
 Added in v0.6.0
@@ -75,7 +75,7 @@ entire match
 **Signature**
 
 ```ts
-export declare function many(parser: P.Parser<C.Char, string>): P.Parser<C.Char, string>
+export declare const many: (parser: P.Parser<string, string>) => P.Parser<string, string>
 ```
 
 Added in v0.6.0
@@ -88,7 +88,7 @@ entire match
 **Signature**
 
 ```ts
-export declare function many1(parser: P.Parser<C.Char, string>): P.Parser<C.Char, string>
+export declare const many1: (parser: P.Parser<string, string>) => P.Parser<string, string>
 ```
 
 Added in v0.6.0
@@ -175,7 +175,7 @@ Matches the exact string provided.
 **Signature**
 
 ```ts
-export declare function string(s: string): P.Parser<C.Char, string>
+export declare const string: (s: string) => P.Parser<string, string>
 ```
 
 Added in v0.6.0

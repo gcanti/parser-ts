@@ -87,7 +87,7 @@ Added in v0.7.0
 **Signature**
 
 ```ts
-export declare const zero: <E, A>() => Parser<E, A>
+export declare const zero: <I, A>() => Parser<I, A>
 ```
 
 Added in v0.7.0
@@ -191,7 +191,7 @@ Matches the provided parser `p` that occurs between the provided `left` and `rig
 **Signature**
 
 ```ts
-export declare function between<I, A>(left: Parser<I, A>, right: Parser<I, A>): <B>(p: Parser<I, B>) => Parser<I, B>
+export declare const between: <I, A>(left: Parser<I, A>, right: Parser<I, A>) => <B>(p: Parser<I, B>) => Parser<I, B>
 ```
 
 Added in v0.6.4
@@ -205,7 +205,7 @@ parsers and return immediately with a fatal error.
 **Signature**
 
 ```ts
-export declare function cut<I, A>(p: Parser<I, A>): Parser<I, A>
+export declare const cut: <I, A>(p: Parser<I, A>) => Parser<I, A>
 ```
 
 Added in v0.6.0
@@ -219,7 +219,7 @@ error.
 **Signature**
 
 ```ts
-export declare function cutWith<I, A, B>(p1: Parser<I, A>, p2: Parser<I, B>): Parser<I, B>
+export declare const cutWith: <I, A, B>(p1: Parser<I, A>, p2: Parser<I, B>) => Parser<I, B>
 ```
 
 Added in v0.6.0
@@ -238,7 +238,7 @@ This is equivalent to the `alt` operation.
 **Signature**
 
 ```ts
-export declare function either<I, A>(p: Parser<I, A>, f: () => Parser<I, A>): Parser<I, A>
+export declare const either: <I, A>(p: Parser<I, A>, f: () => Parser<I, A>) => Parser<I, A>
 ```
 
 Added in v0.6.0
@@ -250,7 +250,7 @@ Matches the end of the stream.
 **Signature**
 
 ```ts
-export declare function eof<I>(): Parser<I, void>
+export declare const eof: <I>() => Parser<I, void>
 ```
 
 Added in v0.6.0
@@ -264,7 +264,7 @@ ParseError`.
 **Signature**
 
 ```ts
-export declare function expected<I, A>(p: Parser<I, A>, message: string): Parser<I, A>
+export declare const expected: <I, A>(p: Parser<I, A>, message: string) => Parser<I, A>
 ```
 
 Added in v0.6.0
@@ -277,7 +277,7 @@ and returns it as its result.
 **Signature**
 
 ```ts
-export declare function item<I>(): Parser<I, I>
+export declare const item: <I>() => Parser<I, I>
 ```
 
 Added in v0.6.0
@@ -320,7 +320,7 @@ the results."
 **Signature**
 
 ```ts
-export declare function many<I, A>(p: Parser<I, A>): Parser<I, Array<A>>
+export declare const many: <I, A>(p: Parser<I, A>) => Parser<I, A[]>
 ```
 
 Added in v0.6.0
@@ -334,7 +334,7 @@ thus guaranteed to contain at least one value.
 **Signature**
 
 ```ts
-export declare function many1<I, A>(p: Parser<I, A>): Parser<I, NonEmptyArray<A>>
+export declare const many1: <I, A>(p: Parser<I, A>) => Parser<I, NonEmptyArray<A>>
 ```
 
 Added in v0.6.0
@@ -348,7 +348,7 @@ defined by `empty`) as a result, without consuming any input.
 **Signature**
 
 ```ts
-export declare function maybe<A>(M: Monoid<A>): <I>(p: Parser<I, A>) => Parser<I, A>
+export declare const maybe: <A>(M: Monoid<A>) => <I>(p: Parser<I, A>) => Parser<I, A>
 ```
 
 Added in v0.6.0
@@ -362,7 +362,7 @@ use `sep` to match separator characters in between matches of `p`.
 **Signature**
 
 ```ts
-export declare function sepBy<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Array<B>>
+export declare const sepBy: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, B[]>
 ```
 
 Added in v0.6.0
@@ -376,7 +376,7 @@ use `sep` to match separator characters in between matches of `p`.
 **Signature**
 
 ```ts
-export declare function sepBy1<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, NonEmptyArray<B>>
+export declare const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NonEmptyArray<B>>
 ```
 
 Added in v0.6.0
@@ -389,7 +389,7 @@ followed by a `p` will cause a fatal error.
 **Signature**
 
 ```ts
-export declare function sepByCut<I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, NonEmptyArray<B>>
+export declare const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NonEmptyArray<B>>
 ```
 
 Added in v0.6.0
@@ -407,7 +407,7 @@ This is equivalent to the monadic `chain` operation.
 **Signature**
 
 ```ts
-export declare function seq<I, A, B>(fa: Parser<I, A>, f: (a: A) => Parser<I, B>): Parser<I, B>
+export declare const seq: <I, A, B>(fa: Parser<I, A>, f: (a: A) => Parser<I, B>) => Parser<I, B>
 ```
 
 Added in v0.6.0
@@ -419,7 +419,7 @@ Matches the provided parser `p` that is surrounded by the `bound` parser. Shortc
 **Signature**
 
 ```ts
-export declare function surroundedBy<I, A>(bound: Parser<I, A>): <B>(p: Parser<I, B>) => Parser<I, B>
+export declare const surroundedBy: <I, A>(bound: Parser<I, A>) => <B>(p: Parser<I, B>) => Parser<I, B>
 ```
 
 Added in v0.6.4
@@ -460,7 +460,7 @@ token came from.
 **Signature**
 
 ```ts
-export declare function withStart<I, A>(p: Parser<I, A>): Parser<I, [A, Stream<I>]>
+export declare const withStart: <I, A>(p: Parser<I, A>) => Parser<I, [A, Stream<I>]>
 ```
 
 Added in v0.6.0
@@ -474,7 +474,7 @@ The `fail` parser will just fail immediately without consuming any input
 **Signature**
 
 ```ts
-export declare function fail<I, A = never>(): Parser<I, A>
+export declare const fail: <I, A = never>() => Parser<I, A>
 ```
 
 Added in v0.6.0
@@ -487,7 +487,7 @@ but will report the failure at the provided input position.
 **Signature**
 
 ```ts
-export declare function failAt<I, A = never>(i: Stream<I>): Parser<I, A>
+export declare const failAt: <I, A = never>(i: Stream<I>) => Parser<I, A>
 ```
 
 Added in v0.6.0
@@ -502,7 +502,7 @@ fail.
 **Signature**
 
 ```ts
-export declare function sat<I>(predicate: Predicate<I>): Parser<I, I>
+export declare const sat: <I>(predicate: Predicate<I>) => Parser<I, I>
 ```
 
 Added in v0.6.0
@@ -517,7 +517,7 @@ This is equivalent to the monadic `of`.
 **Signature**
 
 ```ts
-export declare function succeed<I, A>(a: A): Parser<I, A>
+export declare const succeed: <I, A>(a: A) => Parser<I, A>
 ```
 
 Added in v0.6.0

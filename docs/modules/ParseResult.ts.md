@@ -19,6 +19,8 @@ Added in v0.6.0
 - [constructors](#constructors)
   - [error](#error)
   - [success](#success)
+- [instances](#instances)
+  - [getSemigroup](#getsemigroup)
 - [model](#model)
   - [ParseError (interface)](#parseerror-interface)
   - [ParseResult (type alias)](#parseresult-type-alias)
@@ -33,7 +35,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare function escalate<I>(err: ParseError<I>): ParseError<I>
+export declare const escalate: <I>(err: ParseError<I>) => ParseError<I>
 ```
 
 Added in v0.6.0
@@ -43,7 +45,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare function extend<I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<I>
+export declare const extend: <I>(err1: ParseError<I>, err2: ParseError<I>) => ParseError<I>
 ```
 
 Added in v0.6.0
@@ -53,7 +55,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare function withExpected<I>(err: ParseError<I>, expected: Array<string>): ParseError<I>
+export declare const withExpected: <I>(err: ParseError<I>, expected: string[]) => ParseError<I>
 ```
 
 Added in v0.6.0
@@ -65,11 +67,11 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare function error<I, A = never>(
+export declare const error: <I, A = never>(
   input: Stream<I>,
-  expected: Array<string> = empty,
-  fatal: boolean = false
-): ParseResult<I, A>
+  expected?: string[],
+  fatal?: boolean
+) => Either<ParseError<I>, ParseSuccess<I, A>>
 ```
 
 Added in v0.6.0
@@ -79,10 +81,26 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare function success<I, A>(value: A, next: Stream<I>, start: Stream<I>): ParseResult<I, A>
+export declare const success: <I, A>(
+  value: A,
+  next: Stream<I>,
+  start: Stream<I>
+) => Either<ParseError<I>, ParseSuccess<I, A>>
 ```
 
 Added in v0.6.0
+
+# instances
+
+## getSemigroup
+
+**Signature**
+
+```ts
+export declare const getSemigroup: <I>() => Semigroup<ParseError<I>>
+```
+
+Added in v0.7.0
 
 # model
 
@@ -92,13 +110,13 @@ Added in v0.6.0
 
 ```ts
 export interface ParseError<I> {
-  input: Stream<I>
-  expected: Array<string>
-  fatal: boolean
+  readonly input: Stream<I>
+  readonly expected: Array<string>
+  readonly fatal: boolean
 }
 ```
 
-Added in v0.6.0
+Added in v0.7.0
 
 ## ParseResult (type alias)
 
@@ -116,10 +134,10 @@ Added in v0.6.0
 
 ```ts
 export interface ParseSuccess<I, A> {
-  value: A
-  next: Stream<I>
-  start: Stream<I>
+  readonly value: A
+  readonly next: Stream<I>
+  readonly start: Stream<I>
 }
 ```
 
-Added in v0.6.0
+Added in v0.7.0
