@@ -27,7 +27,7 @@ export interface Stream<A> {
  * @category constructors
  * @since 0.6.0
  */
-export const stream: <A>(buffer: Array<A>, cursor: number) => Stream<A> = (buffer, cursor = 0) => ({
+export const stream: <A>(buffer: Array<A>, cursor?: number) => Stream<A> = (buffer, cursor = 0) => ({
   buffer,
   cursor
 })
