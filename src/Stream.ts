@@ -6,7 +6,12 @@ import { Eq, fromEquals } from 'fp-ts/lib/Eq'
 import { map, Option } from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
 
+// -------------------------------------------------------------------------------------
+// model
+// -------------------------------------------------------------------------------------
+
 /**
+ * @category model
  * @since 0.6.0
  */
 export interface Stream<A> {
@@ -14,14 +19,24 @@ export interface Stream<A> {
   readonly cursor: number
 }
 
+// -------------------------------------------------------------------------------------
+// constructors
+// -------------------------------------------------------------------------------------
+
 /**
+ * @category constructors
  * @since 0.6.0
  */
 export function stream<A>(buffer: Array<A>, cursor: number = 0): Stream<A> {
   return { buffer, cursor }
 }
 
+// -------------------------------------------------------------------------------------
+// destructors
+// -------------------------------------------------------------------------------------
+
 /**
+ * @category destructors
  * @since 0.6.0
  */
 export function get<A>(s: Stream<A>): Option<A> {
@@ -29,6 +44,7 @@ export function get<A>(s: Stream<A>): Option<A> {
 }
 
 /**
+ * @category destructors
  * @since 0.6.0
  */
 export function atEnd<A>(s: Stream<A>): boolean {
@@ -36,6 +52,7 @@ export function atEnd<A>(s: Stream<A>): boolean {
 }
 
 /**
+ * @category destructors
  * @since 0.6.0
  */
 export function getAndNext<A>(s: Stream<A>): Option<{ value: A; next: Stream<A> }> {
@@ -45,7 +62,12 @@ export function getAndNext<A>(s: Stream<A>): Option<{ value: A; next: Stream<A> 
   )
 }
 
+// -------------------------------------------------------------------------------------
+// instances
+// -------------------------------------------------------------------------------------
+
 /**
+ * @category instances
  * @since 0.6.0
  */
 export function getEq<A>(E: Eq<A>): Eq<Stream<A>> {
