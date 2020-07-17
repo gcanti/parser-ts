@@ -96,9 +96,9 @@ Added in v0.6.0
 
 ```ts
 export interface ParseError<I> {
-  readonly input: Stream<I>
-  readonly expected: Array<string>
-  readonly fatal: boolean
+  input: Stream<I>
+  expected: Array<string>
+  fatal: boolean
 }
 ```
 
@@ -120,9 +120,9 @@ Added in v0.6.0
 
 ```ts
 export interface ParseSuccess<I, A> {
-  readonly value: A
-  readonly next: Stream<I>
-  readonly start: Stream<I>
+  value: A
+  next: Stream<I>
+  start: Stream<I>
 }
 ```
 

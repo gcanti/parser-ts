@@ -15,22 +15,20 @@ high state of flux, you're at risk of it changing without notice.
 
 # 0.7.0
 
-- **Breaking Change**
-  - upgrade to `fp-ts@2.7.0` (@IMax153)
+- **New Feature**
   - split "mega" parser instance into individual instances (@IMax153)
-    - Add `Functor` instance
-    - Add `Applicative` instance
-    - Add `Monad` instance
-    - Add `Alt` instance
-    - Add `Alternative` instance
-  - remove `pipeable` from `Parser` module (@IMax153)
+    - Add `Functor` instance (@IMax153)
+    - Add `Applicative` instance (@IMax153)
+    - Add `Monad` instance (@IMax153)
+    - Add `Alt` instance (@IMax153)
+    - Add `Alternative` instance (@IMax153)
 - **Bug Fix**
   - account for all common line terminators in `code-frame` (@IMax153)
 - **Polish**
-  - make `ParseError` and `ParseSuccess` models `readonly` in `ParseResult` (@IMax153)
   - standardize export declarations in all modules (@IMax153)
   - add `category` tags to module exports (@IMax153)
 - **Internal**
+  - remove `pipeable` from `Parser` module (@IMax153)
   - make `Location` model `readonly` in `code-frame` (@IMax153)
 
 # 0.6.6
