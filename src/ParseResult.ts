@@ -10,7 +10,7 @@ import { Stream } from './Stream'
 // model
 // -------------------------------------------------------------------------------------
 
-// TODO: make readonly in version 1.0.0
+// TODO: make readonly in version 0.7.0
 /**
  * @category model
  * @since 0.6.0
@@ -21,7 +21,7 @@ export interface ParseError<I> {
   fatal: boolean
 }
 
-// TODO: make readonly in version 1.0.0
+// TODO: make readonly in version 0.7.0
 /**
  * @category model
  * @since 0.6.0
