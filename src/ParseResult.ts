@@ -13,7 +13,7 @@ import { Stream } from './Stream'
 // TODO: make readonly in version 1.0.0
 /**
  * @category model
- * @since 0.7.0
+ * @since 0.6.0
  */
 export interface ParseError<I> {
   input: Stream<I>
@@ -24,7 +24,7 @@ export interface ParseError<I> {
 // TODO: make readonly in version 1.0.0
 /**
  * @category model
- * @since 0.7.0
+ * @since 0.6.0
  */
 export interface ParseSuccess<I, A> {
   value: A

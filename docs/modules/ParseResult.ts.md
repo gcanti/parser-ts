@@ -102,7 +102,7 @@ export interface ParseError<I> {
 }
 ```
 
-Added in v0.7.0
+Added in v0.6.0
 
 ## ParseResult (type alias)
 
@@ -126,4 +126,4 @@ export interface ParseSuccess<I, A> {
 }
 ```
 
-Added in v0.7.0
+Added in v0.6.0

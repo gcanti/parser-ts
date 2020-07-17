@@ -397,20 +397,20 @@ const alt_: Alt2<URI>['alt'] = (fa, that) => either(fa, that)
 
 /**
  * @category Functor
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const map: <A, B>(f: (a: A) => B) => <I>(fa: Parser<I, A>) => Parser<I, B> = f => fa => map_(fa, f)
 
 /**
  * @category Apply
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const ap: <I, A>(fa: Parser<I, A>) => <B>(fab: Parser<I, (a: A) => B>) => Parser<I, B> = fa => fab =>
   ap_(fab, fa)
 
 /**
  * @category Apply
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const apFirst: <I, B>(fb: Parser<I, B>) => <A>(fa: Parser<I, A>) => Parser<I, A> = fb => fa =>
   ap_(
@@ -420,7 +420,7 @@ export const apFirst: <I, B>(fb: Parser<I, B>) => <A>(fa: Parser<I, A>) => Parse
 
 /**
  * @category Apply
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const apSecond: <I, B>(fb: Parser<I, B>) => <A>(fa: Parser<I, A>) => Parser<I, B> = fb => fa =>
   ap_(
@@ -430,39 +430,39 @@ export const apSecond: <I, B>(fb: Parser<I, B>) => <A>(fa: Parser<I, A>) => Pars
 
 /**
  * @category Applicative
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const of: <I, A>(a: A) => Parser<I, A> = succeed
 
 /**
  * @category Monad
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const chain: <I, A, B>(f: (a: A) => Parser<I, B>) => (ma: Parser<I, A>) => Parser<I, B> = f => ma =>
   chain_(ma, f)
 
 /**
  * @category Monad
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const chainFirst: <I, A, B>(f: (a: A) => Parser<I, B>) => (ma: Parser<I, A>) => Parser<I, A> = f => ma =>
   chain_(ma, a => map_(f(a), () => a))
 
 /**
  * @category Alt
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const alt: <I, A>(that: Lazy<Parser<I, A>>) => (fa: Parser<I, A>) => Parser<I, A> = that => fa => alt_(fa, that)
 
 /**
  * @category Monad
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const flatten: <I, A>(mma: Parser<I, Parser<I, A>>) => Parser<I, A> = mma => chain_(mma, identity)
 
 /**
  * @category Alternative
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const zero: <I, A>() => Parser<I, A> = fail
 
@@ -490,7 +490,7 @@ declare module 'fp-ts/lib/HKT' {
 
 /**
  * @category instances
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const getSemigroup: <I, A>(S: Semigroup<A>) => Semigroup<Parser<I, A>> = S => ({
   concat: (x, y) =>
@@ -511,7 +511,7 @@ export const getMonoid: <I, A>(M: Monoid<A>) => Monoid<Parser<I, A>> = M => ({
 
 /**
  * @category instances
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const Functor: Functor2<URI> = {
   URI,
@@ -520,7 +520,7 @@ export const Functor: Functor2<URI> = {
 
 /**
  * @category instances
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const Applicative: Applicative2<URI> = {
   URI,
@@ -531,7 +531,7 @@ export const Applicative: Applicative2<URI> = {
 
 /**
  * @category instances
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const Monad: Monad2<URI> = {
   URI,
@@ -543,7 +543,7 @@ export const Monad: Monad2<URI> = {
 
 /**
  * @category instances
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const Alt: Alt2<URI> = {
   URI,
@@ -553,7 +553,7 @@ export const Alt: Alt2<URI> = {
 
 /**
  * @category instances
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const Alternative: Alternative2<URI> = {
   URI,
@@ -566,7 +566,7 @@ export const Alternative: Alternative2<URI> = {
 
 /**
  * @category instances
- * @since 0.7.0
+ * @since 0.6.7
  */
 export const parser: Monad2<URI> & Alternative2<URI> = {
   URI,

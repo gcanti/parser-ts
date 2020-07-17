@@ -78,7 +78,7 @@ Added in v0.6.0
 export declare const alt: <I, A>(that: Lazy<Parser<I, A>>) => (fa: Parser<I, A>) => Parser<I, A>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 # Alternative
 
@@ -90,7 +90,7 @@ Added in v0.7.0
 export declare const zero: <I, A>() => Parser<I, A>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 # Applicative
 
@@ -102,7 +102,7 @@ Added in v0.7.0
 export declare const of: <I, A>(a: A) => Parser<I, A>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 # Apply
 
@@ -114,7 +114,7 @@ Added in v0.7.0
 export declare const ap: <I, A>(fa: Parser<I, A>) => <B>(fab: Parser<I, (a: A) => B>) => Parser<I, B>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 ## apFirst
 
@@ -124,7 +124,7 @@ Added in v0.7.0
 export declare const apFirst: <I, B>(fb: Parser<I, B>) => <A>(fa: Parser<I, A>) => Parser<I, A>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 ## apSecond
 
@@ -134,7 +134,7 @@ Added in v0.7.0
 export declare const apSecond: <I, B>(fb: Parser<I, B>) => <A>(fa: Parser<I, A>) => Parser<I, B>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 # Functor
 
@@ -146,7 +146,7 @@ Added in v0.7.0
 export declare const map: <A, B>(f: (a: A) => B) => <I>(fa: Parser<I, A>) => Parser<I, B>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 # Monad
 
@@ -158,7 +158,7 @@ Added in v0.7.0
 export declare const chain: <I, A, B>(f: (a: A) => Parser<I, B>) => (ma: Parser<I, A>) => Parser<I, B>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 ## chainFirst
 
@@ -168,7 +168,7 @@ Added in v0.7.0
 export declare const chainFirst: <I, A, B>(f: (a: A) => Parser<I, B>) => (ma: Parser<I, A>) => Parser<I, A>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 ## flatten
 
@@ -178,7 +178,7 @@ Added in v0.7.0
 export declare const flatten: <I, A>(mma: Parser<I, Parser<I, A>>) => Parser<I, A>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 # combinators
 
@@ -532,7 +532,7 @@ Added in v0.6.0
 export declare const Alt: Alt2<'Parser'>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 ## Alternative
 
@@ -542,7 +542,7 @@ Added in v0.7.0
 export declare const Alternative: Alternative2<'Parser'>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 ## Applicative
 
@@ -552,7 +552,7 @@ Added in v0.7.0
 export declare const Applicative: Applicative2<'Parser'>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 ## Functor
 
@@ -562,7 +562,7 @@ Added in v0.7.0
 export declare const Functor: Functor2<'Parser'>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 ## Monad
 
@@ -572,7 +572,7 @@ Added in v0.7.0
 export declare const Monad: Monad2<'Parser'>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 ## URI
 
@@ -612,7 +612,7 @@ Added in v0.6.0
 export declare const getSemigroup: <I, A>(S: Semigroup<A>) => Semigroup<Parser<I, A>>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 ## parser
 
@@ -622,7 +622,7 @@ Added in v0.7.0
 export declare const parser: Monad2<'Parser'> & Alternative2<'Parser'>
 ```
 
-Added in v0.7.0
+Added in v0.6.7
 
 # model
 
