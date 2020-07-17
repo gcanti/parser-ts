@@ -10,24 +10,26 @@ import { Stream } from './Stream'
 // model
 // -------------------------------------------------------------------------------------
 
+// TODO: make readonly in version 1.0.0
 /**
  * @category model
  * @since 0.7.0
  */
 export interface ParseError<I> {
-  readonly input: Stream<I>
-  readonly expected: Array<string>
-  readonly fatal: boolean
+  input: Stream<I>
+  expected: Array<string>
+  fatal: boolean
 }
 
+// TODO: make readonly in version 1.0.0
 /**
  * @category model
  * @since 0.7.0
  */
 export interface ParseSuccess<I, A> {
-  readonly value: A
-  readonly next: Stream<I>
-  readonly start: Stream<I>
+  value: A
+  next: Stream<I>
+  start: Stream<I>
 }
 
 /**
