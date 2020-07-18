@@ -10,46 +10,19 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import * as C from './char'
 import * as P from './Parser'
 
-/**
- * @since 0.6.0
- */
-export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = P.maybe(M.monoidString)
-
-/**
- * Matches the given parser zero or more times, returning a string of the
- * entire match
- *
- * @since 0.6.0
- */
-export function many(parser: P.Parser<C.Char, string>): P.Parser<C.Char, string> {
-  return maybe(many1(parser))
-}
-
-/**
- * Matches the given parser one or more times, returning a string of the
- * entire match
- *
- * @since 0.6.0
- */
-export function many1(parser: P.Parser<C.Char, string>): P.Parser<C.Char, string> {
-  return pipe(
-    P.many1(parser),
-    P.map(nea => nea.join(''))
-  )
-}
-
-function charAt(index: number, s: string): O.Option<C.Char> {
-  return index >= 0 && index < s.length ? O.some(s.charAt(index)) : O.none
-}
+// -------------------------------------------------------------------------------------
+// constructors
+// -------------------------------------------------------------------------------------
 
 /**
  * Matches the exact string provided.
  *
+ * @category constructors
  * @since 0.6.0
  */
-export function string(s: string): P.Parser<C.Char, string> {
-  function _string(s2: string): P.Parser<C.Char, string> {
-    return pipe(
+export const string: (s: string) => P.Parser<C.Char, string> = s => {
+  const _string: (s2: string) => P.Parser<C.Char, string> = s2 =>
+    pipe(
       charAt(0, s2),
       O.fold(
         () => P.succeed(''),
@@ -61,13 +34,13 @@ export function string(s: string): P.Parser<C.Char, string> {
           )
       )
     )
-  }
   return P.expected(_string(s), JSON.stringify(s))
 }
 
 /**
  * Matches one of a list of strings.
  *
+ * @category constructors
  * @since 0.6.0
  */
 export function oneOf<F extends URIS>(F: Functor1<F> & Foldable1<F>): (ss: Kind<F, string>) => P.Parser<C.Char, string>
@@ -82,9 +55,55 @@ export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P
     )
 }
 
+// -------------------------------------------------------------------------------------
+// destructors
+// -------------------------------------------------------------------------------------
+
+/**
+ * @category destructors
+ * @since 0.6.0
+ */
+export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = M.fold(P.getMonoid(M.monoidString))
+
+// -------------------------------------------------------------------------------------
+// combinators
+// -------------------------------------------------------------------------------------
+
+/**
+ * @category combinators
+ * @since 0.6.0
+ */
+export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = P.maybe(M.monoidString)
+
+/**
+ * Matches the given parser zero or more times, returning a string of the
+ * entire match
+ *
+ * @category combinators
+ * @since 0.6.0
+ */
+export const many: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string> = parser => maybe(many1(parser))
+
+/**
+ * Matches the given parser one or more times, returning a string of the
+ * entire match
+ *
+ * @category combinators
+ * @since 0.6.0
+ */
+export const many1: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string> = parser =>
+  pipe(
+    P.many1(parser),
+    P.map(nea => nea.join(''))
+  )
+
+const charAt: (index: number, s: string) => O.Option<C.Char> = (index, s) =>
+  index >= 0 && index < s.length ? O.some(s.charAt(index)) : O.none
+
 /**
  * Matches zero or more whitespace characters.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const spaces: P.Parser<C.Char, string> = C.many(C.space)
@@ -92,6 +111,7 @@ export const spaces: P.Parser<C.Char, string> = C.many(C.space)
 /**
  * Matches one or more whitespace characters.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const spaces1: P.Parser<C.Char, string> = C.many1(C.space)
@@ -99,6 +119,7 @@ export const spaces1: P.Parser<C.Char, string> = C.many1(C.space)
 /**
  * Matches zero or more non-whitespace characters.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const notSpaces: P.Parser<C.Char, string> = C.many(C.notSpace)
@@ -106,21 +127,18 @@ export const notSpaces: P.Parser<C.Char, string> = C.many(C.notSpace)
 /**
  * Matches one or more non-whitespace characters.
  *
+ * @category combinators
  * @since 0.6.0
  */
 export const notSpaces1: P.Parser<C.Char, string> = C.many1(C.notSpace)
 
-/**
- * @since 0.6.0
- */
-export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = M.fold(P.getMonoid(M.monoidString))
-
-function fromString(s: string): O.Option<number> {
+const fromString: (s: string) => O.Option<number> = s => {
   const n = +s
   return isNaN(n) || s === '' ? O.none : O.some(n)
 }
 
 /**
+ * @category combinators
  * @since 0.6.0
  */
 export const int: P.Parser<C.Char, number> = P.expected(
@@ -132,6 +150,7 @@ export const int: P.Parser<C.Char, number> = P.expected(
 )
 
 /**
+ * @category combinators
  * @since 0.6.0
  */
 export const float: P.Parser<C.Char, number> = P.expected(
@@ -152,6 +171,9 @@ export const float: P.Parser<C.Char, number> = P.expected(
  * inside it, and returns the inner string. Does not perform any other form
  * of string escaping.
  *
+ * @category combinators
  * @since 0.6.0
  */
-export const doubleQuotedString = P.surroundedBy(C.char('"'))(many(P.either(string('\\"'), () => C.notChar('"'))))
+export const doubleQuotedString: P.Parser<string, String> = P.surroundedBy(C.char('"'))(
+  many(P.either(string('\\"'), () => C.notChar('"')))
+)

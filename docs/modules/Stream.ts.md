@@ -12,17 +12,76 @@ Added in v0.6.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [utils](#utils)
-  - [Stream (interface)](#stream-interface)
+- [constructors](#constructors)
+  - [stream](#stream)
+- [destructors](#destructors)
   - [atEnd](#atend)
   - [get](#get)
   - [getAndNext](#getandnext)
+- [instances](#instances)
   - [getEq](#geteq)
-  - [stream](#stream)
+- [model](#model)
+  - [Stream (interface)](#stream-interface)
 
 ---
 
-# utils
+# constructors
+
+## stream
+
+**Signature**
+
+```ts
+export declare const stream: <A>(buffer: A[], cursor?: number) => Stream<A>
+```
+
+Added in v0.6.0
+
+# destructors
+
+## atEnd
+
+**Signature**
+
+```ts
+export declare const atEnd: <A>(s: Stream<A>) => boolean
+```
+
+Added in v0.6.0
+
+## get
+
+**Signature**
+
+```ts
+export declare const get: <A>(s: Stream<A>) => Option<A>
+```
+
+Added in v0.6.0
+
+## getAndNext
+
+**Signature**
+
+```ts
+export declare const getAndNext: <A>(s: Stream<A>) => Option<{ value: A; next: Stream<A> }>
+```
+
+Added in v0.6.0
+
+# instances
+
+## getEq
+
+**Signature**
+
+```ts
+export declare const getEq: <A>(E: Eq<A>) => Eq<Stream<A>>
+```
+
+Added in v0.6.0
+
+# model
 
 ## Stream (interface)
 
@@ -33,56 +92,6 @@ export interface Stream<A> {
   readonly buffer: Array<A>
   readonly cursor: number
 }
-```
-
-Added in v0.6.0
-
-## atEnd
-
-**Signature**
-
-```ts
-export declare function atEnd<A>(s: Stream<A>): boolean
-```
-
-Added in v0.6.0
-
-## get
-
-**Signature**
-
-```ts
-export declare function get<A>(s: Stream<A>): Option<A>
-```
-
-Added in v0.6.0
-
-## getAndNext
-
-**Signature**
-
-```ts
-export declare function getAndNext<A>(s: Stream<A>): Option<{ value: A; next: Stream<A> }>
-```
-
-Added in v0.6.0
-
-## getEq
-
-**Signature**
-
-```ts
-export declare function getEq<A>(E: Eq<A>): Eq<Stream<A>>
-```
-
-Added in v0.6.0
-
-## stream
-
-**Signature**
-
-```ts
-export declare function stream<A>(buffer: Array<A>, cursor: number = 0): Stream<A>
 ```
 
 Added in v0.6.0

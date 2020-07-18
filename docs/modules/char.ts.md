@@ -12,40 +12,33 @@ Added in v0.6.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [utils](#utils)
-  - [Char (type alias)](#char-type-alias)
+- [combinators](#combinators)
   - [alphanum](#alphanum)
-  - [char](#char)
   - [digit](#digit)
-  - [letter](#letter)
   - [lower](#lower)
   - [many](#many)
   - [many1](#many1)
   - [notAlphanum](#notalphanum)
-  - [notChar](#notchar)
   - [notDigit](#notdigit)
   - [notLetter](#notletter)
   - [notLower](#notlower)
-  - [notOneOf](#notoneof)
   - [notSpace](#notspace)
   - [notUpper](#notupper)
-  - [oneOf](#oneof)
   - [space](#space)
   - [upper](#upper)
+- [constructors](#constructors)
+  - [char](#char)
+  - [notChar](#notchar)
+  - [notOneOf](#notoneof)
+  - [oneOf](#oneof)
+- [model](#model)
+  - [Char (type alias)](#char-type-alias)
+- [utils](#utils)
+  - [letter](#letter)
 
 ---
 
-# utils
-
-## Char (type alias)
-
-**Signature**
-
-```ts
-export type Char = string
-```
-
-Added in v0.6.0
+# combinators
 
 ## alphanum
 
@@ -59,19 +52,6 @@ export declare const alphanum: P.Parser<string, string>
 
 Added in v0.6.0
 
-## char
-
-The `char` parser constructor returns a parser which matches only the
-specified single character
-
-**Signature**
-
-```ts
-export declare function char(c: Char): P.Parser<Char, Char>
-```
-
-Added in v0.6.0
-
 ## digit
 
 Matches a single digit.
@@ -80,18 +60,6 @@ Matches a single digit.
 
 ```ts
 export declare const digit: P.Parser<string, string>
-```
-
-Added in v0.6.0
-
-## letter
-
-Matches a single ASCII letter.
-
-**Signature**
-
-```ts
-export declare const letter: P.Parser<string, string>
 ```
 
 Added in v0.6.0
@@ -116,7 +84,7 @@ a `string` of what was matched.
 **Signature**
 
 ```ts
-export declare function many(parser: P.Parser<Char, Char>): P.Parser<Char, string>
+export declare const many: (parser: P.Parser<string, string>) => P.Parser<string, string>
 ```
 
 Added in v0.6.0
@@ -129,7 +97,7 @@ a `string` of what was matched.
 **Signature**
 
 ```ts
-export declare function many1(parser: P.Parser<Char, Char>): P.Parser<Char, string>
+export declare const many1: (parser: P.Parser<string, string>) => P.Parser<string, string>
 ```
 
 Added in v0.6.0
@@ -142,19 +110,6 @@ Matches a single character which isn't a letter, digit or underscore.
 
 ```ts
 export declare const notAlphanum: P.Parser<string, string>
-```
-
-Added in v0.6.0
-
-## notChar
-
-The `notChar` parser constructor makes a parser which will match any
-single character other than the one provided.
-
-**Signature**
-
-```ts
-export declare function notChar(c: Char): P.Parser<Char, Char>
 ```
 
 Added in v0.6.0
@@ -195,18 +150,6 @@ export declare const notLower: P.Parser<string, string>
 
 Added in v0.6.0
 
-## notOneOf
-
-Matches a single character which isn't a character from the provided string.
-
-**Signature**
-
-```ts
-export declare function notOneOf(s: string): P.Parser<Char, Char>
-```
-
-Added in v0.6.0
-
 ## notSpace
 
 Matches a single character which isn't whitespace.
@@ -231,18 +174,6 @@ export declare const notUpper: P.Parser<string, string>
 
 Added in v0.6.0
 
-## oneOf
-
-Matches any one character from the provided string.
-
-**Signature**
-
-```ts
-export declare function oneOf(s: string): P.Parser<Char, Char>
-```
-
-Added in v0.6.0
-
 ## space
 
 Matches a single whitespace character.
@@ -263,6 +194,84 @@ Matches a single upper case ASCII letter.
 
 ```ts
 export declare const upper: P.Parser<string, string>
+```
+
+Added in v0.6.0
+
+# constructors
+
+## char
+
+The `char` parser constructor returns a parser which matches only the
+specified single character
+
+**Signature**
+
+```ts
+export declare const char: (c: string) => P.Parser<string, string>
+```
+
+Added in v0.6.0
+
+## notChar
+
+The `notChar` parser constructor makes a parser which will match any
+single character other than the one provided.
+
+**Signature**
+
+```ts
+export declare const notChar: (c: string) => P.Parser<string, string>
+```
+
+Added in v0.6.0
+
+## notOneOf
+
+Matches a single character which isn't a character from the provided string.
+
+**Signature**
+
+```ts
+export declare const notOneOf: (s: string) => P.Parser<string, string>
+```
+
+Added in v0.6.0
+
+## oneOf
+
+Matches any one character from the provided string.
+
+**Signature**
+
+```ts
+export declare const oneOf: (s: string) => P.Parser<string, string>
+```
+
+Added in v0.6.0
+
+# model
+
+## Char (type alias)
+
+**Signature**
+
+```ts
+export type Char = string
+```
+
+Added in v0.6.0
+
+# utils
+
+## letter
+
+Matches a single ASCII letter.
+
+**Signature**
+
+```ts
+export declare const letter: P.Parser<string, string>
 ```
 
 Added in v0.6.0

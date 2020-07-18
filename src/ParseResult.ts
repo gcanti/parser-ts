@@ -1,11 +1,18 @@
 /**
  * @since 0.6.0
  */
-import { empty } from 'fp-ts/lib/Array'
+import { empty, getMonoid } from 'fp-ts/lib/Array'
 import { Either, left, right } from 'fp-ts/lib/Either'
+import { getFirstSemigroup, getLastSemigroup, getStructSemigroup, Semigroup } from 'fp-ts/lib/Semigroup'
 import { Stream } from './Stream'
 
+// -------------------------------------------------------------------------------------
+// model
+// -------------------------------------------------------------------------------------
+
+// TODO: make readonly in version 0.7.0
 /**
+ * @category model
  * @since 0.6.0
  */
 export interface ParseError<I> {
@@ -14,7 +21,9 @@ export interface ParseError<I> {
   fatal: boolean
 }
 
+// TODO: make readonly in version 0.7.0
 /**
+ * @category model
  * @since 0.6.0
  */
 export interface ParseSuccess<I, A> {
@@ -24,68 +33,83 @@ export interface ParseSuccess<I, A> {
 }
 
 /**
+ * @category model
  * @since 0.6.0
  */
 export type ParseResult<I, A> = Either<ParseError<I>, ParseSuccess<I, A>>
 
-/**
- * @since 0.6.0
- */
-export function withExpected<I>(err: ParseError<I>, expected: Array<string>): ParseError<I> {
-  return {
-    ...err,
-    expected
-  }
-}
+// -------------------------------------------------------------------------------------
+// constructors
+// -------------------------------------------------------------------------------------
 
 /**
+ * @category constructors
  * @since 0.6.0
  */
-export function escalate<I>(err: ParseError<I>): ParseError<I> {
-  return {
-    ...err,
-    fatal: true
-  }
-}
-
-/**
- * @since 0.6.0
- */
-export function extend<I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<I> {
-  if (err1.input.cursor < err2.input.cursor) {
-    return err2
-  } else if (err1.input.cursor > err2.input.cursor) {
-    return err1
-  } else {
-    return {
-      ...err1,
-      expected: err1.expected.concat(err2.expected)
-    }
-  }
-}
-
-/**
- * @since 0.6.0
- */
-export function success<I, A>(value: A, next: Stream<I>, start: Stream<I>): ParseResult<I, A> {
-  return right({
+export const success: <I, A>(value: A, next: Stream<I>, start: Stream<I>) => ParseResult<I, A> = (value, next, start) =>
+  right({
     value,
     next,
     start
   })
-}
 
 /**
+ * @category constructors
  * @since 0.6.0
  */
-export function error<I, A = never>(
-  input: Stream<I>,
-  expected: Array<string> = empty,
-  fatal: boolean = false
-): ParseResult<I, A> {
-  return left({
+export const error: <I, A = never>(input: Stream<I>, expected?: Array<string>, fatal?: boolean) => ParseResult<I, A> = (
+  input,
+  expected = empty,
+  fatal = false
+) =>
+  left({
     input,
     expected,
     fatal
   })
-}
+
+// -------------------------------------------------------------------------------------
+// combinators
+// -------------------------------------------------------------------------------------
+
+/**
+ * @category combinators
+ * @since 0.6.0
+ */
+export const withExpected: <I>(err: ParseError<I>, expected: Array<string>) => ParseError<I> = (err, expected) => ({
+  ...err,
+  expected
+})
+
+/**
+ * @category combinators
+ * @since 0.6.0
+ */
+export const escalate: <I>(err: ParseError<I>) => ParseError<I> = err => ({
+  ...err,
+  fatal: true
+})
+
+/**
+ * @category combinators
+ * @since 0.6.0
+ */
+export const extend = <I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<I> =>
+  getSemigroup<I>().concat(err1, err2)
+
+// -------------------------------------------------------------------------------------
+// instances
+// -------------------------------------------------------------------------------------
+
+const getSemigroup = <I>(): Semigroup<ParseError<I>> => ({
+  concat: (x, y) => {
+    if (x.input.cursor < y.input.cursor) return getLastSemigroup<ParseError<I>>().concat(x, y)
+    if (x.input.cursor > y.input.cursor) return getFirstSemigroup<ParseError<I>>().concat(x, y)
+
+    return getStructSemigroup<ParseError<I>>({
+      input: getFirstSemigroup<Stream<I>>(),
+      fatal: getFirstSemigroup<boolean>(),
+      expected: getMonoid<string>()
+    }).concat(x, y)
+  }
+})

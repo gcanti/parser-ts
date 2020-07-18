@@ -26,7 +26,7 @@ Returns a pretty printed error message using `@babel/code-frame`
 **Signature**
 
 ```ts
-export declare function run<A>(p: Parser<Char, A>, source: string): Either<string, A>
+export declare const run: <A>(p: Parser<string, A>, source: string) => Either<string, A>
 ```
 
 Added in v0.6.0

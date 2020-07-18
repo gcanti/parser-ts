@@ -30,6 +30,26 @@ describe('Parser', () => {
     assert.deepStrictEqual(run(parser4, 'bc'), error(stream(['b', 'c'], 1), ['"bb"']))
   })
 
+  it('ap', () => {
+    const parser = P.ap(C.char('a'))(P.of(s => s.length))
+    assert.deepStrictEqual(run(parser, 'a'), success(1, stream(['a'], 1), stream(['a'])))
+  })
+
+  it('apFirst', () => {
+    const parser = P.apFirst(S.spaces)(C.char('a'))
+    assert.deepStrictEqual(run(parser, 'a '), success('a', stream(['a', ' '], 2), stream(['a', ' '])))
+  })
+
+  it('apSecond', () => {
+    const parser = P.apSecond(S.spaces)(C.char('a'))
+    assert.deepStrictEqual(run(parser, 'a '), success(' ', stream(['a', ' '], 2), stream(['a', ' '])))
+  })
+
+  it('flatten', () => {
+    const parser = P.of<string, P.Parser<string, string>>(C.char('a'))
+    assert.deepStrictEqual(run(P.flatten(parser), 'a'), success('a', stream(['a'], 1), stream(['a'])))
+  })
+
   it('cutWith', () => {
     const parser = P.cutWith(C.char('a'), C.char('b'))
     assert.deepStrictEqual(run(parser, 'ac'), error(stream(['a', 'c'], 1), ['"b"'], true))

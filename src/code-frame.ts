@@ -9,20 +9,22 @@ import { stream } from './Stream'
 const { codeFrameColumns } = require('@babel/code-frame')
 
 interface Location {
-  start: {
-    line: number
-    column: number
+  readonly start: {
+    readonly line: number
+    readonly column: number
   }
 }
 
-function getLocation(source: string, cursor: number): Location {
+const lineTerminatorRegex = /^\r\n$|^[\n\r]$/
+
+const getLocation: (source: string, cursor: number) => Location = (source, cursor) => {
   let line = 1
   let column = 1
   let i = 0
   while (i < cursor) {
     i++
     const c = source.charAt(i)
-    if (c === '\n') {
+    if (lineTerminatorRegex.test(c)) {
       line++
       column = 1
     } else {
@@ -42,8 +44,8 @@ function getLocation(source: string, cursor: number): Location {
  *
  * @since 0.6.0
  */
-export function run<A>(p: Parser<Char, A>, source: string): Either<string, A> {
-  return pipe(
+export const run: <A>(p: Parser<Char, A>, source: string) => Either<string, A> = (p, source) =>
+  pipe(
     p(stream(source.split(''))),
     bimap(
       err =>
@@ -53,4 +55,3 @@ export function run<A>(p: Parser<Char, A>, source: string): Either<string, A> {
       succ => succ.value
     )
   )
-}
