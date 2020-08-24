@@ -65,6 +65,9 @@ Added in v0.6.0
   - [parser](#parser)
 - [model](#model)
   - [Parser (interface)](#parser-interface)
+- [utils](#utils)
+  - [bind](#bind)
+  - [bindTo](#bindto)
 
 ---
 
@@ -637,3 +640,28 @@ export interface Parser<I, A> {
 ```
 
 Added in v0.6.0
+
+# utils
+
+## bind
+
+**Signature**
+
+```ts
+export declare const bind: <N extends string, I, A, B>(
+  name: Exclude<N, keyof A>,
+  f: (a: A) => Parser<I, B>
+) => (fa: Parser<I, A>) => Parser<I, { [K in N | keyof A]: K extends keyof A ? A[K] : B }>
+```
+
+Added in v0.6.8
+
+## bindTo
+
+**Signature**
+
+```ts
+export declare const bindTo: <N extends string>(name: N) => <I, A>(fa: Parser<I, A>) => Parser<I, { [K in N]: A }>
+```
+
+Added in v0.6.8
