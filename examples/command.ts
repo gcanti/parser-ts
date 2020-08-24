@@ -33,7 +33,6 @@
  * For example, one could generalize the parser exemplified below to accept any command. Then, the
  * structure of the parsed AST for specific commands can be enforced using instances of `io-ts` `Schema`s.
  */
-import { Do } from 'fp-ts-contrib/lib/Do'
 import * as A from 'fp-ts/lib/Array'
 import { mapLeft, Either } from 'fp-ts/lib/Either'
 import { getStructMonoid, Monoid } from 'fp-ts/lib/Monoid'
@@ -173,10 +172,11 @@ const positional: P.Parser<string, Positional> = pipe(C.many1(C.notSpace), P.map
 const argument = P.either<string, Argument>(flag, () => P.either<string, Argument>(named, () => positional))
 
 const statement = (cmd: string) =>
-  Do(P.parser)
-    .bind('command', whitespaceSurrounded(S.string(cmd)))
-    .bind('args', P.many(whitespaceSurrounded(argument)))
-    .done()
+  pipe(
+    whitespaceSurrounded(S.string(cmd)),
+    P.bindTo('command'),
+    P.bind('args', () => P.many(whitespaceSurrounded(argument)))
+  )
 
 const ast = (command: string, source: string): P.Parser<string, Ast> => {
   return pipe(

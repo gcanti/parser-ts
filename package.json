@@ -43,7 +43,6 @@
     "docs-ts": "^0.5.1",
     "dtslint": "^0.4.2",
     "fp-ts": "^2.0.0",
-    "fp-ts-contrib": "^0.1.17",
     "import-path-rewrite": "github:gcanti/import-path-rewrite",
     "jest": "^24.8.0",
     "mocha": "^5.2.0",
