@@ -3,6 +3,7 @@ import { char as C, parser as P, string as S } from '../src'
 import { error, success } from '../src/ParseResult'
 import { stream } from '../src/Stream'
 import { run } from './helpers'
+import { pipe } from 'fp-ts/lib/pipeable'
 
 describe('Parser', () => {
   it('eof', () => {
@@ -119,5 +120,26 @@ describe('Parser', () => {
     const parser = P.takeUntil((char: C.Char) => char === 'c')
     assert.deepStrictEqual(run(parser, 'ab'), success(['a', 'b'], stream(['a', 'b'], 2), stream(['a', 'b'])))
     assert.deepStrictEqual(run(parser, 'abc'), success(['a', 'b'], stream(['a', 'b', 'c'], 2), stream(['a', 'b', 'c'])))
+  })
+
+  it('bind', () => {
+    const parser = pipe(
+      C.char('a'),
+      P.bindTo('a'),
+      P.bind('b', () => C.char('b')),
+      P.map(({ a, b }) => [a, b])
+    )
+    assert.deepStrictEqual(run(parser, 'ab'), success(['a', 'b'], stream(['a', 'b'], 2), stream(['a', 'b'])))
+    assert.deepStrictEqual(run(parser, 'bc'), error(stream(['b', 'c'], 0), ['"a"']))
+  })
+
+  it('bindTo', () => {
+    const parser = pipe(
+      C.char('a'),
+      P.bindTo('headingA'),
+      P.map(({ headingA }) => [headingA])
+    )
+    assert.deepStrictEqual(run(parser, 'ab'), success(['a'], stream(['a', 'b'], 1), stream(['a', 'b'])))
+    assert.deepStrictEqual(run(parser, 'bc'), error(stream(['b', 'c'], 0), ['"a"']))
   })
 })

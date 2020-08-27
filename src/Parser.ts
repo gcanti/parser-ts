@@ -577,3 +577,41 @@ export const parser: Monad2<URI> & Alternative2<URI> = {
   alt: alt_,
   zero: fail
 }
+
+// -------------------------------------------------------------------------------------
+// do notation
+// -------------------------------------------------------------------------------------
+
+/**
+ * @internal
+ */
+const bind_ = <A, N extends string, B>(
+  a: A,
+  name: Exclude<N, keyof A>,
+  b: B
+): { [K in keyof A | N]: K extends keyof A ? A[K] : B } => Object.assign({}, a, { [name]: b }) as any
+
+/**
+ * @since 0.6.8
+ */
+export const bindTo = <N extends string>(name: N) => <I, A>(fa: Parser<I, A>): Parser<I, { [K in N]: A }> =>
+  pipe(
+    fa,
+    map(a => bind_({}, name, a))
+  )
+
+/**
+ * @since 0.6.8
+ */
+export const bind = <N extends string, I, A, B>(name: Exclude<N, keyof A>, f: (a: A) => Parser<I, B>) => (
+  fa: Parser<I, A>
+): Parser<I, { [K in keyof A | N]: K extends keyof A ? A[K] : B }> =>
+  pipe(
+    fa,
+    chain(a =>
+      pipe(
+        f(a),
+        map(b => bind_(a, name, b))
+      )
+    )
+  )
