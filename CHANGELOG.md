@@ -13,6 +13,11 @@
 **Note**: Gaps between patch versions are faulty/broken releases. **Note**: A feature tagged as Experimental is in a
 high state of flux, you're at risk of it changing without notice.
 
+# 0.6.9
+
+- **New Feature**
+  - expose modules without lib/es6 prefix, closes #32 (@gcanti)
+
 # 0.6.8
 
 - **New Feature**
