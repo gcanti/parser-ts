@@ -1,6 +1,7 @@
 /**
  * @since 0.6.0
  */
+import * as E from 'fp-ts/lib/Either'
 import { Foldable, Foldable1 } from 'fp-ts/lib/Foldable'
 import { Functor, Functor1 } from 'fp-ts/lib/Functor'
 import { HKT, Kind, URIS } from 'fp-ts/lib/HKT'
@@ -9,6 +10,7 @@ import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as C from './char'
 import * as P from './Parser'
+import { success } from './ParseResult'
 
 // -------------------------------------------------------------------------------------
 // constructors
@@ -35,6 +37,45 @@ export const string: (s: string) => P.Parser<C.Char, string> = s => {
       )
     )
   return P.expected(_string(s), JSON.stringify(s))
+}
+
+/**
+ * Fails if the specified string is matched, otherwise succeeds with an empty result and
+ * consumes no input.
+ *
+ * @example
+ * import { run } from 'parser-ts/lib/code-frame'
+ * import * as S from 'parser-ts/lib/string'
+ *
+ * const parser = S.notString('foo')
+ *
+ * run(parser, 'bar')
+ * // { _tag: 'Right', right: '' }
+ *
+ * run(parser, 'foo')
+ * // { _tag: 'Left', left: '> 1 | foo\n    | ^ Expected: not "foo"' }
+ *
+ * @category constructors
+ * @since 0.7.0
+ */
+export const notString: (s: string) => P.Parser<C.Char, string> = s => i => {
+  const _string: (s2: string) => P.Parser<C.Char, string> = s2 =>
+    pipe(
+      charAt(0, s2),
+      O.fold(
+        () => P.succeed(''),
+        c =>
+          pipe(
+            C.notChar(c),
+            P.chain(() => _string(s2.slice(1))),
+            P.chain(() => P.succeed(''))
+          )
+      )
+    )
+  return pipe(
+    P.expected(_string(s), `not ${JSON.stringify(s)}`)(i),
+    E.chain(next => success(next.value, i, i))
+  )
 }
 
 /**
