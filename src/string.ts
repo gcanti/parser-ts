@@ -96,6 +96,20 @@ export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P
     )
 }
 
+/**
+ * Fails if any of the specified strings are matched, otherwise succeeds with an empty result and
+ * consumes no input.
+ *
+ * @category constructors
+ * @since 0.7.0
+ */
+export const notOneOf: {
+  <F extends URIS>(F: Functor1<F> & Foldable1<F>): (ss: Kind<F, string>) => P.Parser<C.Char, string>
+  <F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string>
+  <F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string>
+} = <F>(F: Functor<F> & Foldable<F>) => (ss: HKT<F, string>): P.Parser<C.Char, string> =>
+  F.reduce(ss, P.succeed(''), (p, s) => fold([p, notString(s)]))
+
 // -------------------------------------------------------------------------------------
 // destructors
 // -------------------------------------------------------------------------------------
