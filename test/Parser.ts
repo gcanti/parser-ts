@@ -1,9 +1,11 @@
 import * as assert from 'assert'
+import { none, some } from 'fp-ts/lib/Option'
+import { pipe } from 'fp-ts/lib/pipeable'
+
 import { char as C, parser as P, string as S } from '../src'
 import { error, success } from '../src/ParseResult'
 import { stream } from '../src/Stream'
 import { run } from './helpers'
-import { pipe } from 'fp-ts/lib/pipeable'
 
 describe('Parser', () => {
   it('eof', () => {
@@ -120,6 +122,12 @@ describe('Parser', () => {
     const parser = P.takeUntil((char: C.Char) => char === 'c')
     assert.deepStrictEqual(run(parser, 'ab'), success(['a', 'b'], stream(['a', 'b'], 2), stream(['a', 'b'])))
     assert.deepStrictEqual(run(parser, 'abc'), success(['a', 'b'], stream(['a', 'b', 'c'], 2), stream(['a', 'b', 'c'])))
+  })
+
+  it('optional', () => {
+    const parser = P.optional(P.sat((char: C.Char) => char === 'a'))
+    assert.deepStrictEqual(run(parser, 'a'), success(some('a'), stream(['a'], 1), stream(['a'])))
+    assert.deepStrictEqual(run(parser, 'b'), success(none, stream(['b'], 0), stream(['b'])))
   })
 
   it('bind', () => {

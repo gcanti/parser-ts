@@ -398,11 +398,12 @@ export const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, Array<I>> = pr
  * @category combinators
  * @since 0.7.0
  */
-export const optional = <I, A>(parser: Parser<I, A>): Parser<I, O.Option<A>> => pipe(
-  parser,
-  map(O.some),
-  alt(() => succeed<I, O.Option<A>>(O.none))
-)
+export const optional = <I, A>(parser: Parser<I, A>): Parser<I, O.Option<A>> =>
+  pipe(
+    parser,
+    map(O.some),
+    alt(() => succeed<I, O.Option<A>>(O.none))
+  )
 
 // -------------------------------------------------------------------------------------
 // non-pipeables
