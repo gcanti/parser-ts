@@ -18,6 +18,7 @@ describe('string', () => {
 
   it('notString', () => {
     const parser = S.notString('foo')
+    assert.deepStrictEqual(run(parser, ''), success('', stream([], 0), stream([])))
     assert.deepStrictEqual(run(parser, 'bar'), success('', stream(['b', 'a', 'r'], 0), stream(['b', 'a', 'r'])))
     assert.deepStrictEqual(run(parser, 'foo'), error(stream(['f', 'o', 'o']), ['not "foo"']))
   })

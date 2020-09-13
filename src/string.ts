@@ -10,7 +10,8 @@ import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as C from './char'
 import * as P from './Parser'
-import { success } from './ParseResult'
+import { error, success, ParseResult } from './ParseResult'
+import { getAndNext, Stream } from './Stream'
 
 // -------------------------------------------------------------------------------------
 // constructors
@@ -59,21 +60,24 @@ export const string: (s: string) => P.Parser<C.Char, string> = s => {
  * @since 0.7.0
  */
 export const notString: (s: string) => P.Parser<C.Char, string> = s => i => {
-  const _string: (s2: string) => P.Parser<C.Char, string> = s2 =>
+  const _string: (s2: string, stream: Stream<string>) => ParseResult<C.Char, string> = (s2, i2) =>
     pipe(
       charAt(0, s2),
       O.fold(
-        () => P.succeed(''),
+        () => success('', i2, i2),
         c =>
           pipe(
-            C.notChar(c),
-            P.chain(() => _string(s2.slice(1))),
-            P.chain(() => P.succeed(''))
+            getAndNext(i2),
+            O.fold(
+              () => success('', i2, i2),
+              ({ value, next }) => (c !== value ? _string(s2.slice(1), next) : error(i2, [`not ${JSON.stringify(s)}`]))
+            )
           )
       )
     )
+
   return pipe(
-    P.expected(_string(s), `not ${JSON.stringify(s)}`)(i),
+    _string(s, i),
     E.chain(next => success(next.value, i, i))
   )
 }
