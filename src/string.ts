@@ -44,8 +44,8 @@ export const string: (s: string) => P.Parser<C.Char, string> = s => {
  * consumes no input.
  *
  * @example
- * import { run } from 'parser-ts/lib/code-frame'
- * import * as S from 'parser-ts/lib/string'
+ * import { run } from 'parser-ts/code-frame'
+ * import * as S from 'parser-ts/string'
  *
  * const parser = S.notString('foo')
  *
