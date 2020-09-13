@@ -338,9 +338,9 @@ export const surroundedBy: <I, A>(bound: Parser<I, A>) => <B>(p: Parser<I, B>) =
  * Takes a `Parser` and tries to match it without consuming any input.
  *
  * @example
- * import { run } from 'parser-ts/lib/code-frame'
- * import * as P from 'parser-ts/lib/Parser'
- * import * as S from 'parser-ts/lib/string'
+ * import { run } from 'parser-ts/code-frame'
+ * import * as P from 'parser-ts/Parser'
+ * import * as S from 'parser-ts/string'
  *
  * const parser = S.fold([
  *   S.string('hello '),
@@ -364,9 +364,9 @@ export const lookAhead: <I, A>(p: Parser<I, A>) => Parser<I, A> = p => i =>
  * Takes a `Predicate` and continues parsing until the given `Predicate` is satisfied.
  *
  * @example
- * import * as C from 'parser-ts/lib/char'
- * import { run } from 'parser-ts/lib/code-frame'
- * import * as P from 'parser-ts/lib/Parser'
+ * import * as C from 'parser-ts/char'
+ * import { run } from 'parser-ts/code-frame'
+ * import * as P from 'parser-ts/Parser'
  *
  * const parser = P.takeUntil((c: C.Char) => c === 'w')
  *
