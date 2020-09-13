@@ -24,6 +24,8 @@ Added in v0.6.0
   - [spaces](#spaces)
   - [spaces1](#spaces1)
 - [constructors](#constructors)
+  - [notOneOf](#notoneof)
+  - [notString](#notstring)
   - [oneOf](#oneof)
   - [string](#string)
 - [destructors](#destructors)
@@ -152,6 +154,53 @@ export declare const spaces1: P.Parser<string, string>
 Added in v0.6.0
 
 # constructors
+
+## notOneOf
+
+Fails if any of the specified strings are matched, otherwise succeeds with an empty result and
+consumes no input.
+
+**Signature**
+
+```ts
+export declare const notOneOf: {
+  <F extends 'Option' | 'ReadonlyRecord' | 'Eq' | 'Ord' | 'NonEmptyArray' | 'Array'>(F: Functor1<F> & Foldable1<F>): (
+    ss: Kind<F, string>
+  ) => P.Parser<string, string>
+  <F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<string, string>
+  <F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<string, string>
+}
+```
+
+Added in v0.7.0
+
+## notString
+
+Fails if the specified string is matched, otherwise succeeds with an empty result and
+consumes no input.
+
+**Signature**
+
+```ts
+export declare const notString: (s: string) => P.Parser<string, string>
+```
+
+**Example**
+
+```ts
+import { run } from 'parser-ts/code-frame'
+import * as S from 'parser-ts/string'
+
+const parser = S.notString('foo')
+
+run(parser, 'bar')
+// { _tag: 'Right', right: '' }
+
+run(parser, 'foo')
+// { _tag: 'Left', left: '> 1 | foo\n    | ^ Expected: not "foo"' }
+```
+
+Added in v0.7.0
 
 ## oneOf
 

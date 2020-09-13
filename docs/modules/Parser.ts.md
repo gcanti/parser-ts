@@ -40,6 +40,7 @@ Added in v0.6.0
   - [many](#many)
   - [many1](#many1)
   - [maybe](#maybe)
+  - [optional](#optional)
   - [sepBy](#sepby)
   - [sepBy1](#sepby1)
   - [sepByCut](#sepbycut)
@@ -355,6 +356,35 @@ export declare const maybe: <A>(M: Monoid<A>) => <I>(p: Parser<I, A>) => Parser<
 ```
 
 Added in v0.6.0
+
+## optional
+
+Returns `Some<A>` if the specified parser succeeds, otherwise returns `None`.
+
+**Signature**
+
+```ts
+export declare const optional: <I, A>(parser: Parser<I, A>) => Parser<I, O.Option<A>>
+```
+
+**Example**
+
+```ts
+import * as C from 'parser-ts/char'
+import { run } from 'parser-ts/code-frame'
+import * as P from 'parser-ts/Parser'
+
+const a = P.sat((c: C.Char) => c === 'a')
+const parser = P.optional(a)
+
+run(parser, 'a')
+// { _tag: 'Right', right: { _tag: 'Some', value: 'a' } }
+
+run(parser, 'b')
+// { _tag: 'Left', left: { _tag: 'None' } }
+```
+
+Added in v0.7.0
 
 ## sepBy
 
