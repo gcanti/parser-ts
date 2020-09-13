@@ -378,6 +378,32 @@ export const lookAhead: <I, A>(p: Parser<I, A>) => Parser<I, A> = p => i =>
  */
 export const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, Array<I>> = predicate => many(sat(not(predicate)))
 
+/**
+ * Returns `Some<A>` if the specified parser succeeds, otherwise returns `None`.
+ *
+ * @example
+ * import * as C from 'parser-ts/char'
+ * import { run } from 'parser-ts/code-frame'
+ * import * as P from 'parser-ts/Parser'
+ *
+ * const a = P.sat((c: C.Char) => c === 'a')
+ * const parser = P.optional(a)
+ *
+ * run(parser, 'a')
+ * // { _tag: 'Right', right: { _tag: 'Some', value: 'a' } }
+ *
+ * run(parser, 'b')
+ * // { _tag: 'Left', left: { _tag: 'None' } }
+ *
+ * @category combinators
+ * @since 0.7.0
+ */
+export const optional = <I, A>(parser: Parser<I, A>): Parser<I, O.Option<A>> => pipe(
+  parser,
+  map(O.some),
+  alt(() => succeed<I, O.Option<A>>(O.none))
+)
+
 // -------------------------------------------------------------------------------------
 // non-pipeables
 // -------------------------------------------------------------------------------------
