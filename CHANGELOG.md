@@ -15,7 +15,7 @@ high state of flux, you're at risk of it changing without notice.
 
 # 0.7.0
 
-- ** New Feature **
+- **New Feature**
   - add `notString` and `notOneOf` to `string` module (@IMax153)
   - add `optional` to `Parser` module (@IMax153)
 
