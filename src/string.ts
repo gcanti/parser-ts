@@ -1,7 +1,6 @@
 /**
  * @since 0.6.0
  */
-import * as E from 'fp-ts/lib/Either'
 import { Foldable, Foldable1 } from 'fp-ts/lib/Foldable'
 import { Functor, Functor1 } from 'fp-ts/lib/Functor'
 import { HKT, Kind, URIS } from 'fp-ts/lib/HKT'
@@ -10,8 +9,6 @@ import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as C from './char'
 import * as P from './Parser'
-import { error, success, ParseResult } from './ParseResult'
-import { getAndNext, Stream } from './Stream'
 
 // -------------------------------------------------------------------------------------
 // constructors
@@ -41,48 +38,6 @@ export const string: (s: string) => P.Parser<C.Char, string> = s => {
 }
 
 /**
- * Fails if the specified string is matched, otherwise succeeds with an empty result and
- * consumes no input.
- *
- * @example
- * import { run } from 'parser-ts/code-frame'
- * import * as S from 'parser-ts/string'
- *
- * const parser = S.notString('foo')
- *
- * run(parser, 'bar')
- * // { _tag: 'Right', right: '' }
- *
- * run(parser, 'foo')
- * // { _tag: 'Left', left: '> 1 | foo\n    | ^ Expected: not "foo"' }
- *
- * @category constructors
- * @since 0.7.0
- */
-export const notString: (s: string) => P.Parser<C.Char, string> = s => i => {
-  const _string: (s2: string, stream: Stream<string>) => ParseResult<C.Char, string> = (s2, i2) =>
-    pipe(
-      charAt(0, s2),
-      O.fold(
-        () => success('', i2, i2),
-        c =>
-          pipe(
-            getAndNext(i2),
-            O.fold(
-              () => success('', i2, i2),
-              ({ value, next }) => (c !== value ? _string(s2.slice(1), next) : error(i2, [`not ${JSON.stringify(s)}`]))
-            )
-          )
-      )
-    )
-
-  return pipe(
-    _string(s, i),
-    E.chain(next => success(next.value, i, i))
-  )
-}
-
-/**
  * Matches one of a list of strings.
  *
  * @category constructors
@@ -99,20 +54,6 @@ export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P
       )
     )
 }
-
-/**
- * Fails if any of the specified strings are matched, otherwise succeeds with an empty result and
- * consumes no input.
- *
- * @category constructors
- * @since 0.7.0
- */
-export const notOneOf: {
-  <F extends URIS>(F: Functor1<F> & Foldable1<F>): (ss: Kind<F, string>) => P.Parser<C.Char, string>
-  <F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string>
-  <F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string>
-} = <F>(F: Functor<F> & Foldable<F>) => (ss: HKT<F, string>): P.Parser<C.Char, string> =>
-  F.reduce(ss, P.succeed(''), (p, s) => fold([p, notString(s)]))
 
 // -------------------------------------------------------------------------------------
 // destructors

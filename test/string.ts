@@ -16,13 +16,6 @@ describe('string', () => {
     assert.deepStrictEqual(run(parser, 'barfoo'), error(stream(['b', 'a', 'r', 'f', 'o', 'o']), ['"foo"']))
   })
 
-  it('notString', () => {
-    const parser = S.notString('foo')
-    assert.deepStrictEqual(run(parser, ''), success('', stream([], 0), stream([])))
-    assert.deepStrictEqual(run(parser, 'bar'), success('', stream(['b', 'a', 'r'], 0), stream(['b', 'a', 'r'])))
-    assert.deepStrictEqual(run(parser, 'foo'), error(stream(['f', 'o', 'o']), ['not "foo"']))
-  })
-
   it('many', () => {
     const parser = S.many(S.string('ab'))
     assert.deepStrictEqual(run(parser, 'ab'), success('ab', stream(['a', 'b'], 2), stream(['a', 'b'])))
@@ -40,22 +33,6 @@ describe('string', () => {
     assert.deepStrictEqual(run(parser, 'ab'), success('a', stream(['a', 'b'], 1), stream(['a', 'b'])))
     assert.deepStrictEqual(run(parser, 'ba'), success('b', stream(['b', 'a'], 1), stream(['b', 'a'])))
     assert.deepStrictEqual(run(parser, 'ca'), error(stream(['c', 'a']), ['"a"', '"b"']))
-  })
-
-  it('notOneOf', () => {
-    assert.deepStrictEqual(
-      run(S.notOneOf(array)([]), 'bar'),
-      success('', stream(['b', 'a', 'r'], 0), stream(['b', 'a', 'r']))
-    )
-    assert.deepStrictEqual(
-      run(S.notOneOf(array)(['foo']), 'bar'),
-      success('', stream(['b', 'a', 'r'], 0), stream(['b', 'a', 'r']))
-    )
-    assert.deepStrictEqual(run(S.notOneOf(array)(['bar']), 'bar'), error(stream(['b', 'a', 'r'], 0), ['not "bar"']))
-    assert.deepStrictEqual(
-      run(S.notOneOf(array)(['foo', 'bar']), 'bar'),
-      error(stream(['b', 'a', 'r'], 0), ['not "bar"'])
-    )
   })
 
   it('int', () => {
