@@ -13,7 +13,7 @@ import { Monoid } from 'fp-ts/lib/Monoid'
 import * as NEA from 'fp-ts/lib/NonEmptyArray'
 import * as O from 'fp-ts/lib/Option'
 import { Semigroup } from 'fp-ts/lib/Semigroup'
-import { identity, not, Predicate, Lazy } from 'fp-ts/lib/function'
+import { identity, not, Lazy, Predicate, Refinement } from 'fp-ts/lib/function'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { error, escalate, extend, success, withExpected, ParseResult } from './ParseResult'
 import { atEnd, getAndNext, Stream } from './Stream'
@@ -308,6 +308,41 @@ export const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I
   )
 
 /**
+ * Filters the result of a parser based upon a `Refinement` or a `Predicate`.
+ *
+ * @example
+ * import { pipe } from 'fp-ts/function'
+ * import { run } from 'parser-ts/code-frame'
+ * import * as C from 'parser-ts/char'
+ * import * as P from 'parser-ts/Parser'
+ *
+ * const parser = P.expected(
+ *   pipe(
+ *     P.item<C.Char>(),
+ *     P.filter((c) => c !== 'a')
+ *   ),
+ *  'anything except "a"'
+ * )
+ *
+ * run(parser, 'a')
+ * // {  _tag: 'Left', left: '> 1 | a\n    | ^ Expected: anything except "a"' }
+ *
+ * run(parser, 'b')
+ * // { _tag: 'Right', right: 'b' }
+ *
+ * @category combinators
+ * @since 0.6.10
+ */
+export const filter: {
+  <A, B extends A>(refinement: Refinement<A, B>): <I>(p: Parser<I, A>) => Parser<I, B>
+  <A>(predicate: Predicate<A>): <I>(p: Parser<I, A>) => Parser<I, A>
+} = <A>(predicate: Predicate<A>) => <I>(p: Parser<I, A>): Parser<I, A> => i =>
+  pipe(
+    p(i),
+    E.chain(next => (predicate(next.value) ? E.right(next) : error(i)))
+  )
+
+/**
  * Matches the provided parser `p` that occurs between the provided `left` and `right` parsers.
  *
  * `p` is polymorphic in its return type, because in general bounds and actual parser could return different types.
@@ -396,7 +431,7 @@ export const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, Array<I>> = pr
  * // { _tag: 'Left', left: { _tag: 'None' } }
  *
  * @category combinators
- * @since 0.7.0
+ * @since 0.6.10
  */
 export const optional = <I, A>(parser: Parser<I, A>): Parser<I, O.Option<A>> =>
   pipe(

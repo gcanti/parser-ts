@@ -35,6 +35,7 @@ Added in v0.6.0
   - [either](#either)
   - [eof](#eof)
   - [expected](#expected)
+  - [filter](#filter)
   - [item](#item)
   - [lookAhead](#lookahead)
   - [many](#many)
@@ -273,6 +274,44 @@ export declare const expected: <I, A>(p: Parser<I, A>, message: string) => Parse
 
 Added in v0.6.0
 
+## filter
+
+Filters the result of a parser based upon a `Refinement` or a `Predicate`.
+
+**Signature**
+
+```ts
+export declare const filter: {
+  <A, B extends A>(refinement: Refinement<A, B>): <I>(p: Parser<I, A>) => Parser<I, B>
+  <A>(predicate: Predicate<A>): <I>(p: Parser<I, A>) => Parser<I, A>
+}
+```
+
+**Example**
+
+```ts
+import { pipe } from 'fp-ts/function'
+import { run } from 'parser-ts/code-frame'
+import * as C from 'parser-ts/char'
+import * as P from 'parser-ts/Parser'
+
+const parser = P.expected(
+  pipe(
+    P.item<C.Char>(),
+    P.filter(c => c !== 'a')
+  ),
+  'anything except "a"'
+)
+
+run(parser, 'a')
+// {  _tag: 'Left', left: '> 1 | a\n    | ^ Expected: anything except "a"' }
+
+run(parser, 'b')
+// { _tag: 'Right', right: 'b' }
+```
+
+Added in v0.6.10
+
 ## item
 
 The `item` parser consumes a single value, regardless of what it is,
@@ -384,7 +423,7 @@ run(parser, 'b')
 // { _tag: 'Left', left: { _tag: 'None' } }
 ```
 
-Added in v0.7.0
+Added in v0.6.10
 
 ## sepBy
 

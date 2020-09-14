@@ -13,11 +13,10 @@
 **Note**: Gaps between patch versions are faulty/broken releases. **Note**: A feature tagged as Experimental is in a
 high state of flux, you're at risk of it changing without notice.
 
-# 0.7.0
+# 0.6.10
 
 - **New Feature**
-  - add `notString` and `notOneOf` to `string` module (@IMax153)
-  - add `optional` to `Parser` module (@IMax153)
+  - add `filter` and `optional` to `Parser` module (@IMax153)
 
 # 0.6.9
 

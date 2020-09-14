@@ -33,6 +33,11 @@ describe('Parser', () => {
     assert.deepStrictEqual(run(parser4, 'bc'), error(stream(['b', 'c'], 1), ['"bb"']))
   })
 
+  it('map', () => {
+    const parser = P.map(() => 'b')(C.char('a'))
+    assert.deepStrictEqual(run(parser, 'a'), success('b', stream(['a'], 1), stream(['a'])))
+  })
+
   it('ap', () => {
     const parser = P.ap(C.char('a'))(P.of(s => s.length))
     assert.deepStrictEqual(run(parser, 'a'), success(1, stream(['a'], 1), stream(['a'])))
@@ -78,6 +83,12 @@ describe('Parser', () => {
     const parser = P.sepByCut(C.char(','), C.char('a'))
     assert.deepStrictEqual(run(parser, 'a,b'), error(stream(['a', ',', 'b'], 2), ['"a"'], true))
     assert.deepStrictEqual(run(parser, 'a,a'), success(['a', 'a'], stream(['a', ',', 'a'], 3), stream(['a', ',', 'a'])))
+  })
+
+  it('filter', () => {
+    const parser = P.expected(P.filter((c: C.Char) => c !== 'a')(P.item<C.Char>()), 'anything except "a"')
+    assert.deepStrictEqual(run(parser, 'a'), error(stream(['a']), ['anything except "a"']))
+    assert.deepStrictEqual(run(parser, 'b'), success('b', stream(['b'], 1), stream(['b'])))
   })
 
   describe('between', () => {
