@@ -1,9 +1,11 @@
 import * as assert from 'assert'
+import { none, some } from 'fp-ts/lib/Option'
+import { pipe } from 'fp-ts/lib/pipeable'
+
 import { char as C, parser as P, string as S } from '../src'
 import { error, success } from '../src/ParseResult'
 import { stream } from '../src/Stream'
 import { run } from './helpers'
-import { pipe } from 'fp-ts/lib/pipeable'
 
 describe('Parser', () => {
   it('eof', () => {
@@ -29,6 +31,11 @@ describe('Parser', () => {
     assert.deepStrictEqual(run(parser3, 'ab'), error(stream(['a', 'b'], 1), ['"aa"']))
     const parser4 = P.either(C.char('a'), () => S.string('bb'))
     assert.deepStrictEqual(run(parser4, 'bc'), error(stream(['b', 'c'], 1), ['"bb"']))
+  })
+
+  it('map', () => {
+    const parser = P.map(() => 'b')(C.char('a'))
+    assert.deepStrictEqual(run(parser, 'a'), success('b', stream(['a'], 1), stream(['a'])))
   })
 
   it('ap', () => {
@@ -78,6 +85,12 @@ describe('Parser', () => {
     assert.deepStrictEqual(run(parser, 'a,a'), success(['a', 'a'], stream(['a', ',', 'a'], 3), stream(['a', ',', 'a'])))
   })
 
+  it('filter', () => {
+    const parser = P.expected(P.filter((c: C.Char) => c !== 'a')(P.item<C.Char>()), 'anything except "a"')
+    assert.deepStrictEqual(run(parser, 'a'), error(stream(['a']), ['anything except "a"']))
+    assert.deepStrictEqual(run(parser, 'b'), success('b', stream(['b'], 1), stream(['b'])))
+  })
+
   describe('between', () => {
     it('monomorphic', () => {
       const betweenParens = P.between(C.char('('), C.char(')'))
@@ -120,6 +133,12 @@ describe('Parser', () => {
     const parser = P.takeUntil((char: C.Char) => char === 'c')
     assert.deepStrictEqual(run(parser, 'ab'), success(['a', 'b'], stream(['a', 'b'], 2), stream(['a', 'b'])))
     assert.deepStrictEqual(run(parser, 'abc'), success(['a', 'b'], stream(['a', 'b', 'c'], 2), stream(['a', 'b', 'c'])))
+  })
+
+  it('optional', () => {
+    const parser = P.optional(P.sat((char: C.Char) => char === 'a'))
+    assert.deepStrictEqual(run(parser, 'a'), success(some('a'), stream(['a'], 1), stream(['a'])))
+    assert.deepStrictEqual(run(parser, 'b'), success(none, stream(['b'], 0), stream(['b'])))
   })
 
   it('bind', () => {
