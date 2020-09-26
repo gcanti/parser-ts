@@ -10,6 +10,8 @@ import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as C from './char'
 import * as P from './Parser'
+import * as S from './Stream'
+import * as PR from './ParseResult'
 
 // -------------------------------------------------------------------------------------
 // constructors
@@ -179,3 +181,14 @@ export const float: P.Parser<C.Char, number> = P.expected(
 export const doubleQuotedString: P.Parser<string, String> = P.surroundedBy(C.char('"'))(
   many(P.either(string('\\"'), () => C.notChar('"')))
 )
+
+/**
+ * @summary
+ * Creates a stream from `string` and runs the parser.
+ *
+ * @category combinators
+ * @since 0.6.8
+ */
+export function run(string: string): <A>(p: P.Parser<C.Char, A>) => PR.ParseResult<C.Char, A> {
+  return p => p(S.stream(string.split('')))
+}

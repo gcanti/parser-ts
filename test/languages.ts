@@ -3,7 +3,7 @@ import { parser as P, string as S } from '../src'
 import { success, error } from '../src/ParseResult'
 import { stream } from '../src/Stream'
 import { pipe } from 'fp-ts/lib/pipeable'
-import { run } from './helpers'
+import { run } from '../src/string'
 
 export const pathParser = pipe(
   S.string('/users/'),
@@ -18,7 +18,7 @@ export const pathParser = pipe(
 describe('languages', () => {
   it('a parser for the path `/users/:user`', () => {
     assert.deepStrictEqual(
-      run(pathParser, '/users/1'),
+      run('/users/1')(pathParser),
       success(
         { user: 1 },
         stream(['/', 'u', 's', 'e', 'r', 's', '/', '1'], 8),
@@ -26,7 +26,7 @@ describe('languages', () => {
       )
     )
     assert.deepStrictEqual(
-      run(pathParser, '/users/a'),
+      run('/users/a')(pathParser),
       error(stream(['/', 'u', 's', 'e', 'r', 's', '/', 'a'], 7), ['an integer'])
     )
   })

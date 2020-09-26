@@ -21,6 +21,7 @@ Added in v0.6.0
   - [maybe](#maybe)
   - [notSpaces](#notspaces)
   - [notSpaces1](#notspaces1)
+  - [run](#run)
   - [spaces](#spaces)
   - [spaces1](#spaces1)
 - [constructors](#constructors)
@@ -126,6 +127,16 @@ export declare const notSpaces1: P.Parser<string, string>
 ```
 
 Added in v0.6.0
+
+## run
+
+**Signature**
+
+```ts
+export declare function run(string: string): <A>(p: P.Parser<C.Char, A>) => PR.ParseResult<C.Char, A>
+```
+
+Added in v0.6.8
 
 ## spaces
 
