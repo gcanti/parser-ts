@@ -141,6 +141,26 @@ describe('Parser', () => {
     assert.deepStrictEqual(run(parser, 'b'), success(none, stream(['b'], 0), stream(['b'])))
   })
 
+  it('manyTill', () => {
+    const parser = P.manyTill(C.letter, C.char('-'))
+    assert.deepStrictEqual(run(parser, 'a1-'), error(stream(['a', '1', '-'], 1), ['"-"', 'a letter']))
+    assert.deepStrictEqual(run(parser, '-'), success([], stream(['-'], 1), stream(['-'])))
+    assert.deepStrictEqual(
+      run(parser, 'abc-'),
+      success(['a', 'b', 'c'], stream(['a', 'b', 'c', '-'], 4), stream(['a', 'b', 'c', '-']))
+    )
+  })
+
+  it('many1Till', () => {
+    const parser = P.many1Till(C.letter, C.char('-'))
+    assert.deepStrictEqual(run(parser, 'a1-'), error(stream(['a', '1', '-'], 1), ['"-"', 'a letter']))
+    assert.deepStrictEqual(run(parser, '-'), error(stream(['-'], 0), ['a letter']))
+    assert.deepStrictEqual(
+      run(parser, 'abc-'),
+      success(['a', 'b', 'c'], stream(['a', 'b', 'c', '-'], 4), stream(['a', 'b', 'c', '-']))
+    )
+  })
+
   it('bind', () => {
     const parser = pipe(
       C.char('a'),
