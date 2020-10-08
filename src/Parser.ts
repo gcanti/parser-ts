@@ -13,6 +13,8 @@ import { Monad2 } from 'fp-ts/lib/Monad'
 import { Monoid } from 'fp-ts/lib/Monoid'
 import * as NEA from 'fp-ts/lib/NonEmptyArray'
 import * as O from 'fp-ts/lib/Option'
+import * as RA from 'fp-ts/lib/ReadonlyArray'
+import * as RNEA from 'fp-ts/lib/ReadonlyNonEmptyArray'
 import { Semigroup } from 'fp-ts/lib/Semigroup'
 import { identity, not, Lazy, Predicate, Refinement } from 'fp-ts/lib/function'
 import { pipe } from 'fp-ts/lib/pipeable'
@@ -441,9 +443,66 @@ export const optional = <I, A>(parser: Parser<I, A>): Parser<I, O.Option<A>> =>
     alt(() => succeed<I, O.Option<A>>(O.none))
   )
 
+/**
+ * The `manyTill` combinator takes a value `parser` and a `terminator` parser, and
+ * returns a new parser that will run the value `parser` repeatedly on the input
+ * stream, returning a list of the result values of each parse operation as its
+ * result, or the empty list if the parser never succeeded.
+ *
+ * @example
+ *
+ *
+ * @category combinators
+ * @since 0.6.11
+ */
+export const manyTill = <I, A, B>(parser: Parser<I, A>, terminator: Parser<I, B>): Parser<I, ReadonlyArray<A>> =>
+  pipe(
+    terminator,
+    map<B, ReadonlyArray<A>>(() => RA.empty),
+    alt<I, ReadonlyArray<A>>(() => many1Till(parser, terminator))
+  )
+
+/**
+ * The `many1Till` combinator is just like the `manyTill` combinator, except it
+ * requires the value `parser` to match at least once before the `terminator`
+ * parser. The resulting list is thus guaranteed to contain at least one value.
+ *
+ * @example
+ *
+ *
+ * @category combinators
+ * @since 0.6.11
+ */
+export const many1Till = <I, A, B>(
+  parser: Parser<I, A>,
+  terminator: Parser<I, B>
+): Parser<I, RNEA.ReadonlyNonEmptyArray<A>> =>
+  pipe(
+    parser,
+    chain(x =>
+      chainRec_(RNEA.of(x), acc =>
+        pipe(
+          terminator,
+          map(() => E.right(acc)),
+          alt(() =>
+            pipe(
+              parser,
+              map(a => E.left(RNEA.snoc(acc, a)))
+            )
+          )
+        )
+      )
+    )
+  )
+
 // -------------------------------------------------------------------------------------
 // non-pipeables
 // -------------------------------------------------------------------------------------
+
+interface Next<I, A> {
+  readonly value: A
+  readonly stream: Stream<I>
+}
 
 const map_: Monad2<URI>['map'] = (ma, f) => i =>
   pipe(
