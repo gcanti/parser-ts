@@ -400,6 +400,22 @@ export declare const many1Till: <I, A, B>(
 ) => Parser<I, RNEA.ReadonlyNonEmptyArray<A>>
 ```
 
+**Example**
+
+```ts
+import * as C from 'parser-ts/char'
+import { run } from 'parser-ts/code-frame'
+import * as P from 'parser-ts/Parser'
+
+const parser = P.many1Till(C.letter, C.char('-'))
+
+run(parser, 'abc-')
+// { _tag: 'Right', right: [ 'a', 'b', 'c' ] }
+
+run(parser, '-')
+// { _tag: 'Left', left: '> 1 | -\n    | ^ Expected: a letter' }
+```
+
 Added in v0.6.11
 
 ## manyTill
@@ -413,6 +429,22 @@ result, or the empty list if the parser never succeeded.
 
 ```ts
 export declare const manyTill: <I, A, B>(parser: Parser<I, A>, terminator: Parser<I, B>) => Parser<I, readonly A[]>
+```
+
+**Example**
+
+```ts
+import * as C from 'parser-ts/char'
+import { run } from 'parser-ts/code-frame'
+import * as P from 'parser-ts/Parser'
+
+const parser = P.manyTill(C.letter, C.char('-'))
+
+run(parser, 'abc-')
+// { _tag: 'Right', right: [ 'a', 'b', 'c' ] }
+
+run(parser, '-')
+// { _tag: 'Right', right: [] }
 ```
 
 Added in v0.6.11
