@@ -40,6 +40,8 @@ Added in v0.6.0
   - [lookAhead](#lookahead)
   - [many](#many)
   - [many1](#many1)
+  - [many1Till](#many1till)
+  - [manyTill](#manytill)
   - [maybe](#maybe)
   - [optional](#optional)
   - [sepBy](#sepby)
@@ -58,6 +60,7 @@ Added in v0.6.0
   - [Alt](#alt-1)
   - [Alternative](#alternative-1)
   - [Applicative](#applicative-1)
+  - [ChainRec](#chainrec)
   - [Functor](#functor-1)
   - [Monad](#monad-1)
   - [URI](#uri)
@@ -382,6 +385,38 @@ export declare const many1: <I, A>(p: Parser<I, A>) => Parser<I, NEA.NonEmptyArr
 
 Added in v0.6.0
 
+## many1Till
+
+The `many1Till` combinator is just like the `manyTill` combinator, except it
+requires the value `parser` to match at least once before the `terminator`
+parser. The resulting list is thus guaranteed to contain at least one value.
+
+**Signature**
+
+```ts
+export declare const many1Till: <I, A, B>(
+  parser: Parser<I, A>,
+  terminator: Parser<I, B>
+) => Parser<I, RNEA.ReadonlyNonEmptyArray<A>>
+```
+
+Added in v0.6.11
+
+## manyTill
+
+The `manyTill` combinator takes a value `parser` and a `terminator` parser, and
+returns a new parser that will run the value `parser` repeatedly on the input
+stream, returning a list of the result values of each parse operation as its
+result, or the empty list if the parser never succeeded.
+
+**Signature**
+
+```ts
+export declare const manyTill: <I, A, B>(parser: Parser<I, A>, terminator: Parser<I, B>) => Parser<I, readonly A[]>
+```
+
+Added in v0.6.11
+
 ## maybe
 
 The `maybe` parser combinator creates a parser which will run the provided
@@ -625,6 +660,16 @@ export declare const Applicative: Applicative2<'Parser'>
 ```
 
 Added in v0.6.7
+
+## ChainRec
+
+**Signature**
+
+```ts
+export declare const ChainRec: ChainRec2<'Parser'>
+```
+
+Added in v0.6.11
 
 ## Functor
 
