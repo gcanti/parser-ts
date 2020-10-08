@@ -450,7 +450,17 @@ export const optional = <I, A>(parser: Parser<I, A>): Parser<I, O.Option<A>> =>
  * result, or the empty list if the parser never succeeded.
  *
  * @example
+ * import * as C from 'parser-ts/char'
+ * import { run } from 'parser-ts/code-frame'
+ * import * as P from 'parser-ts/Parser'
  *
+ * const parser = P.manyTill(C.letter, C.char('-'))
+ *
+ * run(parser, 'abc-')
+ * // { _tag: 'Right', right: [ 'a', 'b', 'c' ] }
+ *
+ * run(parser, '-')
+ * // { _tag: 'Right', right: [] }
  *
  * @category combinators
  * @since 0.6.11
@@ -468,7 +478,17 @@ export const manyTill = <I, A, B>(parser: Parser<I, A>, terminator: Parser<I, B>
  * parser. The resulting list is thus guaranteed to contain at least one value.
  *
  * @example
+ * import * as C from 'parser-ts/char'
+ * import { run } from 'parser-ts/code-frame'
+ * import * as P from 'parser-ts/Parser'
  *
+ * const parser = P.many1Till(C.letter, C.char('-'))
+ *
+ * run(parser, 'abc-')
+ * // { _tag: 'Right', right: [ 'a', 'b', 'c' ] }
+ *
+ * run(parser, '-')
+ * // { _tag: 'Left', left: '> 1 | -\n    | ^ Expected: a letter' }
  *
  * @category combinators
  * @since 0.6.11
