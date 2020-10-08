@@ -6,6 +6,7 @@ import { Alternative2 } from 'fp-ts/lib/Alternative'
 import { Applicative2 } from 'fp-ts/lib/Applicative'
 import * as A from 'fp-ts/lib/Array'
 import { Chain2 } from 'fp-ts/lib/Chain'
+import { tailRec, ChainRec2 } from 'fp-ts/ChainRec'
 import * as E from 'fp-ts/lib/Either'
 import { Functor2 } from 'fp-ts/lib/Functor'
 import { Monad2 } from 'fp-ts/lib/Monad'
@@ -15,7 +16,7 @@ import * as O from 'fp-ts/lib/Option'
 import { Semigroup } from 'fp-ts/lib/Semigroup'
 import { identity, not, Lazy, Predicate, Refinement } from 'fp-ts/lib/function'
 import { pipe } from 'fp-ts/lib/pipeable'
-import { error, escalate, extend, success, withExpected, ParseResult } from './ParseResult'
+import { error, escalate, extend, success, withExpected, ParseResult, ParseSuccess } from './ParseResult'
 import { atEnd, getAndNext, Stream } from './Stream'
 
 // -------------------------------------------------------------------------------------
@@ -451,6 +452,20 @@ const map_: Monad2<URI>['map'] = (ma, f) => i =>
   )
 const ap_: Monad2<URI>['ap'] = (mab, ma) => chain_(mab, f => map_(ma, f))
 const chain_: Chain2<URI>['chain'] = (ma, f) => seq(ma, f)
+const chainRec_: ChainRec2<URI>['chainRec'] = <I, A, B>(a: A, f: (a: A) => Parser<I, E.Either<A, B>>): Parser<I, B> => {
+  const split = (result: ParseSuccess<I, E.Either<A, B>>): E.Either<Next<I, A>, ParseResult<I, B>> =>
+    E.isLeft(result.value)
+      ? E.left({ value: result.value.left, stream: result.next })
+      : E.right(success(result.value.right, result.next, result.start))
+  return i =>
+    tailRec({ value: a, stream: i }, state => {
+      const result = f(state.value)(state.stream)
+      if (E.isLeft(result)) {
+        return E.right(error(state.stream, result.left.expected, result.left.fatal))
+      }
+      return split(result.right)
+    })
+}
 const alt_: Alt2<URI>['alt'] = (fa, that) => either(fa, that)
 
 // -------------------------------------------------------------------------------------
@@ -601,6 +616,18 @@ export const Monad: Monad2<URI> = {
   ap: ap_,
   of,
   chain: chain_
+}
+
+/**
+ * @category instances
+ * @since 0.6.11
+ */
+export const ChainRec: ChainRec2<URI> = {
+  URI,
+  map: map_,
+  ap: ap_,
+  chain: chain_,
+  chainRec: chainRec_
 }
 
 /**
