@@ -1,6 +1,6 @@
 {
   "name": "parser-ts",
-  "version": "0.6.10",
+  "version": "0.6.11",
   "description": "String parser combinators for TypeScript",
   "main": "lib/index.js",
   "module": "es6/index.js",
