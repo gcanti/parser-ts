@@ -178,7 +178,7 @@ Matches the exact string provided.
 export declare const string: (s: string) => P.Parser<C.Char, string>
 ```
 
-Added in v0.6.12
+Added in v0.6.0
 
 # destructors
 

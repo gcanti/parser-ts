@@ -19,7 +19,7 @@ import * as P from './Parser'
  * Matches the exact string provided.
  *
  * @category constructors
- * @since 0.6.12
+ * @since 0.6.0
  */
 export const string: (s: string) => P.Parser<C.Char, string> = s =>
   P.expected(
