@@ -75,7 +75,7 @@ entire match
 **Signature**
 
 ```ts
-export declare const many: (parser: P.Parser<string, string>) => P.Parser<string, string>
+export declare const many: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string>
 ```
 
 Added in v0.6.0
@@ -88,7 +88,7 @@ entire match
 **Signature**
 
 ```ts
-export declare const many1: (parser: P.Parser<string, string>) => P.Parser<string, string>
+export declare const many1: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string>
 ```
 
 Added in v0.6.0
@@ -175,10 +175,10 @@ Matches the exact string provided.
 **Signature**
 
 ```ts
-export declare const string: (s: string) => P.Parser<string, string>
+export declare const string: (s: string) => P.Parser<C.Char, string>
 ```
 
-Added in v0.6.0
+Added in v0.6.12
 
 # destructors
 
