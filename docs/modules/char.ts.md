@@ -84,7 +84,7 @@ a `string` of what was matched.
 **Signature**
 
 ```ts
-export declare const many: (parser: P.Parser<string, string>) => P.Parser<string, string>
+export declare const many: (parser: P.Parser<Char, Char>) => P.Parser<Char, string>
 ```
 
 Added in v0.6.0
@@ -97,7 +97,7 @@ a `string` of what was matched.
 **Signature**
 
 ```ts
-export declare const many1: (parser: P.Parser<string, string>) => P.Parser<string, string>
+export declare const many1: (parser: P.Parser<Char, Char>) => P.Parser<Char, string>
 ```
 
 Added in v0.6.0
@@ -208,7 +208,7 @@ specified single character
 **Signature**
 
 ```ts
-export declare const char: (c: string) => P.Parser<string, string>
+export declare const char: (c: Char) => P.Parser<Char, Char>
 ```
 
 Added in v0.6.0
@@ -221,7 +221,7 @@ single character other than the one provided.
 **Signature**
 
 ```ts
-export declare const notChar: (c: string) => P.Parser<string, string>
+export declare const notChar: (c: Char) => P.Parser<Char, Char>
 ```
 
 Added in v0.6.0
@@ -233,7 +233,7 @@ Matches a single character which isn't a character from the provided string.
 **Signature**
 
 ```ts
-export declare const notOneOf: (s: string) => P.Parser<string, string>
+export declare const notOneOf: (s: string) => P.Parser<Char, Char>
 ```
 
 Added in v0.6.0
@@ -245,7 +245,7 @@ Matches any one character from the provided string.
 **Signature**
 
 ```ts
-export declare const oneOf: (s: string) => P.Parser<string, string>
+export declare const oneOf: (s: string) => P.Parser<Char, Char>
 ```
 
 Added in v0.6.0

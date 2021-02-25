@@ -701,7 +701,7 @@ export const Monad: Monad2<URI> = {
 
 /**
  * @category instances
- * @since 0.6.11
+ * @since 0.6.12
  */
 export const ChainRec: ChainRec2<URI> = {
   URI,

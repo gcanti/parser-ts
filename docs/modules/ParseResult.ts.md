@@ -53,7 +53,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare const withExpected: <I>(err: ParseError<I>, expected: string[]) => ParseError<I>
+export declare const withExpected: <I>(err: ParseError<I>, expected: Array<string>) => ParseError<I>
 ```
 
 Added in v0.6.0
@@ -67,7 +67,7 @@ Added in v0.6.0
 ```ts
 export declare const error: <I, A = never>(
   input: Stream<I>,
-  expected?: string[],
+  expected?: Array<string>,
   fatal?: boolean
 ) => Either<ParseError<I>, ParseSuccess<I, A>>
 ```

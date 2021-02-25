@@ -701,7 +701,7 @@ Added in v0.6.7
 export declare const ChainRec: ChainRec2<'Parser'>
 ```
 
-Added in v0.6.11
+Added in v0.6.12
 
 ## Functor
 

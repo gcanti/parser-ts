@@ -13,6 +13,12 @@
 **Note**: Gaps between patch versions are faulty/broken releases. **Note**: A feature tagged as Experimental is in a
 high state of flux, you're at risk of it changing without notice.
 
+# 0.6.12
+
+- **Bug Fix**
+  - fix `ChainRec` implementation for `Parser` (@IMax153)
+  - fix `string` parser exceeding recursion limit on long strings, closes #41 (@IMax153)
+
 # 0.6.11
 
 - **New Feature**
