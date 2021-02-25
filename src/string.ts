@@ -4,6 +4,7 @@
 import { Foldable, Foldable1 } from 'fp-ts/lib/Foldable'
 import { Functor, Functor1 } from 'fp-ts/lib/Functor'
 import { HKT, Kind, URIS } from 'fp-ts/lib/HKT'
+import * as E from 'fp-ts/Either'
 import * as M from 'fp-ts/lib/Monoid'
 import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
@@ -20,22 +21,23 @@ import * as P from './Parser'
  * @category constructors
  * @since 0.6.0
  */
-export const string: (s: string) => P.Parser<C.Char, string> = s => {
-  const _string: (s2: string) => P.Parser<C.Char, string> = s2 =>
-    pipe(
-      charAt(0, s2),
-      O.fold(
-        () => P.succeed(''),
-        c =>
-          pipe(
-            C.char(c),
-            P.chain(() => _string(s2.slice(1))),
-            P.chain(() => P.succeed(s))
-          )
+export const string: (s: string) => P.Parser<C.Char, string> = s =>
+  P.expected(
+    P.ChainRec.chainRec<string, string, string>(s, acc =>
+      pipe(
+        charAt(0, acc),
+        O.fold(
+          () => P.of(E.right(s)),
+          c =>
+            pipe(
+              C.char(c),
+              P.chain(() => P.of(E.left(acc.slice(1))))
+            )
+        )
       )
-    )
-  return P.expected(_string(s), JSON.stringify(s))
-}
+    ),
+    JSON.stringify(s)
+  )
 
 /**
  * Matches one of a list of strings.
