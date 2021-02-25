@@ -532,17 +532,19 @@ const map_: Monad2<URI>['map'] = (ma, f) => i =>
 const ap_: Monad2<URI>['ap'] = (mab, ma) => chain_(mab, f => map_(ma, f))
 const chain_: Chain2<URI>['chain'] = (ma, f) => seq(ma, f)
 const chainRec_: ChainRec2<URI>['chainRec'] = <I, A, B>(a: A, f: (a: A) => Parser<I, E.Either<A, B>>): Parser<I, B> => {
-  const split = (result: ParseSuccess<I, E.Either<A, B>>): E.Either<Next<I, A>, ParseResult<I, B>> =>
+  const split = (start: Stream<I>) => (
+    result: ParseSuccess<I, E.Either<A, B>>
+  ): E.Either<Next<I, A>, ParseResult<I, B>> =>
     E.isLeft(result.value)
       ? E.left({ value: result.value.left, stream: result.next })
-      : E.right(success(result.value.right, result.next, result.start))
-  return i =>
-    tailRec({ value: a, stream: i }, state => {
+      : E.right(success(result.value.right, result.next, start))
+  return start =>
+    tailRec({ value: a, stream: start }, state => {
       const result = f(state.value)(state.stream)
       if (E.isLeft(result)) {
         return E.right(error(state.stream, result.left.expected, result.left.fatal))
       }
-      return split(result.right)
+      return split(start)(result.right)
     })
 }
 const alt_: Alt2<URI>['alt'] = (fa, that) => either(fa, that)
