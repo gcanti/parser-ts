@@ -1,19 +1,45 @@
 import * as assert from 'assert'
 import { array } from 'fp-ts/lib/Array'
+import { monoidString } from 'fp-ts/lib/Monoid'
+import { intercalate } from 'fp-ts/lib/Foldable'
+import * as RA from 'fp-ts/lib/ReadonlyArray'
+
 import { string as S } from '../src'
 import { error, success } from '../src/ParseResult'
 import { stream } from '../src/Stream'
 import { run } from './helpers'
 
 describe('string', () => {
-  it('string', () => {
-    const parser = S.string('foo')
-    assert.deepStrictEqual(run(parser, 'foo'), success('foo', stream(['f', 'o', 'o'], 3), stream(['f', 'o', 'o'])))
-    assert.deepStrictEqual(
-      run(parser, 'foobar'),
-      success('foo', stream(['f', 'o', 'o', 'b', 'a', 'r'], 3), stream(['f', 'o', 'o', 'b', 'a', 'r']))
-    )
-    assert.deepStrictEqual(run(parser, 'barfoo'), error(stream(['b', 'a', 'r', 'f', 'o', 'o']), ['"foo"']))
+  describe('string', () => {
+    it('should parse an empty string', () => {
+      const parser = S.string('')
+
+      assert.deepStrictEqual(run(parser, 'foo'), success('', stream(['f', 'o', 'o'], 0), stream(['f', 'o', 'o'])))
+    })
+
+    it('should parse a non-empty string', () => {
+      const parser = S.string('foo')
+
+      assert.deepStrictEqual(run(parser, 'foo'), success('foo', stream(['f', 'o', 'o'], 3), stream(['f', 'o', 'o'])))
+      assert.deepStrictEqual(
+        run(parser, 'foobar'),
+        success('foo', stream(['f', 'o', 'o', 'b', 'a', 'r'], 3), stream(['f', 'o', 'o', 'b', 'a', 'r']))
+      )
+      assert.deepStrictEqual(run(parser, 'barfoo'), error(stream(['b', 'a', 'r', 'f', 'o', 'o']), ['"foo"']))
+    })
+
+    it('should handle long strings without exceeding the recursion limit (#41)', () => {
+      const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+      const target = intercalate(monoidString, RA.Foldable)(' ', RA.replicate(1000, lorem))
+      const source = intercalate(monoidString, RA.Foldable)(' ', RA.replicate(10000, lorem))
+      const cursor = target.length
+      const parser = S.string(target)
+
+      assert.deepStrictEqual(
+        run(parser, source),
+        success(target, stream(source.split(''), cursor), stream(source.split('')))
+      )
+    })
   })
 
   it('many', () => {
