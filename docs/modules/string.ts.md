@@ -43,7 +43,7 @@ of string escaping.
 **Signature**
 
 ```ts
-export declare const doubleQuotedString: P.Parser<string, String>
+export declare const doubleQuotedString: P.Parser<string, string>
 ```
 
 Added in v0.6.0
