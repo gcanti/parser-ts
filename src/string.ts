@@ -178,7 +178,7 @@ export const float: P.Parser<C.Char, number> = P.expected(
  * @category combinators
  * @since 0.6.0
  */
-export const doubleQuotedString: P.Parser<string, String> = P.surroundedBy(C.char('"'))(
+export const doubleQuotedString: P.Parser<string, string> = P.surroundedBy(C.char('"'))(
   many(P.either(string('\\"'), () => C.notChar('"')))
 )
 
