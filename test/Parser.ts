@@ -1,10 +1,11 @@
 import * as assert from 'assert'
 import { none, some } from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
-
 import { char as C, parser as P, string as S } from '../src'
 import { error, success } from '../src/ParseResult'
 import { stream } from '../src/Stream'
+import { constant } from 'fp-ts/function'
+import { string } from '../src/string'
 
 describe('Parser', () => {
   it('eof', () => {
@@ -33,6 +34,10 @@ describe('Parser', () => {
 
     const parser4 = P.either(C.char('a'), () => S.string('bb'))
     assert.deepStrictEqual(S.run('bc')(parser4), error(stream(['b', 'c'], 1), ['"bb"']))
+
+    const fatalParser: P.Parser<C.Char, C.Char> = i => error(i, ['expected'], true)
+    const parser5 = P.either(C.char('a'), () => fatalParser)
+    assert.deepStrictEqual(S.run('c')(parser5), error(stream(['c']), ['"a"', 'expected'], true))
   })
 
   it('map', () => {
@@ -62,6 +67,7 @@ describe('Parser', () => {
 
   it('cutWith', () => {
     const parser = P.cutWith(C.char('a'), C.char('b'))
+    assert.deepStrictEqual(S.run('ab')(parser), success('b', stream(['a', 'b'], 2), stream(['a', 'b'])))
     assert.deepStrictEqual(S.run('ac')(parser), error(stream(['a', 'c'], 1), ['"b"'], true))
   })
 
@@ -82,6 +88,7 @@ describe('Parser', () => {
     const parser = P.sepBy1(C.char(','), C.char('a'))
     assert.deepStrictEqual(S.run('')(parser), error(stream([]), ['"a"']))
     assert.deepStrictEqual(S.run('a,b')(parser), success(['a'], stream(['a', ',', 'b'], 1), stream(['a', ',', 'b'])))
+    assert.deepStrictEqual(S.run('ab')(parser), success(['a'], stream(['a', 'b'], 1), stream(['a', 'b'])))
   })
 
   it('sepByCut', () => {
@@ -112,6 +119,20 @@ describe('Parser', () => {
       const parser = betweenParens(S.int)
       assert.deepStrictEqual(S.run('(1')(parser), error(stream(['(', '1'], 2), ['")"']))
       assert.deepStrictEqual(S.run('(1)')(parser), success(1, stream(['(', '1', ')'], 3), stream(['(', '1', ')'])))
+    })
+
+    it('triple polymorphic', () => {
+      const boolTrue: P.Parser<C.Char, boolean> = P.expected(
+        pipe(string('true'), P.map(constant(true))),
+        'a true boolean'
+      )
+      const betweenParens = P.between(C.char('('), boolTrue)
+      const parser = betweenParens(S.int)
+      assert.deepStrictEqual(S.run('(1')(parser), error(stream(['(', '1'], 2), ['a true boolean']))
+      assert.deepStrictEqual(
+        S.run('(1true')(parser),
+        success(1, stream(['(', '1', 't', 'r', 'u', 'e'], 6), stream(['(', '1', 't', 'r', 'u', 'e']))
+      )
     })
   })
 
