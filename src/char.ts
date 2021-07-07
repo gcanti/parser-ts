@@ -36,6 +36,16 @@ export const char: (c: Char) => P.Parser<Char, Char> = c =>
   )
 
 /**
+ * The `charC` parser constructor returns a parser which matches only the
+ * specified single character, case-insensitive
+ *
+ * @category constructors
+ * @since 0.6.15
+ */
+export const charC: (c: Char) => P.Parser<Char, Char> = c =>
+  P.either(char(c.toLowerCase()), () => char(c.toUpperCase()))
+
+/**
  * The `notChar` parser constructor makes a parser which will match any
  * single character other than the one provided.
  *

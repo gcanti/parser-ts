@@ -7,7 +7,20 @@ describe('char', () => {
   it('char', () => {
     const parser = C.char('a')
     assert.deepStrictEqual(S.run('ab')(parser), success('a', stream(['a', 'b'], 1), stream(['a', 'b'])))
+    assert.deepStrictEqual(S.run('Ab')(parser), error(stream(['A', 'b']), ['"a"']))
     assert.deepStrictEqual(S.run('bb')(parser), error(stream(['b', 'b']), ['"a"']))
+  })
+
+  it('charC', () => {
+    const parser = C.charC('a')
+    assert.deepStrictEqual(S.run('Ab')(parser), success('A', stream(['A', 'b'], 1), stream(['A', 'b'])))
+    assert.deepStrictEqual(S.run('ab')(parser), success('a', stream(['a', 'b'], 1), stream(['a', 'b'])))
+    assert.deepStrictEqual(S.run('bb')(parser), error(stream(['b', 'b']), ['"a"', '"A"']))
+
+    const parser2 = C.charC('A')
+    assert.deepStrictEqual(S.run('Ab')(parser2), success('A', stream(['A', 'b'], 1), stream(['A', 'b'])))
+    assert.deepStrictEqual(S.run('ab')(parser2), success('a', stream(['a', 'b'], 1), stream(['a', 'b'])))
+    assert.deepStrictEqual(S.run('bb')(parser2), error(stream(['b', 'b']), ['"a"', '"A"']))
   })
 
   it('run', () => {

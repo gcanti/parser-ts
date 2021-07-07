@@ -99,8 +99,8 @@ export const Named = (name: string, value: string): Named => ({ _tag: 'Named', n
 
 export const Positional = (value: string): Positional => ({ _tag: 'Positional', value })
 
-export const FlagArg = (value: string): Args => ({
-  flags: [value],
+export const FlagArg = (values: string): Args => ({
+  flags: values.split(''),
   named: R.empty,
   positional: A.empty
 })
@@ -164,7 +164,7 @@ const flag: P.Parser<string, Flag> = pipe(
 const named: P.Parser<string, Named> = pipe(
   doubleDash,
   P.chain(() => P.sepBy1(equals, identifier)),
-  P.map(([name, value]) => Named(name, value))
+  P.map(([name, ...values]) => Named(name, values.join('=')))
 )
 
 const positional: P.Parser<string, Positional> = pipe(C.many1(C.notSpace), P.map(Positional))
@@ -189,34 +189,44 @@ const ast = (command: string, source: string): P.Parser<string, Ast> => {
   )
 }
 
-const parseCommand = <E>(cmd: string, onLeft: (cmd: string) => E) => (source: string): Either<E, Ast> =>
-  pipe(
-    run(ast(cmd, source), source),
-    mapLeft(() => onLeft(cmd))
-  )
-
-const cmd = 'foo'
-const source = 'foo ./bar -b --baz=qux'
+const parseCommand = <E>(cmd: string, onLeft: (error: string) => E) => (source: string): Either<E, Ast> =>
+  pipe(run(ast(cmd, source), source), mapLeft(onLeft))
 
 // tslint:disable-next-line: no-console
-console.log(JSON.stringify(parseCommand(cmd, c => console.error(`command not found: ${c}`))(source), null, 2))
+const command = parseCommand('foo', e => console.error(e))
+
+// tslint:disable-next-line: no-console
+console.log(JSON.stringify(command('foo ./bar -bd --baz=qux=45 --tar=get --t'), null, 2))
 /*
 {
-  _tag: 'Right',
-  right: {
-    command: 'foo',
-    source: 'foo ./bar -b --baz=qux',
-    arguments: {
-      flags: [
-        "b"
+  "_tag": "Right",
+  "right": {
+    "command": "foo",
+    "source": "foo ./bar -b --baz=qux=45 --tar=get --t",
+    "args": {
+      "flags": [
+        "b",
+        "d"
       ],
-      named: {
-        baz: "qux",
+      "named": {
+        "baz": "qux=45",
+        "tar": "get",
+        "t": ""
       },
-      positional: [
-        "./bar",
-      ],
+      "positional": [
+        "./bar"
+      ]
     }
   }
+}
+*/
+
+// tslint:disable-next-line: no-console
+console.log(JSON.stringify(command('bar ./bar -bd --baz=qux=45 --tar=get --t'), null, 2))
+/*
+> 1 | bar ./bar -bd --baz=qux=45 --tar=get --t
+    | ^ Expected: "foo"
+{
+  "_tag": "Left"
 }
 */

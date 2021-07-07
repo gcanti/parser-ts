@@ -3,7 +3,7 @@
  */
 import { empty, getMonoid } from 'fp-ts/lib/Array'
 import { Either, left, right } from 'fp-ts/lib/Either'
-import { getFirstSemigroup, getLastSemigroup, getStructSemigroup, Semigroup } from 'fp-ts/lib/Semigroup'
+import { getFirstSemigroup, semigroupAny, getStructSemigroup, Semigroup } from 'fp-ts/lib/Semigroup'
 import { Stream } from './Stream'
 
 // -------------------------------------------------------------------------------------
@@ -103,12 +103,11 @@ export const extend = <I>(err1: ParseError<I>, err2: ParseError<I>): ParseError<
 
 const getSemigroup = <I>(): Semigroup<ParseError<I>> => ({
   concat: (x, y) => {
-    if (x.input.cursor < y.input.cursor) return getLastSemigroup<ParseError<I>>().concat(x, y)
-    if (x.input.cursor > y.input.cursor) return getFirstSemigroup<ParseError<I>>().concat(x, y)
-
+    if (x.input.cursor < y.input.cursor) return y
+    if (x.input.cursor > y.input.cursor) return x
     return getStructSemigroup<ParseError<I>>({
       input: getFirstSemigroup<Stream<I>>(),
-      fatal: getFirstSemigroup<boolean>(),
+      fatal: semigroupAny,
       expected: getMonoid<string>()
     }).concat(x, y)
   }

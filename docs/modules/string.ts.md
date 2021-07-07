@@ -26,7 +26,9 @@ Added in v0.6.0
   - [spaces1](#spaces1)
 - [constructors](#constructors)
   - [oneOf](#oneof)
+  - [oneOfC](#oneofc)
   - [string](#string)
+  - [stringC](#stringc)
 - [destructors](#destructors)
   - [fold](#fold)
 
@@ -171,13 +173,52 @@ Matches one of a list of strings.
 **Signature**
 
 ```ts
-export declare function oneOf<F extends URIS>(
-  F: Functor1<F> & Foldable1<F>
-): (ss: Kind<F, string>) => P.Parser<C.Char, string>
-export declare function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string>
+export declare const oneOf: {
+  <
+    U extends
+      | 'Option'
+      | 'ReadonlyRecord'
+      | 'Eq'
+      | 'Ord'
+      | 'NonEmptyArray'
+      | 'Array'
+      | 'ReadonlyNonEmptyArray'
+      | 'ReadonlyArray'
+  >(
+    F: Functor1<U> & Foldable1<U>
+  ): (ss: Kind<U, string>) => P.Parser<C.Char, string>
+  <U>(F: Functor<U> & Foldable<U>): (ss: HKT<U, string>) => P.Parser<C.Char, string>
+}
 ```
 
 Added in v0.6.0
+
+## oneOfC
+
+Matches one of a list of strings, case-insensitive.
+
+**Signature**
+
+```ts
+export declare const oneOfC: {
+  <
+    U extends
+      | 'Option'
+      | 'ReadonlyRecord'
+      | 'Eq'
+      | 'Ord'
+      | 'NonEmptyArray'
+      | 'Array'
+      | 'ReadonlyNonEmptyArray'
+      | 'ReadonlyArray'
+  >(
+    F: Functor1<U> & Foldable1<U>
+  ): (ss: Kind<U, string>) => P.Parser<C.Char, string>
+  <U>(F: Functor<U> & Foldable<U>): (ss: HKT<U, string>) => P.Parser<C.Char, string>
+}
+```
+
+Added in v0.6.15
 
 ## string
 
@@ -190,6 +231,18 @@ export declare const string: (s: string) => P.Parser<C.Char, string>
 ```
 
 Added in v0.6.0
+
+## stringC
+
+Matches the exact string provided, case-insensitive
+
+**Signature**
+
+```ts
+export declare const stringC: (s: string) => P.Parser<C.Char, string>
+```
+
+Added in v0.6.15
 
 # destructors
 

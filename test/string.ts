@@ -27,6 +27,16 @@ describe('string', () => {
       assert.deepStrictEqual(S.run('barfoo')(parser), error(stream(['b', 'a', 'r', 'f', 'o', 'o']), ['"foo"']))
     })
 
+    it('should parse a non-empty string case insensitive', () => {
+      const parser = S.stringC('fOo')
+      assert.deepStrictEqual(S.run('FoO')(parser), success('FoO', stream(['F', 'o', 'O'], 3), stream(['F', 'o', 'O'])))
+      assert.deepStrictEqual(
+        S.run('fOobAr')(parser),
+        success('fOo', stream(['f', 'O', 'o', 'b', 'A', 'r'], 3), stream(['f', 'O', 'o', 'b', 'A', 'r']))
+      )
+      assert.deepStrictEqual(S.run('bArfOo')(parser), error(stream(['b', 'A', 'r', 'f', 'O', 'o']), ['"fOo"/i']))
+    })
+
     it('should handle long strings without exceeding the recursion limit (#41)', () => {
       const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
       const target = intercalate(monoidString, RA.Foldable)(' ', RA.replicate(1000, lorem))
@@ -58,6 +68,19 @@ describe('string', () => {
     assert.deepStrictEqual(S.run('ab')(parser), success('a', stream(['a', 'b'], 1), stream(['a', 'b'])))
     assert.deepStrictEqual(S.run('ba')(parser), success('b', stream(['b', 'a'], 1), stream(['b', 'a'])))
     assert.deepStrictEqual(S.run('ca')(parser), error(stream(['c', 'a']), ['"a"', '"b"']))
+  })
+
+  it('oneOfC', () => {
+    const parser = S.oneOfC(array)(['A', 'b'])
+    assert.deepStrictEqual(S.run('a')(parser), success('a', stream(['a'], 1), stream(['a'])))
+    assert.deepStrictEqual(S.run('A')(parser), success('A', stream(['A'], 1), stream(['A'])))
+    assert.deepStrictEqual(S.run('b')(parser), success('b', stream(['b'], 1), stream(['b'])))
+    assert.deepStrictEqual(S.run('B')(parser), success('B', stream(['B'], 1), stream(['B'])))
+    assert.deepStrictEqual(S.run('ab')(parser), success('a', stream(['a', 'b'], 1), stream(['a', 'b'])))
+    assert.deepStrictEqual(S.run('Ab')(parser), success('A', stream(['A', 'b'], 1), stream(['A', 'b'])))
+    assert.deepStrictEqual(S.run('ba')(parser), success('b', stream(['b', 'a'], 1), stream(['b', 'a'])))
+    assert.deepStrictEqual(S.run('Ba')(parser), success('B', stream(['B', 'a'], 1), stream(['B', 'a'])))
+    assert.deepStrictEqual(S.run('ca')(parser), error(stream(['c', 'a']), ['"A"/i', '"b"/i']))
   })
 
   it('int', () => {
