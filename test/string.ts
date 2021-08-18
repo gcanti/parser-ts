@@ -4,7 +4,7 @@ import { monoidString } from 'fp-ts/lib/Monoid'
 import { intercalate } from 'fp-ts/lib/Foldable'
 import * as RA from 'fp-ts/lib/ReadonlyArray'
 
-import { string as S } from '../src'
+import { char as C, string as S } from '../src'
 import { error, success } from '../src/ParseResult'
 import { stream } from '../src/Stream'
 
@@ -41,15 +41,25 @@ describe('string', () => {
     })
   })
 
-  it('many', () => {
-    const parser = S.many(S.string('ab'))
-    assert.deepStrictEqual(S.run('ab')(parser), success('ab', stream(['a', 'b'], 2), stream(['a', 'b'])))
-    assert.deepStrictEqual(
-      S.run('abab')(parser),
-      success('abab', stream(['a', 'b', 'a', 'b'], 4), stream(['a', 'b', 'a', 'b']))
-    )
-    assert.deepStrictEqual(S.run('aba')(parser), success('ab', stream(['a', 'b', 'a'], 2), stream(['a', 'b', 'a'])))
-    assert.deepStrictEqual(S.run('ac')(parser), success('', stream(['a', 'c']), stream(['a', 'c'])))
+  describe('many', () => {
+    it('should handle repeated sequences of the target string', () => {
+      const parser = S.many(S.string('ab'))
+      assert.deepStrictEqual(S.run('ab')(parser), success('ab', stream(['a', 'b'], 2), stream(['a', 'b'])))
+      assert.deepStrictEqual(
+        S.run('abab')(parser),
+        success('abab', stream(['a', 'b', 'a', 'b'], 4), stream(['a', 'b', 'a', 'b']))
+      )
+      assert.deepStrictEqual(S.run('aba')(parser), success('ab', stream(['a', 'b', 'a'], 2), stream(['a', 'b', 'a'])))
+      assert.deepStrictEqual(S.run('ac')(parser), success('', stream(['a', 'c']), stream(['a', 'c'])))
+    })
+
+    it('should handle long sequences without exceeding the recursion limit (#45)', () => {
+      const source = 'a'.repeat(10000)
+      assert.deepStrictEqual(
+        S.run(source)(S.many(C.alphanum)),
+        success(source, stream(source.split(''), source.length), stream(source.split('')))
+      )
+    })
   })
 
   it('oneOf', () => {
