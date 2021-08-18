@@ -246,13 +246,16 @@ export const many = <I, A>(p: Parser<I, A>): Parser<I, Array<A>> =>
  * @category combinators
  * @since 0.6.0
  */
-export const many1: <I, A>(p: Parser<I, A>) => Parser<I, NEA.NonEmptyArray<A>> = p =>
+export const many1 = <I, A>(parser: Parser<I, A>): Parser<I, NEA.NonEmptyArray<A>> =>
   pipe(
-    p,
+    parser,
     chain(head =>
-      pipe(
-        many(p),
-        map(tail => NEA.cons(head, tail))
+      chainRec_(NEA.of(head), acc =>
+        pipe(
+          parser,
+          map(a => E.left(NEA.snoc(acc, a))),
+          alt(() => of(E.right(acc)))
+        )
       )
     )
   )
