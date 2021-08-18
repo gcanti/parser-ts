@@ -13,6 +13,11 @@
 **Note**: Gaps between patch versions are faulty/broken releases. **Note**: A feature tagged as Experimental is in a
 high state of flux, you're at risk of it changing without notice.
 
+# 0.6.15
+
+- **Bug Fix**
+  - re-implement `many` and `many1` in terms of `ChainRec`, closes #45 (@IMax153)
+
 # 0.6.14
 
 - **Bug Fix**
