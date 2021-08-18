@@ -380,7 +380,7 @@ thus guaranteed to contain at least one value.
 **Signature**
 
 ```ts
-export declare const many1: <I, A>(p: Parser<I, A>) => Parser<I, NEA.NonEmptyArray<A>>
+export declare const many1: <I, A>(parser: Parser<I, A>) => Parser<I, NEA.NonEmptyArray<A>>
 ```
 
 Added in v0.6.0
