@@ -143,6 +143,17 @@ export const alphanum: P.Parser<Char, Char> = P.expected(P.sat(isAlphanum), 'a w
  */
 export const letter = P.expected(P.sat(isLetter), 'a letter')
 
+const isUnicodeLetter: (c: Char) => boolean = c => c.toLowerCase() !== c.toUpperCase()
+
+/**
+ * Matches a single Unicode letter.
+ * Works for scripts which have a notion of an upper case and lower case letters
+ * (Latin-based scripts, Greek, Russian etc).
+ *
+ * @category combinators
+ */
+export const unicodeLetter = P.expected(P.sat(isUnicodeLetter), 'an unicode letter')
+
 const isUpper: (c: Char) => boolean = c => isLetter(c) && c === c.toUpperCase()
 
 /**

@@ -64,6 +64,26 @@ describe('char', () => {
     assert.deepStrictEqual(S.run('@')(parser), error(stream(['@']), ['a word character']))
   })
 
+  it('letter', () => {
+    const parser = C.letter
+    assert.deepStrictEqual(S.run('a')(parser), success('a', stream(['a'], 1), stream(['a'])))
+    assert.deepStrictEqual(S.run('ą')(parser), error(stream(['ą']), ['a letter']))
+    assert.deepStrictEqual(S.run('@')(parser), error(stream(['@']), ['a letter']))
+  })
+
+it('unicode letter', () => {
+    const parser = C.unicodeLetter
+    assert.deepStrictEqual(S.run('a')(parser), success('a', stream(['a'], 1), stream(['a'])))
+    assert.deepStrictEqual(S.run('ą')(parser), success('ą', stream(['ą'], 1), stream(['ą'])))
+    assert.deepStrictEqual(S.run('Ö')(parser), success('Ö', stream(['Ö'], 1), stream(['Ö'])))
+    assert.deepStrictEqual(S.run('š')(parser), success('š', stream(['š'], 1), stream(['š'])))
+    assert.deepStrictEqual(S.run('ж')(parser), success('ж', stream(['ж'], 1), stream(['ж'])))
+    assert.deepStrictEqual(S.run('æ')(parser), success('æ', stream(['æ'], 1), stream(['æ'])))
+    assert.deepStrictEqual(S.run('Δ')(parser), success('Δ', stream(['Δ'], 1), stream(['Δ'])))
+    assert.deepStrictEqual(S.run('哦')(parser), error(stream(['哦']), ['an unicode letter']))
+    assert.deepStrictEqual(S.run('@')(parser), error(stream(['@']), ['an unicode letter']))
+  })
+
   it('upper', () => {
     const parser = C.upper
     assert.deepStrictEqual(S.run('A')(parser), success('A', stream(['A'], 1), stream(['A'])))
