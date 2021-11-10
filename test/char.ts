@@ -71,7 +71,7 @@ describe('char', () => {
     assert.deepStrictEqual(S.run('@')(parser), error(stream(['@']), ['a letter']))
   })
 
-it('unicode letter', () => {
+  it('unicode letter', () => {
     const parser = C.unicodeLetter
     assert.deepStrictEqual(S.run('a')(parser), success('a', stream(['a'], 1), stream(['a'])))
     assert.deepStrictEqual(S.run('ą')(parser), success('ą', stream(['ą'], 1), stream(['ą'])))

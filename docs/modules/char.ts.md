@@ -25,6 +25,7 @@ Added in v0.6.0
   - [notSpace](#notspace)
   - [notUpper](#notupper)
   - [space](#space)
+  - [unicodeLetter](#unicodeletter)
   - [upper](#upper)
 - [constructors](#constructors)
   - [char](#char)
@@ -185,6 +186,20 @@ export declare const space: P.Parser<string, string>
 ```
 
 Added in v0.6.0
+
+## unicodeLetter
+
+Matches a single Unicode letter.
+Works for scripts which have a notion of an upper case and lower case letters
+(Latin-based scripts, Greek, Russian etc).
+
+**Signature**
+
+```ts
+export declare const unicodeLetter: P.Parser<string, string>
+```
+
+Added in v0.6.16
 
 ## upper
 

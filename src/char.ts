@@ -151,6 +151,7 @@ const isUnicodeLetter: (c: Char) => boolean = c => c.toLowerCase() !== c.toUpper
  * (Latin-based scripts, Greek, Russian etc).
  *
  * @category combinators
+ * @since 0.6.16
  */
 export const unicodeLetter = P.expected(P.sat(isUnicodeLetter), 'an unicode letter')
 
