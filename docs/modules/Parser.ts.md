@@ -199,7 +199,10 @@ Matches the provided parser `p` that occurs between the provided `left` and `rig
 **Signature**
 
 ```ts
-export declare const between: <I, A>(left: Parser<I, A>, right: Parser<I, A>) => <B>(p: Parser<I, B>) => Parser<I, B>
+export declare const between: <I, A, B = A>(
+  left: Parser<I, A>,
+  right: Parser<I, B>
+) => <C>(p: Parser<I, C>) => Parser<I, C>
 ```
 
 Added in v0.6.4
@@ -487,7 +490,7 @@ run(parser, 'a')
 // { _tag: 'Right', right: { _tag: 'Some', value: 'a' } }
 
 run(parser, 'b')
-// { _tag: 'Left', left: { _tag: 'None' } }
+// { _tag: 'Right', right: { _tag: 'None' } }
 ```
 
 Added in v0.6.10

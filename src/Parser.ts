@@ -180,7 +180,8 @@ export const either: <I, A>(p: Parser<I, A>, f: () => Parser<I, A>) => Parser<I,
     return e
   }
   return pipe(
-    f()(i),
+    i,
+    f(),
     E.mapLeft(err => extend(e.left, err))
   )
 }
@@ -268,13 +269,11 @@ export const many1 = <I, A>(parser: Parser<I, A>): Parser<I, NEA.NonEmptyArray<A
  * @category combinators
  * @since 0.6.0
  */
-export const sepBy = <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Array<B>> => {
-  const nil: Parser<I, Array<B>> = of(A.empty)
-  return pipe(
+export const sepBy = <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Array<B>> =>
+  pipe(
     sepBy1(sep, p),
-    alt(() => nil)
+    alt(() => of<I, Array<B>>(A.empty))
   )
-}
 
 /**
  * Matches the provided parser `p` one or more times, but requires the
@@ -356,7 +355,7 @@ export const filter: {
  * @category combinators
  * @since 0.6.4
  */
-export const between: <I, A>(left: Parser<I, A>, right: Parser<I, A>) => <B>(p: Parser<I, B>) => Parser<I, B> = (
+export const between: <I, A, B = A>(left: Parser<I, A>, right: Parser<I, B>) => <C>(p: Parser<I, C>) => Parser<I, C> = (
   left,
   right
 ) => p =>
@@ -434,7 +433,7 @@ export const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, Array<I>> = pr
  * // { _tag: 'Right', right: { _tag: 'Some', value: 'a' } }
  *
  * run(parser, 'b')
- * // { _tag: 'Left', left: { _tag: 'None' } }
+ * // { _tag: 'Right', right: { _tag: 'None' } }
  *
  * @category combinators
  * @since 0.6.10
@@ -535,9 +534,7 @@ const map_: Monad2<URI>['map'] = (ma, f) => i =>
 const ap_: Monad2<URI>['ap'] = (mab, ma) => chain_(mab, f => map_(ma, f))
 const chain_: Chain2<URI>['chain'] = (ma, f) => seq(ma, f)
 const chainRec_: ChainRec2<URI>['chainRec'] = <I, A, B>(a: A, f: (a: A) => Parser<I, E.Either<A, B>>): Parser<I, B> => {
-  const split = (start: Stream<I>) => (
-    result: ParseSuccess<I, E.Either<A, B>>
-  ): E.Either<Next<I, A>, ParseResult<I, B>> =>
+  const split = (start: Stream<I>, result: ParseSuccess<I, E.Either<A, B>>): E.Either<Next<I, A>, ParseResult<I, B>> =>
     E.isLeft(result.value)
       ? E.left({ value: result.value.left, stream: result.next })
       : E.right(success(result.value.right, result.next, start))
@@ -547,7 +544,7 @@ const chainRec_: ChainRec2<URI>['chainRec'] = <I, A, B>(a: A, f: (a: A) => Parse
       if (E.isLeft(result)) {
         return E.right(error(state.stream, result.left.expected, result.left.fatal))
       }
-      return split(start)(result.right)
+      return split(start, result.right)
     })
 }
 const alt_: Alt2<URI>['alt'] = (fa, that) => either(fa, that)

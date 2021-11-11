@@ -12,10 +12,35 @@ import * as C from './char'
 import * as P from './Parser'
 import * as S from './Stream'
 import * as PR from './ParseResult'
+import { flow } from 'fp-ts/lib/function'
+import { snoc } from 'fp-ts/lib/Array'
 
 // -------------------------------------------------------------------------------------
 // constructors
 // -------------------------------------------------------------------------------------
+
+/**
+ * @internal
+ */
+const string_ = (cp: (c: C.Char) => P.Parser<C.Char, C.Char>, expected: (s: string) => string) => (
+  s: string
+): P.Parser<C.Char, string> =>
+  P.expected(
+    P.ChainRec.chainRec<string, [string, Array<string>], string>([s, []], ([sTail, acc]) =>
+      pipe(
+        charAt(0, sTail),
+        O.fold(
+          () => P.of(E.right(acc.join(''))),
+          c =>
+            pipe(
+              cp(c),
+              P.chain(m => P.of(E.left([sTail.slice(1), snoc(acc, m)])))
+            )
+        )
+      )
+    ),
+    expected(s)
+  )
 
 /**
  * Matches the exact string provided.
@@ -23,22 +48,27 @@ import * as PR from './ParseResult'
  * @category constructors
  * @since 0.6.0
  */
-export const string: (s: string) => P.Parser<C.Char, string> = s =>
-  P.expected(
-    P.ChainRec.chainRec<string, string, string>(s, acc =>
-      pipe(
-        charAt(0, acc),
-        O.fold(
-          () => P.of(E.right(s)),
-          c =>
-            pipe(
-              C.char(c),
-              P.chain(() => P.of(E.left(acc.slice(1))))
-            )
-        )
-      )
-    ),
-    JSON.stringify(s)
+export const string: (s: string) => P.Parser<C.Char, string> = string_(C.char, JSON.stringify)
+
+/**
+ * Matches the exact string provided, case-insensitive
+ *
+ * @category constructors
+ * @since 0.6.15
+ */
+export const stringC: (s: string) => P.Parser<C.Char, string> = string_(C.charC, s => `${JSON.stringify(s)}/i`)
+
+/**
+ * @internal
+ */
+const oneOf_ = (sc: (s: string) => P.Parser<C.Char, string>) => <U>(F: Functor<U> & Foldable<U>) => (
+  ss: HKT<U, string>
+): P.Parser<C.Char, string> =>
+  F.reduce(ss, P.fail(), (p, s) =>
+    pipe(
+      p,
+      P.alt(() => sc(s))
+    )
   )
 
 /**
@@ -47,17 +77,21 @@ export const string: (s: string) => P.Parser<C.Char, string> = s =>
  * @category constructors
  * @since 0.6.0
  */
-export function oneOf<F extends URIS>(F: Functor1<F> & Foldable1<F>): (ss: Kind<F, string>) => P.Parser<C.Char, string>
-export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string>
-export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string> {
-  return ss =>
-    F.reduce(ss, P.fail(), (p, s) =>
-      pipe(
-        p,
-        P.alt(() => string(s))
-      )
-    )
-}
+export const oneOf: {
+  <U extends URIS>(F: Functor1<U> & Foldable1<U>): (ss: Kind<U, string>) => P.Parser<C.Char, string>
+  <U>(F: Functor<U> & Foldable<U>): (ss: HKT<U, string>) => P.Parser<C.Char, string>
+} = oneOf_(string)
+
+/**
+ * Matches one of a list of strings, case-insensitive.
+ *
+ * @category constructors
+ * @since 0.6.15
+ */
+export const oneOfC: {
+  <U extends URIS>(F: Functor1<U> & Foldable1<U>): (ss: Kind<U, string>) => P.Parser<C.Char, string>
+  <U>(F: Functor<U> & Foldable<U>): (ss: HKT<U, string>) => P.Parser<C.Char, string>
+} = oneOf_(stringC)
 
 // -------------------------------------------------------------------------------------
 // destructors
@@ -160,9 +194,9 @@ export const int: P.Parser<C.Char, number> = P.expected(
 export const float: P.Parser<C.Char, number> = P.expected(
   pipe(
     fold([maybe(C.char('-')), C.many(C.digit), maybe(fold([C.char('.'), C.many1(C.digit)]))]),
-    P.chain(s =>
-      pipe(
-        fromString(s),
+    P.chain(
+      flow(
+        fromString,
         O.fold(() => P.fail(), P.succeed)
       )
     )

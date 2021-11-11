@@ -29,6 +29,7 @@ Added in v0.6.0
   - [upper](#upper)
 - [constructors](#constructors)
   - [char](#char)
+  - [charC](#charc)
   - [notChar](#notchar)
   - [notOneOf](#notoneof)
   - [oneOf](#oneof)
@@ -227,6 +228,19 @@ export declare const char: (c: Char) => P.Parser<Char, Char>
 ```
 
 Added in v0.6.0
+
+## charC
+
+The `charC` parser constructor returns a parser which matches only the
+specified single character, case-insensitive
+
+**Signature**
+
+```ts
+export declare const charC: (c: Char) => P.Parser<Char, Char>
+```
+
+Added in v0.6.15
 
 ## notChar
 
