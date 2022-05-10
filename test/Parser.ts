@@ -1,10 +1,10 @@
 import * as assert from 'assert'
 import { none, some } from 'fp-ts/lib/Option'
-import { pipe } from 'fp-ts/lib/pipeable'
 
 import { char as C, parser as P, string as S } from '../src'
 import { error, success } from '../src/ParseResult'
 import { stream } from '../src/Stream'
+import { pipe } from 'fp-ts/lib/function'
 
 describe('Parser', () => {
   it('eof', () => {

@@ -7,11 +7,12 @@ import { HKT, Kind, URIS } from 'fp-ts/lib/HKT'
 import * as E from 'fp-ts/Either'
 import * as M from 'fp-ts/lib/Monoid'
 import * as O from 'fp-ts/lib/Option'
-import { pipe } from 'fp-ts/lib/pipeable'
+import * as STR from 'fp-ts/lib/string'
 import * as C from './char'
 import * as P from './Parser'
 import * as S from './Stream'
 import * as PR from './ParseResult'
+import { pipe } from 'fp-ts/lib/function'
 
 // -------------------------------------------------------------------------------------
 // constructors
@@ -67,7 +68,7 @@ export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P
  * @category destructors
  * @since 0.6.0
  */
-export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = M.fold(P.getMonoid(M.monoidString))
+export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = M.concatAll(P.getMonoid(STR.Monoid))
 
 // -------------------------------------------------------------------------------------
 // combinators
@@ -77,7 +78,7 @@ export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = 
  * @category combinators
  * @since 0.6.0
  */
-export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = P.maybe(M.monoidString)
+export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = P.maybe(STR.Monoid)
 
 /**
  * Matches the given parser zero or more times, returning a string of the
