@@ -1,8 +1,7 @@
 import * as assert from 'assert'
-import { array } from 'fp-ts/lib/Array'
-import { monoidString } from 'fp-ts/lib/Monoid'
-import { intercalate } from 'fp-ts/lib/Foldable'
 import * as RA from 'fp-ts/lib/ReadonlyArray'
+import * as STR from 'fp-ts/lib/string'
+import { intercalate } from 'fp-ts/lib/Foldable'
 
 import { char as C, string as S } from '../src'
 import { error, success } from '../src/ParseResult'
@@ -29,8 +28,8 @@ describe('string', () => {
 
     it('should handle long strings without exceeding the recursion limit (#41)', () => {
       const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-      const target = intercalate(monoidString, RA.Foldable)(' ', RA.replicate(1000, lorem))
-      const source = intercalate(monoidString, RA.Foldable)(' ', RA.replicate(10000, lorem))
+      const target = intercalate(STR.Monoid, RA.Foldable)(' ', RA.replicate(1000, lorem))
+      const source = intercalate(STR.Monoid, RA.Foldable)(' ', RA.replicate(10000, lorem))
       const cursor = target.length
       const parser = S.string(target)
 
@@ -63,7 +62,7 @@ describe('string', () => {
   })
 
   it('oneOf', () => {
-    const parser = S.oneOf(array)(['a', 'b'])
+    const parser = S.oneOf({ ...RA.Functor, ...RA.Foldable })(['a', 'b'])
     assert.deepStrictEqual(S.run('a')(parser), success('a', stream(['a'], 1), stream(['a'])))
     assert.deepStrictEqual(S.run('ab')(parser), success('a', stream(['a', 'b'], 1), stream(['a', 'b'])))
     assert.deepStrictEqual(S.run('ba')(parser), success('b', stream(['b', 'a'], 1), stream(['b', 'a'])))

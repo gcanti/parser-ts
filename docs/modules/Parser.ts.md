@@ -199,7 +199,7 @@ Matches the provided parser `p` that occurs between the provided `left` and `rig
 **Signature**
 
 ```ts
-export declare const between: <I, A>(left: Parser<I, A>, right: Parser<I, A>) => <B>(p: Parser<I, B>) => Parser<I, B>
+export declare const between: <I, A, C>(left: Parser<I, A>, right: Parser<I, C>) => <B>(p: Parser<I, B>) => Parser<I, B>
 ```
 
 Added in v0.6.4
@@ -366,7 +366,7 @@ the results."
 **Signature**
 
 ```ts
-export declare const many: <I, A>(p: Parser<I, A>) => Parser<I, A[]>
+export declare const many: <I, A>(p: Parser<I, A>) => Parser<I, readonly A[]>
 ```
 
 Added in v0.6.0
@@ -380,7 +380,7 @@ thus guaranteed to contain at least one value.
 **Signature**
 
 ```ts
-export declare const many1: <I, A>(parser: Parser<I, A>) => Parser<I, NEA.NonEmptyArray<A>>
+export declare const many1: <I, A>(parser: Parser<I, A>) => Parser<I, RNEA.ReadonlyNonEmptyArray<A>>
 ```
 
 Added in v0.6.0
@@ -501,7 +501,7 @@ use `sep` to match separator characters in between matches of `p`.
 **Signature**
 
 ```ts
-export declare const sepBy: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, B[]>
+export declare const sepBy: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, readonly B[]>
 ```
 
 Added in v0.6.0
@@ -515,7 +515,7 @@ use `sep` to match separator characters in between matches of `p`.
 **Signature**
 
 ```ts
-export declare const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NEA.NonEmptyArray<B>>
+export declare const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, RNEA.ReadonlyNonEmptyArray<B>>
 ```
 
 Added in v0.6.0
@@ -528,7 +528,7 @@ followed by a `p` will cause a fatal error.
 **Signature**
 
 ```ts
-export declare const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NEA.NonEmptyArray<B>>
+export declare const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, RNEA.ReadonlyNonEmptyArray<B>>
 ```
 
 Added in v0.6.0
@@ -570,7 +570,7 @@ Takes a `Predicate` and continues parsing until the given `Predicate` is satisfi
 **Signature**
 
 ```ts
-export declare const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, I[]>
+export declare const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, readonly I[]>
 ```
 
 **Example**

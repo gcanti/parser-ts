@@ -4,22 +4,22 @@
 import { Alt2 } from 'fp-ts/lib/Alt'
 import { Alternative2 } from 'fp-ts/lib/Alternative'
 import { Applicative2 } from 'fp-ts/lib/Applicative'
-import * as A from 'fp-ts/lib/Array'
 import { Chain2 } from 'fp-ts/lib/Chain'
 import { tailRec, ChainRec2 } from 'fp-ts/ChainRec'
 import * as E from 'fp-ts/lib/Either'
 import { Functor2 } from 'fp-ts/lib/Functor'
 import { Monad2 } from 'fp-ts/lib/Monad'
 import { Monoid } from 'fp-ts/lib/Monoid'
-import * as NEA from 'fp-ts/lib/NonEmptyArray'
 import * as O from 'fp-ts/lib/Option'
 import * as RA from 'fp-ts/lib/ReadonlyArray'
 import * as RNEA from 'fp-ts/lib/ReadonlyNonEmptyArray'
 import { Semigroup } from 'fp-ts/lib/Semigroup'
-import { identity, not, Lazy, Predicate, Refinement } from 'fp-ts/lib/function'
-import { pipe } from 'fp-ts/lib/pipeable'
+import { identity, Lazy } from 'fp-ts/lib/function'
 import { error, escalate, extend, success, withExpected, ParseResult, ParseSuccess } from './ParseResult'
 import { atEnd, getAndNext, Stream } from './Stream'
+import { pipe } from 'fp-ts/function'
+import { Predicate, not } from 'fp-ts/Predicate'
+import { Refinement } from 'fp-ts/Refinement'
 
 // -------------------------------------------------------------------------------------
 // model
@@ -232,11 +232,11 @@ export const eof: <I>() => Parser<I, void> = () =>
  * @category combinators
  * @since 0.6.0
  */
-export const many = <I, A>(p: Parser<I, A>): Parser<I, Array<A>> =>
-  pipe(
-    many1(p),
-    alt(() => of<I, Array<A>>(A.empty))
-  )
+export const many = <I, A>(p: Parser<I, A>): Parser<I, ReadonlyArray<A>> =>
+    pipe(
+        many1(p),
+        alt(() => of<I, ReadonlyArray<A>>(RA.empty))
+    )
 
 /**
  * The `many1` combinator is just like the `many` combinator, except it
@@ -246,19 +246,19 @@ export const many = <I, A>(p: Parser<I, A>): Parser<I, Array<A>> =>
  * @category combinators
  * @since 0.6.0
  */
-export const many1 = <I, A>(parser: Parser<I, A>): Parser<I, NEA.NonEmptyArray<A>> =>
-  pipe(
-    parser,
-    chain(head =>
-      chainRec_(NEA.of(head), acc =>
-        pipe(
-          parser,
-          map(a => E.left(NEA.snoc(acc, a))),
-          alt(() => of(E.right(acc)))
+export const many1 = <I, A>(parser: Parser<I, A>): Parser<I, RNEA.ReadonlyNonEmptyArray<A>> =>
+    pipe(
+        parser,
+        chain(head =>
+            chainRec_(RNEA.of(head), acc =>
+                pipe(
+                    parser,
+                    map(a => E.left(RA.append(a)(acc))),
+                    alt(() => of(E.right(acc)))
+                )
+            )
         )
-      )
     )
-  )
 
 /**
  * Matches the provided parser `p` zero or more times, but requires the
@@ -268,12 +268,12 @@ export const many1 = <I, A>(parser: Parser<I, A>): Parser<I, NEA.NonEmptyArray<A
  * @category combinators
  * @since 0.6.0
  */
-export const sepBy = <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Array<B>> => {
-  const nil: Parser<I, Array<B>> = of(A.empty)
-  return pipe(
-    sepBy1(sep, p),
-    alt(() => nil)
-  )
+export const sepBy = <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, ReadonlyArray<B>> => {
+    const nil: Parser<I, ReadonlyArray<B>> = of(RA.empty)
+    return pipe(
+        sepBy1(sep, p),
+        alt(() => nil)
+    )
 }
 
 /**
@@ -284,16 +284,19 @@ export const sepBy = <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Ar
  * @category combinators
  * @since 0.6.0
  */
-export const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NEA.NonEmptyArray<B>> = (sep, p) =>
-  pipe(
-    p,
-    chain(head =>
-      pipe(
-        many(pipe(sep, apSecond(p))),
-        map(tail => NEA.cons(head, tail))
-      )
+export const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, RNEA.ReadonlyNonEmptyArray<B>> = (
+    sep,
+    p
+) =>
+    pipe(
+        p,
+        chain(head =>
+            pipe(
+                many(pipe(sep, apSecond(p))),
+                map(tail => RA.prepend(head)(tail))
+            )
+        )
     )
-  )
 
 /**
  * Like `sepBy1`, but cut on the separator, so that matching a `sep` not
@@ -302,16 +305,19 @@ export const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, 
  * @category combinators
  * @since 0.6.0
  */
-export const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NEA.NonEmptyArray<B>> = (sep, p) =>
-  pipe(
-    p,
-    chain(head =>
-      pipe(
-        many(cutWith(sep, p)),
-        map(tail => NEA.cons(head, tail))
-      )
+export const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, RNEA.ReadonlyNonEmptyArray<B>> = (
+    sep,
+    p
+) =>
+    pipe(
+        p,
+        chain(head =>
+            pipe(
+                many(cutWith(sep, p)),
+                map(tail => RA.append(head)(tail))
+            )
+        )
     )
-  )
 
 /**
  * Filters the result of a parser based upon a `Refinement` or a `Predicate`.
@@ -356,15 +362,15 @@ export const filter: {
  * @category combinators
  * @since 0.6.4
  */
-export const between: <I, A>(left: Parser<I, A>, right: Parser<I, A>) => <B>(p: Parser<I, B>) => Parser<I, B> = (
-  left,
-  right
-) => p =>
-  pipe(
+export const between: <I, A, C>(left: Parser<I, A>, right: Parser<I, C>) => <B>(p: Parser<I, B>) => Parser<I, B> = (
     left,
-    chain(() => p),
-    chainFirst(() => right)
-  )
+    right
+) => p =>
+    pipe(
+        left,
+        chain(() => p),
+        chainFirst(() => right)
+    )
 
 /**
  * Matches the provided parser `p` that is surrounded by the `bound` parser. Shortcut for `between(bound, bound)`.
@@ -417,7 +423,8 @@ export const lookAhead: <I, A>(p: Parser<I, A>) => Parser<I, A> = p => i =>
  * @category combinators
  * @since 0.6.6
  */
-export const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, Array<I>> = predicate => many(sat(not(predicate)))
+export const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, ReadonlyArray<I>> = predicate =>
+    many(sat(not(predicate)))
 
 /**
  * Returns `Some<A>` if the specified parser succeeds, otherwise returns `None`.
@@ -510,7 +517,7 @@ export const many1Till = <I, A, B>(
           alt(() =>
             pipe(
               parser,
-              map(a => E.left(RNEA.snoc(acc, a)))
+                map(a => E.left(RA.append(a)(acc)))
             )
           )
         )
