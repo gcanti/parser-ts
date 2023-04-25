@@ -1,6 +1,6 @@
 {
   "name": "parser-ts",
-  "version": "0.6.16",
+  "version": "0.6.17",
   "description": "String parser combinators for TypeScript",
   "main": "lib/index.js",
   "module": "es6/index.js",
@@ -42,7 +42,7 @@
     "@types/node": "^13.11.0",
     "docs-ts": "^0.6.4",
     "dtslint": "^0.4.2",
-    "fp-ts": "^2.8.2",
+    "fp-ts": "^2.14.0",
     "import-path-rewrite": "github:gcanti/import-path-rewrite",
     "jest": "^24.8.0",
     "mocha": "^5.2.0",

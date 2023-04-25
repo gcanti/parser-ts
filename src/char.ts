@@ -1,12 +1,12 @@
 /**
  * @since 0.6.0
  */
-import { not } from 'fp-ts/lib/function'
-import { monoidString } from 'fp-ts/lib/Monoid'
-import { pipe } from 'fp-ts/lib/pipeable'
-import * as P from './Parser'
+import { not } from "fp-ts/lib/Predicate";
+import { Monoid } from "fp-ts/lib/string";
+import { pipe } from "fp-ts/lib/function";
+import * as P from "./Parser";
 
-const maybe = P.maybe(monoidString)
+const maybe = P.maybe(Monoid);
 
 // -------------------------------------------------------------------------------------
 // model
@@ -16,7 +16,7 @@ const maybe = P.maybe(monoidString)
  * @category model
  * @since 0.6.0
  */
-export type Char = string
+export type Char = string;
 
 // -------------------------------------------------------------------------------------
 // constructors
@@ -29,11 +29,11 @@ export type Char = string
  * @category constructors
  * @since 0.6.0
  */
-export const char: (c: Char) => P.Parser<Char, Char> = c =>
+export const char: (c: Char) => P.Parser<Char, Char> = (c) =>
   P.expected(
-    P.sat(s => s === c),
-    `"${c}"`
-  )
+    P.sat((s) => s === c),
+    `"${c}"`,
+  );
 
 /**
  * The `notChar` parser constructor makes a parser which will match any
@@ -42,13 +42,13 @@ export const char: (c: Char) => P.Parser<Char, Char> = c =>
  * @category constructors
  * @since 0.6.0
  */
-export const notChar: (c: Char) => P.Parser<Char, Char> = c =>
+export const notChar: (c: Char) => P.Parser<Char, Char> = (c) =>
   P.expected(
-    P.sat(c1 => c1 !== c),
-    `anything but "${c}"`
-  )
+    P.sat((c1) => c1 !== c),
+    `anything but "${c}"`,
+  );
 
-const isOneOf: (s: string, c: Char) => boolean = (s, c) => s.indexOf(c) !== -1
+const isOneOf: (s: string, c: Char) => boolean = (s, c) => s.indexOf(c) !== -1;
 
 /**
  * Matches any one character from the provided string.
@@ -56,11 +56,11 @@ const isOneOf: (s: string, c: Char) => boolean = (s, c) => s.indexOf(c) !== -1
  * @category constructors
  * @since 0.6.0
  */
-export const oneOf: (s: string) => P.Parser<Char, Char> = s =>
+export const oneOf: (s: string) => P.Parser<Char, Char> = (s) =>
   P.expected(
-    P.sat(c => isOneOf(s, c)),
-    `One of "${s}"`
-  )
+    P.sat((c) => isOneOf(s, c)),
+    `One of "${s}"`,
+  );
 
 /**
  * Matches a single character which isn't a character from the provided string.
@@ -68,11 +68,11 @@ export const oneOf: (s: string) => P.Parser<Char, Char> = s =>
  * @category constructors
  * @since 0.6.0
  */
-export const notOneOf: (s: string) => P.Parser<Char, Char> = s =>
+export const notOneOf: (s: string) => P.Parser<Char, Char> = (s) =>
   P.expected(
-    P.sat(c => !isOneOf(s, c)),
-    `Not one of ${JSON.stringify(s)}`
-  )
+    P.sat((c) => !isOneOf(s, c)),
+    `Not one of ${JSON.stringify(s)}`,
+  );
 
 // -------------------------------------------------------------------------------------
 // combinators
@@ -85,7 +85,9 @@ export const notOneOf: (s: string) => P.Parser<Char, Char> = s =>
  * @category combinators
  * @since 0.6.0
  */
-export const many: (parser: P.Parser<Char, Char>) => P.Parser<Char, string> = parser => maybe(many1(parser))
+export const many: (parser: P.Parser<Char, Char>) => P.Parser<Char, string> = (
+  parser,
+) => maybe(many1(parser));
 
 /**
  * Takes a `Parser<Char, string>` and matches it one or more times, returning
@@ -94,13 +96,15 @@ export const many: (parser: P.Parser<Char, Char>) => P.Parser<Char, string> = pa
  * @category combinators
  * @since 0.6.0
  */
-export const many1: (parser: P.Parser<Char, Char>) => P.Parser<Char, string> = parser =>
+export const many1: (parser: P.Parser<Char, Char>) => P.Parser<Char, string> = (
+  parser,
+) =>
   pipe(
     P.many1(parser),
-    P.map(nea => nea.join(''))
-  )
+    P.map((nea) => nea.join("")),
+  );
 
-const isDigit: (c: Char) => boolean = c => '0123456789'.indexOf(c) !== -1
+const isDigit: (c: Char) => boolean = (c) => "0123456789".indexOf(c) !== -1;
 
 /**
  * Matches a single digit.
@@ -108,11 +112,14 @@ const isDigit: (c: Char) => boolean = c => '0123456789'.indexOf(c) !== -1
  * @category combinators
  * @since 0.6.0
  */
-export const digit: P.Parser<Char, Char> = P.expected(P.sat(isDigit), 'a digit')
+export const digit: P.Parser<Char, Char> = P.expected(
+  P.sat(isDigit),
+  "a digit",
+);
 
-const spaceRe = /^\s$/
+const spaceRe = /^\s$/;
 
-const isSpace: (c: Char) => boolean = c => spaceRe.test(c)
+const isSpace: (c: Char) => boolean = (c) => spaceRe.test(c);
 
 /**
  * Matches a single whitespace character.
@@ -120,13 +127,17 @@ const isSpace: (c: Char) => boolean = c => spaceRe.test(c)
  * @category combinators
  * @since 0.6.0
  */
-export const space: P.Parser<Char, Char> = P.expected(P.sat(isSpace), 'a whitespace')
+export const space: P.Parser<Char, Char> = P.expected(
+  P.sat(isSpace),
+  "a whitespace",
+);
 
-const isUnderscore: (c: Char) => boolean = c => c === '_'
+const isUnderscore: (c: Char) => boolean = (c) => c === "_";
 
-const isLetter: (c: Char) => boolean = c => /[a-z]/.test(c.toLowerCase())
+const isLetter: (c: Char) => boolean = (c) => /[a-z]/.test(c.toLowerCase());
 
-const isAlphanum: (c: Char) => boolean = c => isLetter(c) || isDigit(c) || isUnderscore(c)
+const isAlphanum: (c: Char) => boolean = (c) =>
+  isLetter(c) || isDigit(c) || isUnderscore(c);
 
 /**
  * Matches a single letter, digit or underscore character.
@@ -134,16 +145,20 @@ const isAlphanum: (c: Char) => boolean = c => isLetter(c) || isDigit(c) || isUnd
  * @category combinators
  * @since 0.6.0
  */
-export const alphanum: P.Parser<Char, Char> = P.expected(P.sat(isAlphanum), 'a word character')
+export const alphanum: P.Parser<Char, Char> = P.expected(
+  P.sat(isAlphanum),
+  "a word character",
+);
 
 /**
  * Matches a single ASCII letter.
  *
  * @since 0.6.0
  */
-export const letter = P.expected(P.sat(isLetter), 'a letter')
+export const letter = P.expected(P.sat(isLetter), "a letter");
 
-const isUnicodeLetter: (c: Char) => boolean = c => c.toLowerCase() !== c.toUpperCase()
+const isUnicodeLetter: (c: Char) => boolean = (c) =>
+  c.toLowerCase() !== c.toUpperCase();
 
 /**
  * Matches a single Unicode letter.
@@ -153,9 +168,13 @@ const isUnicodeLetter: (c: Char) => boolean = c => c.toLowerCase() !== c.toUpper
  * @category combinators
  * @since 0.6.16
  */
-export const unicodeLetter = P.expected(P.sat(isUnicodeLetter), 'an unicode letter')
+export const unicodeLetter = P.expected(
+  P.sat(isUnicodeLetter),
+  "an unicode letter",
+);
 
-const isUpper: (c: Char) => boolean = c => isLetter(c) && c === c.toUpperCase()
+const isUpper: (c: Char) => boolean = (c) =>
+  isLetter(c) && c === c.toUpperCase();
 
 /**
  * Matches a single upper case ASCII letter.
@@ -163,9 +182,13 @@ const isUpper: (c: Char) => boolean = c => isLetter(c) && c === c.toUpperCase()
  * @category combinators
  * @since 0.6.0
  */
-export const upper: P.Parser<Char, Char> = P.expected(P.sat(isUpper), 'an upper case letter')
+export const upper: P.Parser<Char, Char> = P.expected(
+  P.sat(isUpper),
+  "an upper case letter",
+);
 
-const isLower: (c: Char) => boolean = c => isLetter(c) && c === c.toLowerCase()
+const isLower: (c: Char) => boolean = (c) =>
+  isLetter(c) && c === c.toLowerCase();
 
 /**
  * Matches a single lower case ASCII letter.
@@ -173,7 +196,10 @@ const isLower: (c: Char) => boolean = c => isLetter(c) && c === c.toLowerCase()
  * @category combinators
  * @since 0.6.0
  */
-export const lower: P.Parser<Char, Char> = P.expected(P.sat(isLower), 'a lower case letter')
+export const lower: P.Parser<Char, Char> = P.expected(
+  P.sat(isLower),
+  "a lower case letter",
+);
 
 /**
  * Matches a single character which isn't a digit.
@@ -181,7 +207,10 @@ export const lower: P.Parser<Char, Char> = P.expected(P.sat(isLower), 'a lower c
  * @category combinators
  * @since 0.6.0
  */
-export const notDigit: P.Parser<Char, Char> = P.expected(P.sat(not(isDigit)), 'a non-digit')
+export const notDigit: P.Parser<Char, Char> = P.expected(
+  P.sat(not(isDigit)),
+  "a non-digit",
+);
 
 /**
  * Matches a single character which isn't whitespace.
@@ -189,7 +218,10 @@ export const notDigit: P.Parser<Char, Char> = P.expected(P.sat(not(isDigit)), 'a
  * @category combinators
  * @since 0.6.0
  */
-export const notSpace: P.Parser<Char, Char> = P.expected(P.sat(not(isSpace)), 'a non-whitespace character')
+export const notSpace: P.Parser<Char, Char> = P.expected(
+  P.sat(not(isSpace)),
+  "a non-whitespace character",
+);
 
 /**
  * Matches a single character which isn't a letter, digit or underscore.
@@ -197,7 +229,10 @@ export const notSpace: P.Parser<Char, Char> = P.expected(P.sat(not(isSpace)), 'a
  * @category combinators
  * @since 0.6.0
  */
-export const notAlphanum: P.Parser<Char, Char> = P.expected(P.sat(not(isAlphanum)), 'a non-word character')
+export const notAlphanum: P.Parser<Char, Char> = P.expected(
+  P.sat(not(isAlphanum)),
+  "a non-word character",
+);
 
 /**
  * Matches a single character which isn't an ASCII letter.
@@ -205,7 +240,10 @@ export const notAlphanum: P.Parser<Char, Char> = P.expected(P.sat(not(isAlphanum
  * @category combinators
  * @since 0.6.0
  */
-export const notLetter: P.Parser<Char, Char> = P.expected(P.sat(not(isLetter)), 'a non-letter character')
+export const notLetter: P.Parser<Char, Char> = P.expected(
+  P.sat(not(isLetter)),
+  "a non-letter character",
+);
 
 /**
  * Matches a single character which isn't an upper case ASCII letter.
@@ -213,7 +251,10 @@ export const notLetter: P.Parser<Char, Char> = P.expected(P.sat(not(isLetter)), 
  * @category combinators
  * @since 0.6.0
  */
-export const notUpper: P.Parser<Char, Char> = P.expected(P.sat(not(isUpper)), 'anything but an upper case letter')
+export const notUpper: P.Parser<Char, Char> = P.expected(
+  P.sat(not(isUpper)),
+  "anything but an upper case letter",
+);
 
 /**
  * Matches a single character which isn't a lower case ASCII letter.
@@ -221,4 +262,7 @@ export const notUpper: P.Parser<Char, Char> = P.expected(P.sat(not(isUpper)), 'a
  * @category combinators
  * @since 0.6.0
  */
-export const notLower: P.Parser<Char, Char> = P.expected(P.sat(not(isLower)), 'anything but a lower case letter')
+export const notLower: P.Parser<Char, Char> = P.expected(
+  P.sat(not(isLower)),
+  "anything but a lower case letter",
+);

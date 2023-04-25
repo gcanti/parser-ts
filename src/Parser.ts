@@ -1,25 +1,35 @@
 /**
  * @since 0.6.0
  */
-import { Alt2 } from 'fp-ts/lib/Alt'
-import { Alternative2 } from 'fp-ts/lib/Alternative'
-import { Applicative2 } from 'fp-ts/lib/Applicative'
-import * as A from 'fp-ts/lib/Array'
-import { Chain2 } from 'fp-ts/lib/Chain'
-import { tailRec, ChainRec2 } from 'fp-ts/ChainRec'
-import * as E from 'fp-ts/lib/Either'
-import { Functor2 } from 'fp-ts/lib/Functor'
-import { Monad2 } from 'fp-ts/lib/Monad'
-import { Monoid } from 'fp-ts/lib/Monoid'
-import * as NEA from 'fp-ts/lib/NonEmptyArray'
-import * as O from 'fp-ts/lib/Option'
-import * as RA from 'fp-ts/lib/ReadonlyArray'
-import * as RNEA from 'fp-ts/lib/ReadonlyNonEmptyArray'
-import { Semigroup } from 'fp-ts/lib/Semigroup'
-import { identity, not, Lazy, Predicate, Refinement } from 'fp-ts/lib/function'
-import { pipe } from 'fp-ts/lib/pipeable'
-import { error, escalate, extend, success, withExpected, ParseResult, ParseSuccess } from './ParseResult'
-import { atEnd, getAndNext, Stream } from './Stream'
+import { Alt2 } from "fp-ts/lib/Alt";
+import { Alternative2 } from "fp-ts/lib/Alternative";
+import { Applicative2 } from "fp-ts/lib/Applicative";
+import * as A from "fp-ts/lib/Array";
+import { Chain2 } from "fp-ts/lib/Chain";
+import { ChainRec2, tailRec } from "fp-ts/ChainRec";
+import * as E from "fp-ts/lib/Either";
+import { Functor2 } from "fp-ts/lib/Functor";
+import { Monad2 } from "fp-ts/lib/Monad";
+import { Monoid } from "fp-ts/lib/Monoid";
+import * as NEA from "fp-ts/lib/NonEmptyArray";
+import * as O from "fp-ts/lib/Option";
+import * as RA from "fp-ts/lib/ReadonlyArray";
+import * as RNEA from "fp-ts/lib/ReadonlyNonEmptyArray";
+import { Semigroup } from "fp-ts/lib/Semigroup";
+import { identity, Lazy } from "fp-ts/lib/function";
+import { Refinement } from "fp-ts/lib/Refinement";
+import { not, Predicate } from "fp-ts/lib/Predicate";
+import { pipe } from "fp-ts/lib/function";
+import {
+  error,
+  escalate,
+  extend,
+  ParseResult,
+  ParseSuccess,
+  success,
+  withExpected,
+} from "./ParseResult";
+import { atEnd, getAndNext, Stream } from "./Stream";
 
 // -------------------------------------------------------------------------------------
 // model
@@ -30,7 +40,7 @@ import { atEnd, getAndNext, Stream } from './Stream'
  * @since 0.6.0
  */
 export interface Parser<I, A> {
-  (i: Stream<I>): ParseResult<I, A>
+  (i: Stream<I>): ParseResult<I, A>;
 }
 
 // -------------------------------------------------------------------------------------
@@ -46,7 +56,8 @@ export interface Parser<I, A> {
  * @category constructors
  * @since 0.6.0
  */
-export const succeed: <I, A>(a: A) => Parser<I, A> = a => i => success(a, i, i)
+export const succeed: <I, A>(a: A) => Parser<I, A> = (a) => (i) =>
+  success(a, i, i);
 
 /**
  * The `fail` parser will just fail immediately without consuming any input
@@ -54,7 +65,7 @@ export const succeed: <I, A>(a: A) => Parser<I, A> = a => i => success(a, i, i)
  * @category constructors
  * @since 0.6.0
  */
-export const fail: <I, A = never>() => Parser<I, A> = () => i => error(i)
+export const fail: <I, A = never>() => Parser<I, A> = () => (i) => error(i);
 
 /**
  * The `failAt` parser will fail immediately without consuming any input,
@@ -63,7 +74,8 @@ export const fail: <I, A = never>() => Parser<I, A> = () => i => error(i)
  * @category constructors
  * @since 0.6.0
  */
-export const failAt: <I, A = never>(i: Stream<I>) => Parser<I, A> = i => () => error(i)
+export const failAt: <I, A = never>(i: Stream<I>) => Parser<I, A> = (i) => () =>
+  error(i);
 
 /**
  * The `sat` parser constructor takes a predicate function, and will consume
@@ -77,8 +89,8 @@ export const failAt: <I, A = never>(i: Stream<I>) => Parser<I, A> = i => () => e
 export const sat = <I>(predicate: Predicate<I>): Parser<I, I> =>
   pipe(
     withStart(item<I>()),
-    chain(([a, start]) => (predicate(a) ? of(a) : failAt(start)))
-  )
+    chain(([a, start]) => (predicate(a) ? of(a) : failAt(start))),
+  );
 
 // -------------------------------------------------------------------------------------
 // combinators
@@ -92,11 +104,14 @@ export const sat = <I>(predicate: Predicate<I>): Parser<I, I> =>
  * @category combinators
  * @since 0.6.0
  */
-export const expected: <I, A>(p: Parser<I, A>, message: string) => Parser<I, A> = (p, message) => i =>
+export const expected: <I, A>(
+  p: Parser<I, A>,
+  message: string,
+) => Parser<I, A> = (p, message) => (i) =>
   pipe(
     p(i),
-    E.mapLeft(err => withExpected(err, [message]))
-  )
+    E.mapLeft((err) => withExpected(err, [message])),
+  );
 
 /**
  * The `item` parser consumes a single value, regardless of what it is,
@@ -105,14 +120,14 @@ export const expected: <I, A>(p: Parser<I, A>, message: string) => Parser<I, A> 
  * @category combinators
  * @since 0.6.0
  */
-export const item: <I>() => Parser<I, I> = () => i =>
+export const item: <I>() => Parser<I, I> = () => (i) =>
   pipe(
     getAndNext(i),
     O.fold(
       () => error(i),
-      ({ value, next }) => success(value, next, i)
-    )
-  )
+      ({ value, next }) => success(value, next, i),
+    ),
+  );
 
 /**
  * The `cut` parser combinator takes a parser and produces a new parser for
@@ -122,7 +137,8 @@ export const item: <I>() => Parser<I, I> = () => i =>
  * @category combinators
  * @since 0.6.0
  */
-export const cut: <I, A>(p: Parser<I, A>) => Parser<I, A> = p => i => pipe(p(i), E.mapLeft(escalate))
+export const cut: <I, A>(p: Parser<I, A>) => Parser<I, A> = (p) => (i) =>
+  pipe(p(i), E.mapLeft(escalate));
 
 /**
  * Takes two parsers `p1` and `p2`, returning a parser which will match
@@ -132,8 +148,10 @@ export const cut: <I, A>(p: Parser<I, A>) => Parser<I, A> = p => i => pipe(p(i),
  * @category combinators
  * @since 0.6.0
  */
-export const cutWith: <I, A, B>(p1: Parser<I, A>, p2: Parser<I, B>) => Parser<I, B> = (p1, p2) =>
-  pipe(p1, apSecond(cut(p2)))
+export const cutWith: <I, A, B>(
+  p1: Parser<I, A>,
+  p2: Parser<I, B>,
+) => Parser<I, B> = (p1, p2) => pipe(p1, apSecond(cut(p2)));
 
 /**
  * The `seq` combinator takes a parser, and a function which will receive
@@ -147,16 +165,19 @@ export const cutWith: <I, A, B>(p1: Parser<I, A>, p2: Parser<I, B>) => Parser<I,
  * @category combinators
  * @since 0.6.0
  */
-export const seq: <I, A, B>(fa: Parser<I, A>, f: (a: A) => Parser<I, B>) => Parser<I, B> = (fa, f) => i =>
+export const seq: <I, A, B>(
+  fa: Parser<I, A>,
+  f: (a: A) => Parser<I, B>,
+) => Parser<I, B> = (fa, f) => (i) =>
   pipe(
     fa(i),
-    E.chain(s =>
+    E.chain((s) =>
       pipe(
         f(s.value)(s.next),
-        E.chain(next => success(next.value, next.next, i))
+        E.chain((next) => success(next.value, next.next, i)),
       )
-    )
-  )
+    ),
+  );
 
 /**
  * The `either` combinator takes two parsers, runs the first on the input
@@ -171,19 +192,22 @@ export const seq: <I, A, B>(fa: Parser<I, A>, f: (a: A) => Parser<I, B>) => Pars
  * @category combinators
  * @since 0.6.0
  */
-export const either: <I, A>(p: Parser<I, A>, f: () => Parser<I, A>) => Parser<I, A> = (p, f) => i => {
-  const e = p(i)
+export const either: <I, A>(
+  p: Parser<I, A>,
+  f: () => Parser<I, A>,
+) => Parser<I, A> = (p, f) => (i) => {
+  const e = p(i);
   if (E.isRight(e)) {
-    return e
+    return e;
   }
   if (e.left.fatal) {
-    return e
+    return e;
   }
   return pipe(
     f()(i),
-    E.mapLeft(err => extend(e.left, err))
-  )
-}
+    E.mapLeft((err) => extend(e.left, err)),
+  );
+};
 
 /**
  * Converts a parser into one which will return the point in the stream where
@@ -195,11 +219,12 @@ export const either: <I, A>(p: Parser<I, A>, f: () => Parser<I, A>) => Parser<I,
  * @category combinators
  * @since 0.6.0
  */
-export const withStart: <I, A>(p: Parser<I, A>) => Parser<I, [A, Stream<I>]> = p => i =>
-  pipe(
-    p(i),
-    E.map(s => ({ ...s, value: [s.value, i] }))
-  )
+export const withStart: <I, A>(p: Parser<I, A>) => Parser<I, [A, Stream<I>]> =
+  (p) => (i) =>
+    pipe(
+      p(i),
+      E.map((s) => ({ ...s, value: [s.value, i] })),
+    );
 
 /**
  * The `maybe` parser combinator creates a parser which will run the provided
@@ -209,7 +234,8 @@ export const withStart: <I, A>(p: Parser<I, A>) => Parser<I, [A, Stream<I>]> = p
  * @category combinators
  * @since 0.6.0
  */
-export const maybe: <A>(M: Monoid<A>) => <I>(p: Parser<I, A>) => Parser<I, A> = M => alt(() => of(M.empty))
+export const maybe: <A>(M: Monoid<A>) => <I>(p: Parser<I, A>) => Parser<I, A> =
+  (M) => alt(() => of(M.empty));
 
 /**
  * Matches the end of the stream.
@@ -218,7 +244,10 @@ export const maybe: <A>(M: Monoid<A>) => <I>(p: Parser<I, A>) => Parser<I, A> = 
  * @since 0.6.0
  */
 export const eof: <I>() => Parser<I, void> = () =>
-  expected(i => (atEnd(i) ? success(undefined, i, i) : error(i)), 'end of file')
+  expected(
+    (i) => (atEnd(i) ? success(undefined, i, i) : error(i)),
+    "end of file",
+  );
 
 /**
  * The `many` combinator takes a parser, and returns a new parser which will
@@ -235,8 +264,8 @@ export const eof: <I>() => Parser<I, void> = () =>
 export const many = <I, A>(p: Parser<I, A>): Parser<I, Array<A>> =>
   pipe(
     many1(p),
-    alt(() => of<I, Array<A>>(A.empty))
-  )
+    alt(() => of<I, Array<A>>(A.empty)),
+  );
 
 /**
  * The `many1` combinator is just like the `many` combinator, except it
@@ -246,19 +275,20 @@ export const many = <I, A>(p: Parser<I, A>): Parser<I, Array<A>> =>
  * @category combinators
  * @since 0.6.0
  */
-export const many1 = <I, A>(parser: Parser<I, A>): Parser<I, NEA.NonEmptyArray<A>> =>
+export const many1 = <I, A>(
+  parser: Parser<I, A>,
+): Parser<I, NEA.NonEmptyArray<A>> =>
   pipe(
     parser,
-    chain(head =>
-      chainRec_(NEA.of(head), acc =>
+    chain((head) =>
+      chainRec_(NEA.of(head), (acc) =>
         pipe(
           parser,
-          map(a => E.left(NEA.snoc(acc, a))),
-          alt(() => of(E.right(acc)))
-        )
-      )
-    )
-  )
+          map((a) => E.left(NEA.snoc(acc, a))),
+          alt(() => of(E.right(acc))),
+        ))
+    ),
+  );
 
 /**
  * Matches the provided parser `p` zero or more times, but requires the
@@ -268,13 +298,16 @@ export const many1 = <I, A>(parser: Parser<I, A>): Parser<I, NEA.NonEmptyArray<A
  * @category combinators
  * @since 0.6.0
  */
-export const sepBy = <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Array<B>> => {
-  const nil: Parser<I, Array<B>> = of(A.empty)
+export const sepBy = <I, A, B>(
+  sep: Parser<I, A>,
+  p: Parser<I, B>,
+): Parser<I, Array<B>> => {
+  const nil: Parser<I, Array<B>> = of(A.empty);
   return pipe(
     sepBy1(sep, p),
-    alt(() => nil)
-  )
-}
+    alt(() => nil),
+  );
+};
 
 /**
  * Matches the provided parser `p` one or more times, but requires the
@@ -284,16 +317,19 @@ export const sepBy = <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Ar
  * @category combinators
  * @since 0.6.0
  */
-export const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NEA.NonEmptyArray<B>> = (sep, p) =>
+export const sepBy1: <I, A, B>(
+  sep: Parser<I, A>,
+  p: Parser<I, B>,
+) => Parser<I, NEA.NonEmptyArray<B>> = (sep, p) =>
   pipe(
     p,
-    chain(head =>
+    chain((head) =>
       pipe(
         many(pipe(sep, apSecond(p))),
-        map(tail => NEA.cons(head, tail))
+        map((tail) => NEA.cons(head, tail)),
       )
-    )
-  )
+    ),
+  );
 
 /**
  * Like `sepBy1`, but cut on the separator, so that matching a `sep` not
@@ -302,16 +338,19 @@ export const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, 
  * @category combinators
  * @since 0.6.0
  */
-export const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, NEA.NonEmptyArray<B>> = (sep, p) =>
+export const sepByCut: <I, A, B>(
+  sep: Parser<I, A>,
+  p: Parser<I, B>,
+) => Parser<I, NEA.NonEmptyArray<B>> = (sep, p) =>
   pipe(
     p,
-    chain(head =>
+    chain((head) =>
       pipe(
         many(cutWith(sep, p)),
-        map(tail => NEA.cons(head, tail))
+        map((tail) => NEA.cons(head, tail)),
       )
-    )
-  )
+    ),
+  );
 
 /**
  * Filters the result of a parser based upon a `Refinement` or a `Predicate`.
@@ -340,13 +379,15 @@ export const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I
  * @since 0.6.10
  */
 export const filter: {
-  <A, B extends A>(refinement: Refinement<A, B>): <I>(p: Parser<I, A>) => Parser<I, B>
-  <A>(predicate: Predicate<A>): <I>(p: Parser<I, A>) => Parser<I, A>
-} = <A>(predicate: Predicate<A>) => <I>(p: Parser<I, A>): Parser<I, A> => i =>
+  <A, B extends A>(
+    refinement: Refinement<A, B>,
+  ): <I>(p: Parser<I, A>) => Parser<I, B>;
+  <A>(predicate: Predicate<A>): <I>(p: Parser<I, A>) => Parser<I, A>;
+} = <A>(predicate: Predicate<A>) => <I>(p: Parser<I, A>): Parser<I, A> => (i) =>
   pipe(
     p(i),
-    E.chain(next => (predicate(next.value) ? E.right(next) : error(i)))
-  )
+    E.chain((next) => (predicate(next.value) ? E.right(next) : error(i))),
+  );
 
 /**
  * Matches the provided parser `p` that occurs between the provided `left` and `right` parsers.
@@ -356,15 +397,19 @@ export const filter: {
  * @category combinators
  * @since 0.6.4
  */
-export const between: <I, A>(left: Parser<I, A>, right: Parser<I, A>) => <B>(p: Parser<I, B>) => Parser<I, B> = (
+export const between: <I, A>(
+  left: Parser<I, A>,
+  right: Parser<I, A>,
+) => <B>(p: Parser<I, B>) => Parser<I, B> = (
   left,
-  right
-) => p =>
+  right,
+) =>
+(p) =>
   pipe(
     left,
     chain(() => p),
-    chainFirst(() => right)
-  )
+    chainFirst(() => right),
+  );
 
 /**
  * Matches the provided parser `p` that is surrounded by the `bound` parser. Shortcut for `between(bound, bound)`.
@@ -372,8 +417,9 @@ export const between: <I, A>(left: Parser<I, A>, right: Parser<I, A>) => <B>(p: 
  * @category combinators
  * @since 0.6.4
  */
-export const surroundedBy: <I, A>(bound: Parser<I, A>) => <B>(p: Parser<I, B>) => Parser<I, B> = bound =>
-  between(bound, bound)
+export const surroundedBy: <I, A>(
+  bound: Parser<I, A>,
+) => <B>(p: Parser<I, B>) => Parser<I, B> = (bound) => between(bound, bound);
 
 /**
  * Takes a `Parser` and tries to match it without consuming any input.
@@ -395,11 +441,11 @@ export const surroundedBy: <I, A>(bound: Parser<I, A>) => <B>(p: Parser<I, B>) =
  * @category combinators
  * @since 0.6.6
  */
-export const lookAhead: <I, A>(p: Parser<I, A>) => Parser<I, A> = p => i =>
+export const lookAhead: <I, A>(p: Parser<I, A>) => Parser<I, A> = (p) => (i) =>
   pipe(
     p(i),
-    E.chain(next => success(next.value, i, i))
-  )
+    E.chain((next) => success(next.value, i, i)),
+  );
 
 /**
  * Takes a `Predicate` and continues parsing until the given `Predicate` is satisfied.
@@ -417,7 +463,9 @@ export const lookAhead: <I, A>(p: Parser<I, A>) => Parser<I, A> = p => i =>
  * @category combinators
  * @since 0.6.6
  */
-export const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, Array<I>> = predicate => many(sat(not(predicate)))
+export const takeUntil: <I>(predicate: Predicate<I>) => Parser<I, Array<I>> = (
+  predicate,
+) => many(sat(not(predicate)));
 
 /**
  * Returns `Some<A>` if the specified parser succeeds, otherwise returns `None`.
@@ -443,8 +491,8 @@ export const optional = <I, A>(parser: Parser<I, A>): Parser<I, O.Option<A>> =>
   pipe(
     parser,
     map(O.some),
-    alt(() => succeed<I, O.Option<A>>(O.none))
-  )
+    alt(() => succeed<I, O.Option<A>>(O.none)),
+  );
 
 /**
  * The `manyTill` combinator takes a value `parser` and a `terminator` parser, and
@@ -468,12 +516,15 @@ export const optional = <I, A>(parser: Parser<I, A>): Parser<I, O.Option<A>> =>
  * @category combinators
  * @since 0.6.11
  */
-export const manyTill = <I, A, B>(parser: Parser<I, A>, terminator: Parser<I, B>): Parser<I, ReadonlyArray<A>> =>
+export const manyTill = <I, A, B>(
+  parser: Parser<I, A>,
+  terminator: Parser<I, B>,
+): Parser<I, ReadonlyArray<A>> =>
   pipe(
     terminator,
     map<B, ReadonlyArray<A>>(() => RA.empty),
-    alt<I, ReadonlyArray<A>>(() => many1Till(parser, terminator))
-  )
+    alt<I, ReadonlyArray<A>>(() => many1Till(parser, terminator)),
+  );
 
 /**
  * The `many1Till` combinator is just like the `manyTill` combinator, except it
@@ -498,59 +549,64 @@ export const manyTill = <I, A, B>(parser: Parser<I, A>, terminator: Parser<I, B>
  */
 export const many1Till = <I, A, B>(
   parser: Parser<I, A>,
-  terminator: Parser<I, B>
+  terminator: Parser<I, B>,
 ): Parser<I, RNEA.ReadonlyNonEmptyArray<A>> =>
   pipe(
     parser,
-    chain(x =>
-      chainRec_(RNEA.of(x), acc =>
+    chain((x) =>
+      chainRec_(RNEA.of(x), (acc) =>
         pipe(
           terminator,
           map(() => E.right(acc)),
           alt(() =>
             pipe(
               parser,
-              map(a => E.left(RNEA.snoc(acc, a)))
+              map((a) => E.left(RNEA.snoc(acc, a))),
             )
-          )
-        )
-      )
-    )
-  )
+          ),
+        ))
+    ),
+  );
 
 // -------------------------------------------------------------------------------------
 // non-pipeables
 // -------------------------------------------------------------------------------------
 
 interface Next<I, A> {
-  readonly value: A
-  readonly stream: Stream<I>
+  readonly value: A;
+  readonly stream: Stream<I>;
 }
 
-const map_: Monad2<URI>['map'] = (ma, f) => i =>
+const map_: Monad2<URI>["map"] = (ma, f) => (i) =>
   pipe(
     ma(i),
-    E.map(s => ({ ...s, value: f(s.value) }))
-  )
-const ap_: Monad2<URI>['ap'] = (mab, ma) => chain_(mab, f => map_(ma, f))
-const chain_: Chain2<URI>['chain'] = (ma, f) => seq(ma, f)
-const chainRec_: ChainRec2<URI>['chainRec'] = <I, A, B>(a: A, f: (a: A) => Parser<I, E.Either<A, B>>): Parser<I, B> => {
-  const split = (start: Stream<I>) => (
-    result: ParseSuccess<I, E.Either<A, B>>
+    E.map((s) => ({ ...s, value: f(s.value) })),
+  );
+const ap_: Monad2<URI>["ap"] = (mab, ma) => chain_(mab, (f) => map_(ma, f));
+const chain_: Chain2<URI>["chain"] = (ma, f) => seq(ma, f);
+const chainRec_: ChainRec2<URI>["chainRec"] = <I, A, B>(
+  a: A,
+  f: (a: A) => Parser<I, E.Either<A, B>>,
+): Parser<I, B> => {
+  const split = (start: Stream<I>) =>
+  (
+    result: ParseSuccess<I, E.Either<A, B>>,
   ): E.Either<Next<I, A>, ParseResult<I, B>> =>
     E.isLeft(result.value)
       ? E.left({ value: result.value.left, stream: result.next })
-      : E.right(success(result.value.right, result.next, start))
-  return start =>
-    tailRec({ value: a, stream: start }, state => {
-      const result = f(state.value)(state.stream)
+      : E.right(success(result.value.right, result.next, start));
+  return (start) =>
+    tailRec({ value: a, stream: start }, (state) => {
+      const result = f(state.value)(state.stream);
       if (E.isLeft(result)) {
-        return E.right(error(state.stream, result.left.expected, result.left.fatal))
+        return E.right(
+          error(state.stream, result.left.expected, result.left.fatal),
+        );
       }
-      return split(start)(result.right)
-    })
-}
-const alt_: Alt2<URI>['alt'] = (fa, that) => either(fa, that)
+      return split(start)(result.right);
+    });
+};
+const alt_: Alt2<URI>["alt"] = (fa, that) => either(fa, that);
 
 // -------------------------------------------------------------------------------------
 // pipeables
@@ -560,72 +616,87 @@ const alt_: Alt2<URI>['alt'] = (fa, that) => either(fa, that)
  * @category Functor
  * @since 0.6.7
  */
-export const map: <A, B>(f: (a: A) => B) => <I>(fa: Parser<I, A>) => Parser<I, B> = f => fa => map_(fa, f)
+export const map: <A, B>(
+  f: (a: A) => B,
+) => <I>(fa: Parser<I, A>) => Parser<I, B> = (f) => (fa) => map_(fa, f);
 
 /**
  * @category Apply
  * @since 0.6.7
  */
-export const ap: <I, A>(fa: Parser<I, A>) => <B>(fab: Parser<I, (a: A) => B>) => Parser<I, B> = fa => fab =>
-  ap_(fab, fa)
+export const ap: <I, A>(
+  fa: Parser<I, A>,
+) => <B>(fab: Parser<I, (a: A) => B>) => Parser<I, B> = (fa) => (fab) =>
+  ap_(fab, fa);
 
 /**
  * @category Apply
  * @since 0.6.7
  */
-export const apFirst: <I, B>(fb: Parser<I, B>) => <A>(fa: Parser<I, A>) => Parser<I, A> = fb => fa =>
+export const apFirst: <I, B>(
+  fb: Parser<I, B>,
+) => <A>(fa: Parser<I, A>) => Parser<I, A> = (fb) => (fa) =>
   ap_(
-    map_(fa, a => () => a),
-    fb
-  )
+    map_(fa, (a) => () => a),
+    fb,
+  );
 
 /**
  * @category Apply
  * @since 0.6.7
  */
-export const apSecond: <I, B>(fb: Parser<I, B>) => <A>(fa: Parser<I, A>) => Parser<I, B> = fb => fa =>
+export const apSecond: <I, B>(
+  fb: Parser<I, B>,
+) => <A>(fa: Parser<I, A>) => Parser<I, B> = (fb) => (fa) =>
   ap_(
-    map_(fa, () => b => b),
-    fb
-  )
+    map_(fa, () => (b) => b),
+    fb,
+  );
 
 /**
  * @category Applicative
  * @since 0.6.7
  */
-export const of: <I, A>(a: A) => Parser<I, A> = succeed
+export const of: <I, A>(a: A) => Parser<I, A> = succeed;
 
 /**
  * @category Monad
  * @since 0.6.7
  */
-export const chain: <I, A, B>(f: (a: A) => Parser<I, B>) => (ma: Parser<I, A>) => Parser<I, B> = f => ma =>
-  chain_(ma, f)
+export const chain: <I, A, B>(
+  f: (a: A) => Parser<I, B>,
+) => (ma: Parser<I, A>) => Parser<I, B> = (f) => (ma) => chain_(ma, f);
 
 /**
  * @category Monad
  * @since 0.6.7
  */
-export const chainFirst: <I, A, B>(f: (a: A) => Parser<I, B>) => (ma: Parser<I, A>) => Parser<I, A> = f => ma =>
-  chain_(ma, a => map_(f(a), () => a))
+export const chainFirst: <I, A, B>(
+  f: (a: A) => Parser<I, B>,
+) => (ma: Parser<I, A>) => Parser<I, A> = (f) => (ma) =>
+  chain_(ma, (a) => map_(f(a), () => a));
 
 /**
  * @category Alt
  * @since 0.6.7
  */
-export const alt: <I, A>(that: Lazy<Parser<I, A>>) => (fa: Parser<I, A>) => Parser<I, A> = that => fa => alt_(fa, that)
+export const alt: <I, A>(
+  that: Lazy<Parser<I, A>>,
+) => (fa: Parser<I, A>) => Parser<I, A> = (that) => (fa) => alt_(fa, that);
 
 /**
  * @category Monad
  * @since 0.6.7
  */
-export const flatten: <I, A>(mma: Parser<I, Parser<I, A>>) => Parser<I, A> = mma => chain_(mma, identity)
+export const flatten: <I, A>(mma: Parser<I, Parser<I, A>>) => Parser<I, A> = (
+  mma,
+) => chain_(mma, identity);
 
 /**
  * @category Alternative
  * @since 0.6.7
  */
-export const zero: <I, A>() => Parser<I, A> = fail
+export const zero: <I, A>() => Parser<I, A> = fail;
 
 // -------------------------------------------------------------------------------------
 // instances
@@ -635,17 +706,17 @@ export const zero: <I, A>() => Parser<I, A> = fail
  * @category instances
  * @since 0.6.0
  */
-export const URI = 'Parser'
+export const URI = "Parser";
 
 /**
  * @category instances
  * @since 0.6.0
  */
-export type URI = typeof URI
+export type URI = typeof URI;
 
-declare module 'fp-ts/lib/HKT' {
+declare module "fp-ts/lib/HKT" {
   interface URItoKind2<E, A> {
-    Parser: Parser<E, A>
+    Parser: Parser<E, A>;
   }
 }
 
@@ -653,22 +724,23 @@ declare module 'fp-ts/lib/HKT' {
  * @category instances
  * @since 0.6.7
  */
-export const getSemigroup: <I, A>(S: Semigroup<A>) => Semigroup<Parser<I, A>> = S => ({
-  concat: (x, y) =>
-    ap_(
-      map_(x, x => y => S.concat(x, y)),
-      y
-    )
-})
+export const getSemigroup: <I, A>(S: Semigroup<A>) => Semigroup<Parser<I, A>> =
+  (S) => ({
+    concat: (x, y) =>
+      ap_(
+        map_(x, (x) => (y) => S.concat(x, y)),
+        y,
+      ),
+  });
 
 /**
  * @category instances
  * @since 0.6.0
  */
-export const getMonoid: <I, A>(M: Monoid<A>) => Monoid<Parser<I, A>> = M => ({
+export const getMonoid: <I, A>(M: Monoid<A>) => Monoid<Parser<I, A>> = (M) => ({
   ...getSemigroup(M),
-  empty: succeed(M.empty)
-})
+  empty: succeed(M.empty),
+});
 
 /**
  * @category instances
@@ -676,8 +748,8 @@ export const getMonoid: <I, A>(M: Monoid<A>) => Monoid<Parser<I, A>> = M => ({
  */
 export const Functor: Functor2<URI> = {
   URI,
-  map: map_
-}
+  map: map_,
+};
 
 /**
  * @category instances
@@ -687,8 +759,8 @@ export const Applicative: Applicative2<URI> = {
   URI,
   map: map_,
   ap: ap_,
-  of
-}
+  of,
+};
 
 /**
  * @category instances
@@ -699,8 +771,8 @@ export const Monad: Monad2<URI> = {
   map: map_,
   ap: ap_,
   of,
-  chain: chain_
-}
+  chain: chain_,
+};
 
 /**
  * @category instances
@@ -711,8 +783,8 @@ export const ChainRec: ChainRec2<URI> = {
   map: map_,
   ap: ap_,
   chain: chain_,
-  chainRec: chainRec_
-}
+  chainRec: chainRec_,
+};
 
 /**
  * @category instances
@@ -721,8 +793,8 @@ export const ChainRec: ChainRec2<URI> = {
 export const Alt: Alt2<URI> = {
   URI,
   map: map_,
-  alt: alt_
-}
+  alt: alt_,
+};
 
 /**
  * @category instances
@@ -734,8 +806,8 @@ export const Alternative: Alternative2<URI> = {
   of,
   ap: ap_,
   alt: alt_,
-  zero: fail
-}
+  zero: fail,
+};
 
 /**
  * @category instances
@@ -748,8 +820,8 @@ export const parser: Monad2<URI> & Alternative2<URI> = {
   ap: ap_,
   chain: chain_,
   alt: alt_,
-  zero: fail
-}
+  zero: fail,
+};
 
 // -------------------------------------------------------------------------------------
 // do notation
@@ -761,30 +833,37 @@ export const parser: Monad2<URI> & Alternative2<URI> = {
 const bind_ = <A, N extends string, B>(
   a: A,
   name: Exclude<N, keyof A>,
-  b: B
-): { [K in keyof A | N]: K extends keyof A ? A[K] : B } => Object.assign({}, a, { [name]: b }) as any
+  b: B,
+): { [K in keyof A | N]: K extends keyof A ? A[K] : B } =>
+  Object.assign({}, a, { [name]: b }) as any;
 
 /**
  * @since 0.6.8
  */
-export const bindTo = <N extends string>(name: N) => <I, A>(fa: Parser<I, A>): Parser<I, { [K in N]: A }> =>
-  pipe(
-    fa,
-    map(a => bind_({}, name, a))
-  )
+export const bindTo =
+  <N extends string>(name: N) =>
+  <I, A>(fa: Parser<I, A>): Parser<I, { [K in N]: A }> =>
+    pipe(
+      fa,
+      map((a) => bind_({}, name, a)),
+    );
 
 /**
  * @since 0.6.8
  */
-export const bind = <N extends string, I, A, B>(name: Exclude<N, keyof A>, f: (a: A) => Parser<I, B>) => (
-  fa: Parser<I, A>
+export const bind = <N extends string, I, A, B>(
+  name: Exclude<N, keyof A>,
+  f: (a: A) => Parser<I, B>,
+) =>
+(
+  fa: Parser<I, A>,
 ): Parser<I, { [K in keyof A | N]: K extends keyof A ? A[K] : B }> =>
   pipe(
     fa,
-    chain(a =>
+    chain((a) =>
       pipe(
         f(a),
-        map(b => bind_(a, name, b))
+        map((b) => bind_(a, name, b)),
       )
-    )
-  )
+    ),
+  );

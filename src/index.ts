@@ -1,11 +1,11 @@
 /**
  * @since 0.6.0
  */
-import * as char from './char'
-import * as parser from './Parser'
-import * as parseResult from './ParseResult'
-import * as stream from './Stream'
-import * as string from './string'
+import * as char from "./char";
+import * as parser from "./Parser";
+import * as parseResult from "./ParseResult";
+import * as stream from "./Stream";
+import * as string from "./string";
 export {
   /**
    * @since 0.6.0
@@ -26,5 +26,5 @@ export {
   /**
    * @since 0.6.0
    */
-  string
-}
+  string,
+};
