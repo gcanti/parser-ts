@@ -8,6 +8,7 @@ import { Functor, Functor1 } from 'fp-ts/lib/Functor'
 import { HKT, Kind, URIS } from 'fp-ts/lib/HKT'
 import * as M from 'fp-ts/lib/Monoid'
 import * as O from 'fp-ts/lib/Option'
+import { Monoid } from 'fp-ts/lib/string'
 
 import * as C from './char'
 import * as P from './Parser'
@@ -68,7 +69,7 @@ export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P
  * @category destructors
  * @since 0.6.0
  */
-export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = M.fold(P.getMonoid(M.monoidString))
+export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = M.concatAll(P.getMonoid(Monoid))
 
 // -------------------------------------------------------------------------------------
 // combinators
@@ -78,7 +79,7 @@ export const fold: <I>(as: Array<P.Parser<I, string>>) => P.Parser<I, string> = 
  * @category combinators
  * @since 0.6.0
  */
-export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = P.maybe(M.monoidString)
+export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = P.maybe(Monoid)
 
 /**
  * Matches the given parser zero or more times, returning a string of the
