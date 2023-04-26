@@ -11,7 +11,7 @@ export const pathParser = pipe(
   P.chain(() =>
     pipe(
       S.int,
-      P.map(n => ({ user: n }))
+      P.map((n) => ({ user: n }))
     )
   )
 )

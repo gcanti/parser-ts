@@ -3,7 +3,7 @@
  */
 import { getMonoid } from 'fp-ts/lib/Array'
 import { Either, left, right } from 'fp-ts/lib/Either'
-import { first, last, Semigroup,struct } from 'fp-ts/lib/Semigroup'
+import { first, last, Semigroup, struct } from 'fp-ts/lib/Semigroup'
 
 import { Stream } from './Stream'
 
@@ -86,7 +86,7 @@ export const withExpected: <I>(err: ParseError<I>, expected: Array<string>) => P
  * @category combinators
  * @since 0.6.0
  */
-export const escalate: <I>(err: ParseError<I>) => ParseError<I> = err => ({
+export const escalate: <I>(err: ParseError<I>) => ParseError<I> = (err) => ({
   ...err,
   fatal: true
 })

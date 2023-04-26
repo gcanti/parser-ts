@@ -32,7 +32,7 @@ Added in v0.6.0
 **Signature**
 
 ```ts
-export declare const stream: <A>(buffer: A[], cursor?: number) => Stream<A>
+export declare const stream: <A>(buffer: A[], cursor?: number | undefined) => Stream<A>
 ```
 
 Added in v0.6.0

@@ -25,14 +25,14 @@ import * as S from './Stream'
  * @category constructors
  * @since 0.6.0
  */
-export const string: (s: string) => P.Parser<C.Char, string> = s =>
+export const string: (s: string) => P.Parser<C.Char, string> = (s) =>
   P.expected(
-    P.ChainRec.chainRec<string, string, string>(s, acc =>
+    P.ChainRec.chainRec<string, string, string>(s, (acc) =>
       pipe(
         charAt(0, acc),
         O.fold(
           () => P.of(E.right(s)),
-          c =>
+          (c) =>
             pipe(
               C.char(c),
               P.chain(() => P.of(E.left(acc.slice(1))))
@@ -52,7 +52,7 @@ export const string: (s: string) => P.Parser<C.Char, string> = s =>
 export function oneOf<F extends URIS>(F: Functor1<F> & Foldable1<F>): (ss: Kind<F, string>) => P.Parser<C.Char, string>
 export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string>
 export function oneOf<F>(F: Functor<F> & Foldable<F>): (ss: HKT<F, string>) => P.Parser<C.Char, string> {
-  return ss =>
+  return (ss) =>
     F.reduce(ss, P.fail(), (p, s) =>
       pipe(
         p,
@@ -88,7 +88,7 @@ export const maybe: <I>(p: P.Parser<I, string>) => P.Parser<I, string> = P.maybe
  * @category combinators
  * @since 0.6.0
  */
-export const many: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string> = parser => maybe(many1(parser))
+export const many: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string> = (parser) => maybe(many1(parser))
 
 /**
  * Matches the given parser one or more times, returning a string of the
@@ -97,10 +97,10 @@ export const many: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string
  * @category combinators
  * @since 0.6.0
  */
-export const many1: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string> = parser =>
+export const many1: (parser: P.Parser<C.Char, string>) => P.Parser<C.Char, string> = (parser) =>
   pipe(
     P.many1(parser),
-    P.map(nea => nea.join(''))
+    P.map((nea) => nea.join(''))
   )
 
 const charAt: (index: number, s: string) => O.Option<C.Char> = (index, s) =>
@@ -138,7 +138,7 @@ export const notSpaces: P.Parser<C.Char, string> = C.many(C.notSpace)
  */
 export const notSpaces1: P.Parser<C.Char, string> = C.many1(C.notSpace)
 
-const fromString: (s: string) => O.Option<number> = s => {
+const fromString: (s: string) => O.Option<number> = (s) => {
   const n = +s
   return isNaN(n) || s === '' ? O.none : O.some(n)
 }
@@ -150,7 +150,7 @@ const fromString: (s: string) => O.Option<number> = s => {
 export const int: P.Parser<C.Char, number> = P.expected(
   pipe(
     fold([maybe(C.char('-')), C.many1(C.digit)]),
-    P.map(s => +s)
+    P.map((s) => +s)
   ),
   'an integer'
 )
@@ -162,7 +162,7 @@ export const int: P.Parser<C.Char, number> = P.expected(
 export const float: P.Parser<C.Char, number> = P.expected(
   pipe(
     fold([maybe(C.char('-')), C.many(C.digit), maybe(fold([C.char('.'), C.many1(C.digit)]))]),
-    P.chain(s =>
+    P.chain((s) =>
       pipe(
         fromString(s),
         O.fold(() => P.fail(), P.succeed)
@@ -192,5 +192,5 @@ export const doubleQuotedString: P.Parser<string, string> = P.surroundedBy(C.cha
  * @since 0.6.8
  */
 export function run(string: string): <A>(p: P.Parser<C.Char, A>) => PR.ParseResult<C.Char, A> {
-  return p => p(S.stream(string.split('')))
+  return (p) => p(S.stream(string.split('')))
 }

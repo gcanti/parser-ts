@@ -67,8 +67,8 @@ Added in v0.6.0
 ```ts
 export declare const error: <I, A = never>(
   input: Stream<I>,
-  expected?: Array<string>,
-  fatal?: boolean
+  expected?: string[] | undefined,
+  fatal?: boolean | undefined
 ) => Either<ParseError<I>, ParseSuccess<I, A>>
 ```
 

@@ -1,14 +1,13 @@
 /**
  * @since 0.6.0
  */
+import { codeFrameColumns } from '@babel/code-frame'
 import { bimap, Either } from 'fp-ts/lib/Either'
 import { pipe } from 'fp-ts/lib/function'
 
 import { Char } from './char'
 import { Parser } from './Parser'
 import { stream } from './Stream'
-
-const { codeFrameColumns } = import('@babel/code-frame')
 
 interface Location {
   readonly start: {
@@ -50,10 +49,10 @@ export const run: <A>(p: Parser<Char, A>, source: string) => Either<string, A> =
   pipe(
     p(stream(source.split(''))),
     bimap(
-      err =>
+      (err) =>
         codeFrameColumns(source, getLocation(source, err.input.cursor), {
           message: 'Expected: ' + err.expected.join(', ')
         }),
-      succ => succ.value
+      (succ) => succ.value
     )
   )
