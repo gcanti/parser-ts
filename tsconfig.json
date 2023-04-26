@@ -6,7 +6,10 @@
     "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "sourceMap": false,
     "declaration": true,
     "strict": true,
@@ -16,5 +19,9 @@
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["./src", "./test"]
+  "include": [
+    "./src",
+    "./test",
+    "./scripts"
+  ]
 }

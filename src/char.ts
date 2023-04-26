@@ -1,12 +1,13 @@
 /**
  * @since 0.6.0
  */
-import { not } from 'fp-ts/lib/function'
-import { monoidString } from 'fp-ts/lib/Monoid'
-import { pipe } from 'fp-ts/lib/pipeable'
+import { pipe } from 'fp-ts/lib/function'
+import { not } from 'fp-ts/lib/Predicate'
+import { Monoid } from 'fp-ts/lib/string'
+
 import * as P from './Parser'
 
-const maybe = P.maybe(monoidString)
+const maybe = P.maybe(Monoid)
 
 // -------------------------------------------------------------------------------------
 // model

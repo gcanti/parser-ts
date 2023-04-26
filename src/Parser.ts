@@ -1,24 +1,26 @@
 /**
  * @since 0.6.0
  */
+import { ChainRec2, tailRec } from 'fp-ts/ChainRec'
 import { Alt2 } from 'fp-ts/lib/Alt'
 import { Alternative2 } from 'fp-ts/lib/Alternative'
 import { Applicative2 } from 'fp-ts/lib/Applicative'
 import * as A from 'fp-ts/lib/Array'
 import { Chain2 } from 'fp-ts/lib/Chain'
-import { tailRec, ChainRec2 } from 'fp-ts/ChainRec'
 import * as E from 'fp-ts/lib/Either'
+import { identity, Lazy, pipe } from 'fp-ts/lib/function'
 import { Functor2 } from 'fp-ts/lib/Functor'
 import { Monad2 } from 'fp-ts/lib/Monad'
 import { Monoid } from 'fp-ts/lib/Monoid'
 import * as NEA from 'fp-ts/lib/NonEmptyArray'
 import * as O from 'fp-ts/lib/Option'
+import { not, Predicate } from 'fp-ts/lib/Predicate';
 import * as RA from 'fp-ts/lib/ReadonlyArray'
 import * as RNEA from 'fp-ts/lib/ReadonlyNonEmptyArray'
+import { Refinement } from 'fp-ts/lib/Refinement';
 import { Semigroup } from 'fp-ts/lib/Semigroup'
-import { identity, not, Lazy, Predicate, Refinement } from 'fp-ts/lib/function'
-import { pipe } from 'fp-ts/lib/pipeable'
-import { error, escalate, extend, success, withExpected, ParseResult, ParseSuccess } from './ParseResult'
+
+import { error, escalate, extend, ParseResult, ParseSuccess, success, withExpected } from './ParseResult'
 import { atEnd, getAndNext, Stream } from './Stream'
 
 // -------------------------------------------------------------------------------------
@@ -360,11 +362,11 @@ export const between: <I, A>(left: Parser<I, A>, right: Parser<I, A>) => <B>(p: 
   left,
   right
 ) => p =>
-  pipe(
-    left,
-    chain(() => p),
-    chainFirst(() => right)
-  )
+    pipe(
+      left,
+      chain(() => p),
+      chainFirst(() => right)
+    )
 
 /**
  * Matches the provided parser `p` that is surrounded by the `bound` parser. Shortcut for `between(bound, bound)`.

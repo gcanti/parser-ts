@@ -1,17 +1,18 @@
 /**
  * @since 0.6.0
  */
+import * as E from 'fp-ts/Either'
 import { Foldable, Foldable1 } from 'fp-ts/lib/Foldable'
+import { pipe } from 'fp-ts/lib/function'
 import { Functor, Functor1 } from 'fp-ts/lib/Functor'
 import { HKT, Kind, URIS } from 'fp-ts/lib/HKT'
-import * as E from 'fp-ts/Either'
 import * as M from 'fp-ts/lib/Monoid'
 import * as O from 'fp-ts/lib/Option'
-import { pipe } from 'fp-ts/lib/pipeable'
+
 import * as C from './char'
 import * as P from './Parser'
-import * as S from './Stream'
 import * as PR from './ParseResult'
+import * as S from './Stream'
 
 // -------------------------------------------------------------------------------------
 // constructors

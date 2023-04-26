@@ -1,8 +1,9 @@
 import * as assert from 'assert'
+import { pipe } from 'fp-ts/lib/function'
+
 import { parser as P, string as S } from '../src'
-import { success, error } from '../src/ParseResult'
+import { error, success } from '../src/ParseResult'
 import { stream } from '../src/Stream'
-import { pipe } from 'fp-ts/lib/pipeable'
 import { run } from '../src/string'
 
 export const pathParser = pipe(
