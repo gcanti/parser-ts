@@ -1,7 +1,7 @@
 /**
  * @since 0.6.0
  */
-import * as E from 'fp-ts/Either'
+import * as E from 'fp-ts/lib/Either'
 import { Foldable, Foldable1 } from 'fp-ts/lib/Foldable'
 import { pipe } from 'fp-ts/lib/function'
 import { Functor, Functor1 } from 'fp-ts/lib/Functor'

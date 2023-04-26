@@ -1,12 +1,12 @@
 /**
  * @since 0.6.0
  */
-import { ChainRec2, tailRec } from 'fp-ts/ChainRec'
 import { Alt2 } from 'fp-ts/lib/Alt'
 import { Alternative2 } from 'fp-ts/lib/Alternative'
 import { Applicative2 } from 'fp-ts/lib/Applicative'
 import * as A from 'fp-ts/lib/Array'
 import { Chain2 } from 'fp-ts/lib/Chain'
+import { ChainRec2, tailRec } from 'fp-ts/lib/ChainRec'
 import * as E from 'fp-ts/lib/Either'
 import { identity, Lazy, pipe } from 'fp-ts/lib/function'
 import { Functor2 } from 'fp-ts/lib/Functor'
