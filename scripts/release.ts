@@ -1,7 +1,8 @@
-import { run } from './run'
 import * as child_process from 'child_process'
 import { left, right } from 'fp-ts/Either'
 import * as TE from 'fp-ts/TaskEither'
+
+import { run } from './run'
 
 const DIST = 'dist'
 

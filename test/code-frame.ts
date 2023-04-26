@@ -1,7 +1,8 @@
 import * as assert from 'assert'
+import * as E from 'fp-ts/lib/Either'
+
 import { run } from '../src/code-frame'
 import { pathParser } from './languages'
-import * as E from 'fp-ts/lib/Either'
 
 describe('code-frame', () => {
   it('run', () => {

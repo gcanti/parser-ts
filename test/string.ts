@@ -1,8 +1,8 @@
 import * as assert from 'assert'
 import { array } from 'fp-ts/lib/Array'
-import { monoidString } from 'fp-ts/lib/Monoid'
 import { intercalate } from 'fp-ts/lib/Foldable'
 import * as RA from 'fp-ts/lib/ReadonlyArray'
+import { Monoid } from 'fp-ts/lib/string'
 
 import { char as C, string as S } from '../src'
 import { error, success } from '../src/ParseResult'
@@ -29,8 +29,8 @@ describe('string', () => {
 
     it('should handle long strings without exceeding the recursion limit (#41)', () => {
       const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-      const target = intercalate(monoidString, RA.Foldable)(' ', RA.replicate(1000, lorem))
-      const source = intercalate(monoidString, RA.Foldable)(' ', RA.replicate(10000, lorem))
+      const target = intercalate(Monoid, RA.Foldable)(' ', RA.replicate(1000, lorem))
+      const source = intercalate(Monoid, RA.Foldable)(' ', RA.replicate(10000, lorem))
       const cursor = target.length
       const parser = S.string(target)
 

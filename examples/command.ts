@@ -35,11 +35,10 @@
  */
 import * as A from 'fp-ts/lib/Array'
 import { mapLeft, Either } from 'fp-ts/lib/Either'
-import { getStructMonoid, Monoid } from 'fp-ts/lib/Monoid'
+import { struct, Monoid } from 'fp-ts/lib/Monoid'
 import * as R from 'fp-ts/lib/Record'
-import { getLastSemigroup } from 'fp-ts/lib/Semigroup'
-import { absurd } from 'fp-ts/lib/function'
-import { pipe } from 'fp-ts/lib/pipeable'
+import { last } from 'fp-ts/lib/Semigroup'
+import { absurd, pipe } from 'fp-ts/lib/function'
 import * as C from '../src/char'
 import { run } from '../src/code-frame'
 import * as S from '../src/string'
@@ -83,9 +82,9 @@ export interface Ast {
 // instances
 // -------------------------------------------------------------------------------------
 
-const monoidArgs: Monoid<Args> = getStructMonoid({
+const monoidArgs: Monoid<Args> = struct({
   flags: A.getMonoid<string>(),
-  named: R.getMonoid(getLastSemigroup<string>()),
+  named: R.getMonoid(last<string>()),
   positional: A.getMonoid<string>()
 })
 

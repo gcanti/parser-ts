@@ -6,6 +6,7 @@ import * as parser from './Parser'
 import * as parseResult from './ParseResult'
 import * as stream from './Stream'
 import * as string from './string'
+
 export {
   /**
    * @since 0.6.0

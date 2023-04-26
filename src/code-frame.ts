@@ -2,11 +2,13 @@
  * @since 0.6.0
  */
 import { bimap, Either } from 'fp-ts/lib/Either'
-import { pipe } from 'fp-ts/lib/pipeable'
+import { pipe } from 'fp-ts/lib/function'
+
 import { Char } from './char'
 import { Parser } from './Parser'
 import { stream } from './Stream'
-const { codeFrameColumns } = require('@babel/code-frame')
+
+const { codeFrameColumns } = import('@babel/code-frame')
 
 interface Location {
   readonly start: {

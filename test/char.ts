@@ -1,4 +1,5 @@
 import * as assert from 'assert'
+
 import { char as C, string as S } from '../src'
 import { error, success } from '../src/ParseResult'
 import { stream } from '../src/Stream'

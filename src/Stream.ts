@@ -3,8 +3,8 @@
  */
 import { getEq as getArrayEq, lookup } from 'fp-ts/lib/Array'
 import { Eq, fromEquals } from 'fp-ts/lib/Eq'
+import { pipe } from 'fp-ts/lib/function'
 import { map, Option } from 'fp-ts/lib/Option'
-import { pipe } from 'fp-ts/lib/pipeable'
 
 // -------------------------------------------------------------------------------------
 // model
