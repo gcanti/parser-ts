@@ -8,7 +8,7 @@ import * as path from 'path'
 import { FileSystem, fileSystem } from './FileSystem'
 import { run } from './run'
 
-interface Build<A> extends RTE.ReaderTaskEither<FileSystem, Error, A> {}
+interface Build<A> extends RTE.ReaderTaskEither<FileSystem, Error, A> { }
 
 const OUTPUT_FOLDER = 'dist'
 const PKG = 'package.json'

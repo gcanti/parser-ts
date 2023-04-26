@@ -237,7 +237,7 @@ export const eof: <I>() => Parser<I, void> = () =>
 export const many = <I, A>(p: Parser<I, A>): Parser<I, Array<A>> =>
   pipe(
     many1(p),
-    alt(() => of<I, Array<A>>(A.empty))
+    alt(() => of<I, Array<A>>([]))
   )
 
 /**
@@ -255,7 +255,7 @@ export const many1 = <I, A>(parser: Parser<I, A>): Parser<I, NEA.NonEmptyArray<A
       chainRec_(NEA.of(head), acc =>
         pipe(
           parser,
-          map(a => E.left(NEA.snoc(acc, a))),
+          map(a => E.left(A.append(a)(acc))),
           alt(() => of(E.right(acc)))
         )
       )
@@ -271,7 +271,7 @@ export const many1 = <I, A>(parser: Parser<I, A>): Parser<I, NEA.NonEmptyArray<A
  * @since 0.6.0
  */
 export const sepBy = <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>): Parser<I, Array<B>> => {
-  const nil: Parser<I, Array<B>> = of(A.empty)
+  const nil: Parser<I, Array<B>> = of([])
   return pipe(
     sepBy1(sep, p),
     alt(() => nil)
@@ -292,7 +292,7 @@ export const sepBy1: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I, 
     chain(head =>
       pipe(
         many(pipe(sep, apSecond(p))),
-        map(tail => NEA.cons(head, tail))
+        map(tail => A.prepend(head)(tail))
       )
     )
   )
@@ -310,7 +310,7 @@ export const sepByCut: <I, A, B>(sep: Parser<I, A>, p: Parser<I, B>) => Parser<I
     chain(head =>
       pipe(
         many(cutWith(sep, p)),
-        map(tail => NEA.cons(head, tail))
+        map(tail => A.prepend(head)(tail))
       )
     )
   )
@@ -512,7 +512,7 @@ export const many1Till = <I, A, B>(
           alt(() =>
             pipe(
               parser,
-              map(a => E.left(RNEA.snoc(acc, a)))
+              map(a => E.left(RA.append(a)(acc)))
             )
           )
         )

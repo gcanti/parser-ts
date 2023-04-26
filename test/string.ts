@@ -1,5 +1,5 @@
 import * as assert from 'assert'
-import { array } from 'fp-ts/lib/Array'
+import { Traversable } from 'fp-ts/lib/Array'
 import { intercalate } from 'fp-ts/lib/Foldable'
 import * as RA from 'fp-ts/lib/ReadonlyArray'
 import { Monoid } from 'fp-ts/lib/string'
@@ -63,7 +63,7 @@ describe('string', () => {
   })
 
   it('oneOf', () => {
-    const parser = S.oneOf(array)(['a', 'b'])
+    const parser = S.oneOf(Traversable)(['a', 'b'])
     assert.deepStrictEqual(S.run('a')(parser), success('a', stream(['a'], 1), stream(['a'])))
     assert.deepStrictEqual(S.run('ab')(parser), success('a', stream(['a', 'b'], 1), stream(['a', 'b'])))
     assert.deepStrictEqual(S.run('ba')(parser), success('b', stream(['b', 'a'], 1), stream(['b', 'a'])))
