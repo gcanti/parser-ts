@@ -120,25 +120,23 @@ export const PositionalArg = (value: string): Args => ({
 // destructors
 // -------------------------------------------------------------------------------------
 
-export const fold = <R>(
-  onFlag: (value: string) => R,
-  onNamed: (name: string, value: string) => R,
-  onPositional: (value: string) => R
-) => (a: Argument): R => {
-  switch (a._tag) {
-    case 'Flag':
-      return onFlag(a.value)
+export const fold =
+  <R>(onFlag: (value: string) => R, onNamed: (name: string, value: string) => R, onPositional: (value: string) => R) =>
+  (a: Argument): R => {
+    switch (a._tag) {
+      case 'Flag':
+        return onFlag(a.value)
 
-    case 'Named':
-      return onNamed(a.name, a.value)
+      case 'Named':
+        return onNamed(a.name, a.value)
 
-    case 'Positional':
-      return onPositional(a.value)
+      case 'Positional':
+        return onPositional(a.value)
 
-    default:
-      return absurd<R>(a)
+      default:
+        return absurd<R>(a)
+    }
   }
-}
 
 // -------------------------------------------------------------------------------------
 // parsers
@@ -188,17 +186,19 @@ const ast = (command: string, source: string): P.Parser<string, Ast> => {
   )
 }
 
-const parseCommand = <E>(cmd: string, onLeft: (cmd: string) => E) => (source: string): Either<E, Ast> =>
-  pipe(
-    run(ast(cmd, source), source),
-    mapLeft(() => onLeft(cmd))
-  )
+const parseCommand =
+  <E>(cmd: string, onLeft: (cmd: string) => E) =>
+  (source: string): Either<E, Ast> =>
+    pipe(
+      run(ast(cmd, source), source),
+      mapLeft(() => onLeft(cmd))
+    )
 
 const cmd = 'foo'
 const source = 'foo ./bar -b --baz=qux'
 
 // tslint:disable-next-line: no-console
-console.log(JSON.stringify(parseCommand(cmd, c => console.error(`command not found: ${c}`))(source), null, 2))
+console.log(JSON.stringify(parseCommand(cmd, (c) => console.error(`command not found: ${c}`))(source), null, 2))
 /*
 {
   _tag: 'Right',

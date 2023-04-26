@@ -39,6 +39,7 @@
     "fp-ts": "^2.14.0"
   },
   "devDependencies": {
+    "@types/babel__code-frame": "^7.0.3",
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.1",
     "@types/node": "^18.16.1",

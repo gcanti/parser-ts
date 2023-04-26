@@ -301,7 +301,7 @@ import * as P from 'parser-ts/Parser'
 const parser = P.expected(
   pipe(
     P.item<C.Char>(),
-    P.filter(c => c !== 'a')
+    P.filter((c) => c !== 'a')
   ),
   'anything except "a"'
 )

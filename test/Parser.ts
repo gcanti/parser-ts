@@ -41,7 +41,7 @@ describe('Parser', () => {
   })
 
   it('ap', () => {
-    const parser = P.ap(C.char('a'))(P.of(s => s.length))
+    const parser = P.ap(C.char('a'))(P.of((s) => s.length))
     assert.deepStrictEqual(S.run('a')(parser), success(1, stream(['a'], 1), stream(['a'])))
   })
 
@@ -68,7 +68,7 @@ describe('Parser', () => {
   it('sepBy', () => {
     const parser = P.sepBy(
       C.char(','),
-      P.sat(c => c !== ',')
+      P.sat((c) => c !== ',')
     )
     assert.deepStrictEqual(S.run('')(parser), success([], stream([]), stream([])))
     assert.deepStrictEqual(S.run('a')(parser), success(['a'], stream(['a'], 1), stream(['a'])))
